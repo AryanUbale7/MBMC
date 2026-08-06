@@ -79,14 +79,14 @@ export default function HomePage() {
     <div className="space-y-8 pb-16 font-sans text-gov-text bg-gov-bg">
 
       {/* -------------------------------------------------
-          SECTION 4: PURE NATURAL GOVERNMENT IMAGE BANNER SLIDER (NO BLUE TINT, NO TEXT, NO BOTTOM WHITE CONTROLS BAR)
+          SECTION 4: PURE NATURAL GOVERNMENT IMAGE BANNER SLIDER
       ------------------------------------------------- */}
       <section className="w-full relative overflow-hidden bg-white border-b-4 border-gov-accent shadow-gov-md group">
         
-        {/* Full-Width Image Container (Height: 460px - 500px) */}
+        {/* Full-Width Image Container */}
         <div className="w-full h-[440px] sm:h-[480px] lg:h-[520px] relative">
           
-          {/* Natural Bright Banner Image (Full 100% Opacity) */}
+          {/* Natural Bright Banner Image */}
           <div className="absolute inset-0 z-0">
             <img
               src={heroSlides[currentSlide].image}
@@ -113,7 +113,7 @@ export default function HomePage() {
               </span>
             </div>
 
-            {/* Subtle Floating Navigation Chevrons on Left & Right Sides */}
+            {/* Floating Navigation Chevrons */}
             <div className="flex items-center justify-between w-full pointer-events-auto">
               <button
                 onClick={prevSlide}
@@ -135,9 +135,7 @@ export default function HomePage() {
 
         </div>
 
-        {/* -------------------------------------------------
-            BREAKING NEWS TICKER BAR (DIRECTLY BELOW SLIDER)
-        ------------------------------------------------- */}
+        {/* BREAKING NEWS TICKER BAR */}
         <div className="bg-gov-navbar text-white font-sans font-bold text-xs py-2.5 px-4 sm:px-8 border-t border-blue-900 shadow-md">
           <div className="max-w-[1440px] mx-auto flex items-center space-x-3">
             <div className="bg-gov-accent text-gov-footer px-3 py-1 rounded text-[11px] uppercase tracking-wider font-extrabold flex items-center space-x-1 flex-shrink-0 shadow-xs">
@@ -180,7 +178,7 @@ export default function HomePage() {
 
 
       {/* -------------------------------------------------
-          SECTION 5: QUICK CITIZEN SERVICES GRID
+          SECTION 5: QUICK CITIZEN SERVICES DIRECTORY (REDESIGNED WITH REAL SERVICE THUMBNAILS)
       ------------------------------------------------- */}
       <section className="max-w-[1440px] mx-auto px-4 sm:px-8 space-y-4">
         <div className="border-b border-gov-border pb-3 flex items-center justify-between">
@@ -194,143 +192,233 @@ export default function HomePage() {
           </div>
         </div>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
           
-          {/* Card 1 */}
+          {/* Service Card 1: Apply Event Permission */}
           <Link
             href="/apply"
-            className="bg-white rounded-gov-card border border-gov-border p-5 shadow-gov-sm hover:shadow-gov-md hover:border-gov-primary transition space-y-3 block group"
+            className="bg-white rounded-[16px] border border-[#DCE6F7] shadow-gov-sm overflow-hidden flex flex-col justify-between group hover:border-gov-primary hover:shadow-gov-md transition-all duration-300 block"
           >
-            <div className="w-10 h-10 bg-blue-50 text-gov-primary rounded-gov-sm flex items-center justify-center font-bold">
-              <FileText className="w-5 h-5" />
+            {/* Top Thumbnail Image (38-42% Height) */}
+            <div className="relative h-44 sm:h-48 w-full overflow-hidden bg-slate-100">
+              <img
+                src="/images/services/apply.png"
+                alt="Apply Event Permission"
+                className="w-full h-full object-cover group-hover:scale-105 group-hover:brightness-105 transition-all duration-500"
+              />
+              <div className="absolute inset-0 bg-black/10 transition-opacity duration-300 group-hover:opacity-0" />
+              <div className="absolute top-3 left-3 bg-gov-primary text-white text-[10px] font-extrabold px-2.5 py-1 rounded shadow-xs uppercase tracking-wider">
+                {t("CLEARANCE NOC", "परवानगी सेवा")}
+              </div>
             </div>
-            <h3 className="text-base font-bold text-gov-text group-hover:text-gov-primary transition">
-              {t("Apply Event Permission", "कार्यक्रम परवानगी अर्ज")}
-            </h3>
-            <p className="text-xs text-gov-muted leading-relaxed">
-              {t(
-                "Submit online application for Sarvajanik Ganesh Utsav, Exhibitions, Rallies, and Stage setups.",
-                "सार्वजनिक उत्सव, प्रदर्शने, सभा व मंडप उभारणीसाठी ऑनलाईन अर्ज करा."
-              )}
-            </p>
-            <div className="text-xs font-bold text-gov-primary flex items-center space-x-1 pt-1">
-              <span>{t("Start Application", "अर्ज सुरु करा")}</span>
-              <ChevronRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
+
+            {/* Bottom Content Body */}
+            <div className="p-5 flex-1 flex flex-col justify-between space-y-3">
+              <div className="space-y-1.5">
+                <h3 className="text-base sm:text-lg font-bold text-gov-text group-hover:text-gov-primary transition-colors">
+                  {t("Apply Event Permission", "कार्यक्रम परवानगी अर्ज")}
+                </h3>
+                <p className="text-xs text-gov-muted leading-relaxed font-medium">
+                  {t(
+                    "Submit online application for Sarvajanik Ganesh Utsav, Exhibitions, Rallies, and Stage setups with multi-department NOC routing.",
+                    "सार्वजनिक उत्सव, प्रदर्शने, सभा व मंडप उभारणीसाठी ऑनलाईन अर्ज करा."
+                  )}
+                </p>
+              </div>
+              <div className="text-xs font-extrabold text-gov-primary flex items-center space-x-1 pt-2 border-t border-slate-100">
+                <span>{t("Start Application", "अर्ज सुरु करा")}</span>
+                <ChevronRight className="w-4 h-4 group-hover:translate-x-1 transition-transform text-gov-accent" />
+              </div>
             </div>
           </Link>
 
-          {/* Card 2 */}
+          {/* Service Card 2: Track NOC Approval Status */}
           <Link
             href="/track"
-            className="bg-white rounded-gov-card border border-gov-border p-5 shadow-gov-sm hover:shadow-gov-md hover:border-gov-primary transition space-y-3 block group"
+            className="bg-white rounded-[16px] border border-[#DCE6F7] shadow-gov-sm overflow-hidden flex flex-col justify-between group hover:border-gov-primary hover:shadow-gov-md transition-all duration-300 block"
           >
-            <div className="w-10 h-10 bg-emerald-50 text-emerald-700 rounded-gov-sm flex items-center justify-center font-bold">
-              <CheckCircle2 className="w-5 h-5" />
+            {/* Top Thumbnail Image */}
+            <div className="relative h-44 sm:h-48 w-full overflow-hidden bg-slate-100">
+              <img
+                src="/images/services/track.png"
+                alt="Track NOC Approval Status"
+                className="w-full h-full object-cover group-hover:scale-105 group-hover:brightness-105 transition-all duration-500"
+              />
+              <div className="absolute inset-0 bg-black/10 transition-opacity duration-300 group-hover:opacity-0" />
+              <div className="absolute top-3 left-3 bg-emerald-700 text-white text-[10px] font-extrabold px-2.5 py-1 rounded shadow-xs uppercase tracking-wider">
+                {t("REAL-TIME TRACKING", "थेट स्थिती")}
+              </div>
             </div>
-            <h3 className="text-base font-bold text-gov-text group-hover:text-gov-primary transition">
-              {t("Track NOC Approval Status", "अर्जाची स्थिती तपासा")}
-            </h3>
-            <p className="text-xs text-gov-muted leading-relaxed">
-              {t(
-                "Monitor real-time progress across Fire, Police, PWD, Sanitation and Electrical departments.",
-                "अग्निशमन, पोलीस, मनपा बांधकाम व स्वच्छता विभागाचे डिजिटल शेरे तपासा."
-              )}
-            </p>
-            <div className="text-xs font-bold text-gov-primary flex items-center space-x-1 pt-1">
-              <span>{t("Track Status", "स्थिती पहा")}</span>
-              <ChevronRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
+
+            {/* Bottom Content Body */}
+            <div className="p-5 flex-1 flex flex-col justify-between space-y-3">
+              <div className="space-y-1.5">
+                <h3 className="text-base sm:text-lg font-bold text-gov-text group-hover:text-gov-primary transition-colors">
+                  {t("Track NOC Approval Status", "अर्जाची स्थिती तपासा")}
+                </h3>
+                <p className="text-xs text-gov-muted leading-relaxed font-medium">
+                  {t(
+                    "Monitor real-time progress across Fire Services, Police, MBMC PWD, Sanitation, and Electrical departments.",
+                    "अग्निशमन, पोलीस, मनपा बांधकाम व स्वच्छता विभागाचे डिजिटल शेरे तपासा."
+                  )}
+                </p>
+              </div>
+              <div className="text-xs font-extrabold text-gov-primary flex items-center space-x-1 pt-2 border-t border-slate-100">
+                <span>{t("Track Application Status", "अर्जाची स्थिती तपासा")}</span>
+                <ChevronRight className="w-4 h-4 group-hover:translate-x-1 transition-transform text-gov-accent" />
+              </div>
             </div>
           </Link>
 
-          {/* Card 3 */}
+          {/* Service Card 3: Required Documents Checklist */}
           <Link
             href="#required-documents"
-            className="bg-white rounded-gov-card border border-gov-border p-5 shadow-gov-sm hover:shadow-gov-md hover:border-gov-primary transition space-y-3 block group"
+            className="bg-white rounded-[16px] border border-[#DCE6F7] shadow-gov-sm overflow-hidden flex flex-col justify-between group hover:border-gov-primary hover:shadow-gov-md transition-all duration-300 block"
           >
-            <div className="w-10 h-10 bg-purple-50 text-purple-700 rounded-gov-sm flex items-center justify-center font-bold">
-              <FileCheck2 className="w-5 h-5" />
+            {/* Top Thumbnail Image */}
+            <div className="relative h-44 sm:h-48 w-full overflow-hidden bg-slate-100">
+              <img
+                src="/images/services/required.png"
+                alt="Required Documents Checklist"
+                className="w-full h-full object-cover group-hover:scale-105 group-hover:brightness-105 transition-all duration-500"
+              />
+              <div className="absolute inset-0 bg-black/10 transition-opacity duration-300 group-hover:opacity-0" />
+              <div className="absolute top-3 left-3 bg-purple-700 text-white text-[10px] font-extrabold px-2.5 py-1 rounded shadow-xs uppercase tracking-wider">
+                {t("DOCUMENTS GUIDE", "कागदपत्रे यादी")}
+              </div>
             </div>
-            <h3 className="text-base font-bold text-gov-text group-hover:text-gov-primary transition">
-              {t("Required Documents Checklist", "आवश्यक कागदपत्रे यादी")}
-            </h3>
-            <p className="text-xs text-gov-muted leading-relaxed">
-              {t(
-                "View mandatory document list including Aadhaar, PAN, Site Layout Map, and Society NOC.",
-                "आधार, पॅन, मंडप आराखडा व जागा मालक ना-हरकत पत्राची आवश्यक यादी पहा."
-              )}
-            </p>
-            <div className="text-xs font-bold text-gov-primary flex items-center space-x-1 pt-1">
-              <span>{t("Check Required Docs", "कागदपत्रे यादी पहा")}</span>
-              <ChevronRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
+
+            {/* Bottom Content Body */}
+            <div className="p-5 flex-1 flex flex-col justify-between space-y-3">
+              <div className="space-y-1.5">
+                <h3 className="text-base sm:text-lg font-bold text-gov-text group-hover:text-gov-primary transition-colors">
+                  {t("Required Documents Checklist", "आवश्यक कागदपत्रे यादी")}
+                </h3>
+                <p className="text-xs text-gov-muted leading-relaxed font-medium">
+                  {t(
+                    "View mandatory document checklist including Aadhaar, PAN, Site Layout CAD Plan, and Society NOC.",
+                    "आधार, पॅन, मंडप आराखडा व जागा मालक ना-हरकत पत्राची आवश्यक यादी पहा."
+                  )}
+                </p>
+              </div>
+              <div className="text-xs font-extrabold text-gov-primary flex items-center space-x-1 pt-2 border-t border-slate-100">
+                <span>{t("Check Required Docs", "कागदपत्रे यादी पहा")}</span>
+                <ChevronRight className="w-4 h-4 group-hover:translate-x-1 transition-transform text-gov-accent" />
+              </div>
             </div>
           </Link>
 
-          {/* Card 4 */}
+          {/* Service Card 4: Public Ground Availability */}
           <Link
             href="/venues"
-            className="bg-white rounded-gov-card border border-gov-border p-5 shadow-gov-sm hover:shadow-gov-md hover:border-gov-primary transition space-y-3 block group"
+            className="bg-white rounded-[16px] border border-[#DCE6F7] shadow-gov-sm overflow-hidden flex flex-col justify-between group hover:border-gov-primary hover:shadow-gov-md transition-all duration-300 block"
           >
-            <div className="w-10 h-10 bg-amber-50 text-gov-accent rounded-gov-sm flex items-center justify-center font-bold">
-              <Calendar className="w-5 h-5" />
+            {/* Top Thumbnail Image */}
+            <div className="relative h-44 sm:h-48 w-full overflow-hidden bg-slate-100">
+              <img
+                src="/images/services/public_ground.png"
+                alt="Public Ground Availability"
+                className="w-full h-full object-cover group-hover:scale-105 group-hover:brightness-105 transition-all duration-500"
+              />
+              <div className="absolute inset-0 bg-black/10 transition-opacity duration-300 group-hover:opacity-0" />
+              <div className="absolute top-3 left-3 bg-amber-700 text-white text-[10px] font-extrabold px-2.5 py-1 rounded shadow-xs uppercase tracking-wider">
+                {t("VENUE BOOKING", "मैदान वेळापत्रक")}
+              </div>
             </div>
-            <h3 className="text-base font-bold text-gov-text group-hover:text-gov-primary transition">
-              {t("Public Ground Availability", "सार्वजनिक मैदान उपलब्धता")}
-            </h3>
-            <p className="text-xs text-gov-muted leading-relaxed">
-              {t(
-                "Check availability schedule for Netaji Bose Ground, Shanti Nagar Field, and Maxus Mall Plaza.",
-                "नेताजी सुभाषचंद्र बोस मैदान, शांती नगर क्रीडा संकुल व मनपा मैदानांची उपलब्धता पाहू शकता."
-              )}
-            </p>
-            <div className="text-xs font-bold text-gov-primary flex items-center space-x-1 pt-1">
-              <span>{t("View Ground Schedule", "मैदान वेळापत्रक पहा")}</span>
-              <ChevronRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
+
+            {/* Bottom Content Body */}
+            <div className="p-5 flex-1 flex flex-col justify-between space-y-3">
+              <div className="space-y-1.5">
+                <h3 className="text-base sm:text-lg font-bold text-gov-text group-hover:text-gov-primary transition-colors">
+                  {t("Public Ground Availability", "सार्वजनिक मैदान उपलब्धता")}
+                </h3>
+                <p className="text-xs text-gov-muted leading-relaxed font-medium">
+                  {t(
+                    "Check real-time availability schedule for Netaji Bose Ground, Shanti Nagar Field, and MBMC Plazas.",
+                    "नेताजी सुभाषचंद्र बोस मैदान, शांती नगर क्रीडा संकुल व मनपा मैदानांची उपलब्धता पाहू शकता."
+                  )}
+                </p>
+              </div>
+              <div className="text-xs font-extrabold text-gov-primary flex items-center space-x-1 pt-2 border-t border-slate-100">
+                <span>{t("View Ground Schedule", "मैदान वेळापत्रक पहा")}</span>
+                <ChevronRight className="w-4 h-4 group-hover:translate-x-1 transition-transform text-gov-accent" />
+              </div>
             </div>
           </Link>
 
-          {/* Card 5 */}
+          {/* Service Card 5: NOC Rules & Sound Guidelines */}
           <Link
             href="/guidelines"
-            className="bg-white rounded-gov-card border border-gov-border p-5 shadow-gov-sm hover:shadow-gov-md hover:border-gov-primary transition space-y-3 block group"
+            className="bg-white rounded-[16px] border border-[#DCE6F7] shadow-gov-sm overflow-hidden flex flex-col justify-between group hover:border-gov-primary hover:shadow-gov-md transition-all duration-300 block"
           >
-            <div className="w-10 h-10 bg-sky-50 text-sky-700 rounded-gov-sm flex items-center justify-center font-bold">
-              <Volume2 className="w-5 h-5" />
+            {/* Top Thumbnail Image */}
+            <div className="relative h-44 sm:h-48 w-full overflow-hidden bg-slate-100">
+              <img
+                src="/images/services/noc.png"
+                alt="NOC Rules & Sound Guidelines"
+                className="w-full h-full object-cover group-hover:scale-105 group-hover:brightness-105 transition-all duration-500"
+              />
+              <div className="absolute inset-0 bg-black/10 transition-opacity duration-300 group-hover:opacity-0" />
+              <div className="absolute top-3 left-3 bg-sky-700 text-white text-[10px] font-extrabold px-2.5 py-1 rounded shadow-xs uppercase tracking-wider">
+                {t("COMPLIANCE RULES", "सुरक्षा नियमावली")}
+              </div>
             </div>
-            <h3 className="text-base font-bold text-gov-text group-hover:text-gov-primary transition">
-              {t("NOC Rules & Sound Guidelines", "ध्वनी व सुरक्षा मार्गदर्शक नियम")}
-            </h3>
-            <p className="text-xs text-gov-muted leading-relaxed">
-              {t(
-                "High Court mandated noise level rules (dB standards), fire extinguisher norms, and zero-litter policy.",
-                "ध्वनी मर्यादा नियम (डेसिबल मानके), अग्निशमन सुरक्षा व स्वच्छता नियमावली."
-              )}
-            </p>
-            <div className="text-xs font-bold text-gov-primary flex items-center space-x-1 pt-1">
-              <span>{t("Read Guidelines", "नियमावली वाचा")}</span>
-              <ChevronRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
+
+            {/* Bottom Content Body */}
+            <div className="p-5 flex-1 flex flex-col justify-between space-y-3">
+              <div className="space-y-1.5">
+                <h3 className="text-base sm:text-lg font-bold text-gov-text group-hover:text-gov-primary transition-colors">
+                  {t("NOC Rules & Sound Guidelines", "ध्वनी व सुरक्षा मार्गदर्शक नियम")}
+                </h3>
+                <p className="text-xs text-gov-muted leading-relaxed font-medium">
+                  {t(
+                    "High Court mandated noise level rules (dB standards), CFO fire safety norms, and solid waste disposal policy.",
+                    "ध्वनी मर्यादा नियम (डेसिबल मानके), अग्निशमन सुरक्षा व स्वच्छता नियमावली."
+                  )}
+                </p>
+              </div>
+              <div className="text-xs font-extrabold text-gov-primary flex items-center space-x-1 pt-2 border-t border-slate-100">
+                <span>{t("Read Guidelines", "नियमावली वाचा")}</span>
+                <ChevronRight className="w-4 h-4 group-hover:translate-x-1 transition-transform text-gov-accent" />
+              </div>
             </div>
           </Link>
 
-          {/* Card 6 */}
+          {/* Service Card 6: Help Centre & Emergency Contacts */}
           <a
             href="#emergency-contacts"
-            className="bg-white rounded-gov-card border border-gov-border p-5 shadow-gov-sm hover:shadow-gov-md hover:border-gov-primary transition space-y-3 block group"
+            className="bg-white rounded-[16px] border border-[#DCE6F7] shadow-gov-sm overflow-hidden flex flex-col justify-between group hover:border-gov-primary hover:shadow-gov-md transition-all duration-300 block"
           >
-            <div className="w-10 h-10 bg-red-50 text-red-600 rounded-gov-sm flex items-center justify-center font-bold">
-              <PhoneCall className="w-5 h-5" />
+            {/* Top Thumbnail Image */}
+            <div className="relative h-44 sm:h-48 w-full overflow-hidden bg-slate-100">
+              <img
+                src="/images/services/help.png"
+                alt="Help Centre & Emergency Contacts"
+                className="w-full h-full object-cover group-hover:scale-105 group-hover:brightness-105 transition-all duration-500"
+              />
+              <div className="absolute inset-0 bg-black/10 transition-opacity duration-300 group-hover:opacity-0" />
+              <div className="absolute top-3 left-3 bg-red-700 text-white text-[10px] font-extrabold px-2.5 py-1 rounded shadow-xs uppercase tracking-wider">
+                {t("24x7 HELPLINES", "आपत्कालीन संपर्क")}
+              </div>
             </div>
-            <h3 className="text-base font-bold text-gov-text group-hover:text-gov-primary transition">
-              {t("Help Centre & Emergency Contacts", "मदत केंद्र व आपत्कालीन क्रमांक")}
-            </h3>
-            <p className="text-xs text-gov-muted leading-relaxed">
-              {t(
-                "Direct contact phone numbers for MBMC Disaster Cell, Fire Brigade, Police, and Ward Nodal Officers.",
-                "आपत्ती व्यवस्थापन कक्ष, अग्निशमन दल, पोलीस व प्रभाग अधिकाऱ्यांचे थेट नंबर."
-              )}
-            </p>
-            <div className="text-xs font-bold text-gov-primary flex items-center space-x-1 pt-1">
-              <span>{t("View Contacts", "संपर्क क्रमांक पहा")}</span>
-              <ChevronRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
+
+            {/* Bottom Content Body */}
+            <div className="p-5 flex-1 flex flex-col justify-between space-y-3">
+              <div className="space-y-1.5">
+                <h3 className="text-base sm:text-lg font-bold text-gov-text group-hover:text-gov-primary transition-colors">
+                  {t("Help Centre & Emergency Contacts", "मदत केंद्र व आपत्कालीन क्रमांक")}
+                </h3>
+                <p className="text-xs text-gov-muted leading-relaxed font-medium">
+                  {t(
+                    "Direct contact numbers for MBMC Disaster Management Cell, Fire Brigade Control, Police, and Ward Officers.",
+                    "आपत्ती व्यवस्थापन कक्ष, अग्निशमन दल, पोलीस व प्रभाग अधिकाऱ्यांचे थेट नंबर."
+                  )}
+                </p>
+              </div>
+              <div className="text-xs font-extrabold text-gov-primary flex items-center space-x-1 pt-2 border-t border-slate-100">
+                <span>{t("View Emergency Contacts", "संपर्क क्रमांक पहा")}</span>
+                <ChevronRight className="w-4 h-4 group-hover:translate-x-1 transition-transform text-gov-accent" />
+              </div>
             </div>
           </a>
 
