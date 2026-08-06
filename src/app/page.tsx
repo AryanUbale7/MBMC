@@ -237,7 +237,7 @@ export default function HomePage() {
           >
             <div className="relative h-44 sm:h-48 w-full overflow-hidden bg-slate-100">
               <img
-                src="https://images.unsplash.com/photo-1450133064473-71024230f91b?w=600&auto=format&fit=crop&q=70&fm=webp"
+                src="/images/services/apply.png"
                 alt="Apply Event Permission"
                 className="w-full h-full object-cover group-hover:scale-105 group-hover:brightness-105 transition-all duration-500"
                 loading="lazy"
@@ -276,7 +276,7 @@ export default function HomePage() {
           >
             <div className="relative h-44 sm:h-48 w-full overflow-hidden bg-slate-100">
               <img
-                src="https://images.unsplash.com/photo-1460925895917-afdab827c52f?w=600&auto=format&fit=crop&q=70&fm=webp"
+                src="/images/services/track.png"
                 alt="Track NOC Approval Status"
                 className="w-full h-full object-cover group-hover:scale-105 group-hover:brightness-105 transition-all duration-500"
                 loading="lazy"
@@ -315,7 +315,7 @@ export default function HomePage() {
           >
             <div className="relative h-44 sm:h-48 w-full overflow-hidden bg-slate-100">
               <img
-                src="https://images.unsplash.com/photo-1586281380349-632531db7ed4?w=600&auto=format&fit=crop&q=70&fm=webp"
+                src="/images/services/required.png"
                 alt="Required Documents Checklist"
                 className="w-full h-full object-cover group-hover:scale-105 group-hover:brightness-105 transition-all duration-500"
                 loading="lazy"
@@ -354,7 +354,7 @@ export default function HomePage() {
           >
             <div className="relative h-44 sm:h-48 w-full overflow-hidden bg-slate-100">
               <img
-                src="https://images.unsplash.com/photo-1589487391730-58f20eb2c308?w=600&auto=format&fit=crop&q=70&fm=webp"
+                src="/images/services/public_ground.png"
                 alt="Public Ground Availability"
                 className="w-full h-full object-cover group-hover:scale-105 group-hover:brightness-105 transition-all duration-500"
                 loading="lazy"
@@ -393,7 +393,7 @@ export default function HomePage() {
           >
             <div className="relative h-44 sm:h-48 w-full overflow-hidden bg-slate-100">
               <img
-                src="https://images.unsplash.com/photo-1589829545856-d10d557cf95f?w=600&auto=format&fit=crop&q=70&fm=webp"
+                src="/images/services/noc.png"
                 alt="NOC Rules & Sound Guidelines"
                 className="w-full h-full object-cover group-hover:scale-105 group-hover:brightness-105 transition-all duration-500"
                 loading="lazy"
@@ -432,7 +432,7 @@ export default function HomePage() {
           >
             <div className="relative h-44 sm:h-48 w-full overflow-hidden bg-slate-100">
               <img
-                src="https://images.unsplash.com/photo-1486312338219-ce68d2c6f44d?w=600&auto=format&fit=crop&q=70&fm=webp"
+                src="/images/services/help.png"
                 alt="Help Centre & Emergency Contacts"
                 className="w-full h-full object-cover group-hover:scale-105 group-hover:brightness-105 transition-all duration-500"
                 loading="lazy"
