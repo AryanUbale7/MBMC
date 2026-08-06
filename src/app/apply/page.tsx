@@ -13,7 +13,6 @@ import {
   AlertCircle,
   Upload,
   Calendar,
-  DollarSign,
   ShieldCheck,
   Flame,
   Volume2,
@@ -21,11 +20,20 @@ import {
   Printer,
   ArrowRight,
   ArrowLeft,
-  Sparkles,
   MapPin,
   Check,
   Clock,
-  Download
+  Download,
+  PhoneCall,
+  Mail,
+  HelpCircle,
+  FileCheck2,
+  ShieldAlert,
+  Save,
+  Lock,
+  ExternalLink,
+  ChevronRight,
+  Info
 } from "lucide-react";
 
 function ApplyFormContent() {
@@ -37,44 +45,82 @@ function ApplyFormContent() {
   // Wizard Step State (1 to 6)
   const [step, setStep] = useState<number>(1);
   const [submittedRef, setSubmittedRef] = useState<string>("");
+  const [isSavedDraft, setIsSavedDraft] = useState<boolean>(false);
+
+  // Validation Error State
+  const [errors, setErrors] = useState<Record<string, string>>({});
 
   // Form State
   const [formData, setFormData] = useState({
-    // Step 1
+    // STEP 1: EVENT DETAILS
     wardId: "W04",
-    eventType: "Religious / Cultural Festival",
-    eventName: "Shanti Nagar Sarvajanik Ganesh Utsav 2026",
-    venueName: "Shanti Nagar Cultural & Community Field",
+    policeStation: "Kashimira Police Station",
+    wardOffice: "Prabhag Samiti No. 04 (Kashimira - Ghodbunder)",
+    groundName: "Shanti Nagar Cultural & Community Field",
+    eventCategory: "Religious / Cultural Festival",
+    eventType: "Sarvajanik Ganesh Utsav 2026",
+    eventName: "Shanti Nagar Sarvajanik Ganeshotsav Pandal",
+    eventDescription: "Annual Sarvajanik Ganesh Utsav celebrations featuring cultural performances, daily aarti, and public darshan setup.",
+    expectedCrowd: "10000",
     startDate: "2026-09-10",
     endDate: "2026-09-20",
-    // Step 2
-    applicantType: "Trust",
-    organizationName: "Shanti Nagar Welfare Mandal Trust",
+    startTime: "06:00",
+    endTime: "23:00",
+
+    // STEP 2: APPLICANT DETAILS
     applicantName: "Pravin Kumar Raut",
-    mobile: "9820199482",
+    organization: "Shanti Nagar Welfare Mandal Trust",
     email: "pravin.raut@mandal.org",
-    aadhaarPan: "4589 1204 8812 / ABCDE1234F",
-    address: "Flat 402, Building A, Shanti Nagar, Mira Road East, 401107",
-    // Step 3
+    mobile: "9820199482",
+    alternateMobile: "9820199483",
+    address: "Flat 402, Building A, Shanti Nagar, Mira Road East",
+    city: "Mira Bhayandar",
+    state: "Maharashtra",
+    pinCode: "401107",
+    identityProofType: "Aadhaar Card",
+    identityProofNo: "4589 1204 8812",
+
+    // STEP 3: VENUE DETAILS
+    venueName: "Shanti Nagar Ground, Sector 3, Mira Road East",
+    latitude: "19.2812 N",
+    longitude: "72.8542 E",
+    googleMapLink: "https://maps.google.com/?q=19.2812,72.8542",
+    nearbyLandmark: "Opposite MBMC Fire Station, Near Shanti Nagar Market",
+    parkingAvailability: "Yes — 120 Four-Wheelers & 300 Two-Wheelers Capacity",
+    emergencyExit: "Yes — 3 Dedicated 12-foot Wide Exit Gates",
+
+    // STEP 4: DEPARTMENT REQUIREMENTS
     needFireNoc: true,
     needPoliceNoc: true,
-    needSanitationNoc: true,
-    needPowerNoc: true,
-    needTrafficNoc: false,
+    needTrafficNoc: true,
+    needHealthSanitationNoc: true,
+    needElectricityNoc: true,
+    needNoisePermission: true,
+    needPublicWorksPermission: true,
     bioToiletsQty: 4,
-    // Step 4
     stageLengthFt: 40,
     stageWidthFt: 30,
-    maxAttendance: 10000,
     cctvCount: 8,
     fireExtinguishers: 6,
     soundWattage: "5000W RMS",
     soundDecibelAgree: true,
     flameRetardantAgree: true,
-    // Step 5
-    docAadhaarUploaded: true,
-    docSitePlanUploaded: true,
-    docLandNocUploaded: true,
+
+    // STEP 5: DOCUMENTS UPLOAD
+    docAadhaar: true,
+    docPan: true,
+    docSocietyNoc: true,
+    docVenueLayout: true,
+    docSiteMap: true,
+    docFireCert: true,
+    docIdentityProof: true,
+    docInsurance: true,
+
+    // STEP 6: DECLARATION
+    declarationAgreed: false,
+    digitalSignature: "",
+    declarationPlace: "Mira Road",
+    declarationDate: new Date().toISOString().split("T")[0]
   });
 
   // Dynamic Fee Calculation
@@ -82,728 +128,1267 @@ function ApplyFormContent() {
   const areaSqFt = formData.stageLengthFt * formData.stageWidthFt;
   const basePermitFee = 2500;
   const groundLeaseFee = Math.round(areaSqFt * 0.25 * daysCount);
-  const sanitationDeposit = formData.needSanitationNoc ? 3000 : 0;
+  const sanitationDeposit = formData.needHealthSanitationNoc ? 3000 : 0;
   const fireInspectionFee = formData.needFireNoc ? 1500 : 0;
   const policeSecurityBond = 5000;
   const totalFeeCalculated = basePermitFee + groundLeaseFee + sanitationDeposit + fireInspectionFee + policeSecurityBond;
 
-  const handleNextStep = () => {
-    if (step < 5) {
-      setStep(step + 1);
-      window.scrollTo({ top: 0, behavior: 'smooth' });
-    } else if (step === 5) {
-      const randomRef = `MBMC/UECP/2026/${Math.floor(10000 + Math.random() * 90000)}`;
-      setSubmittedRef(randomRef);
-      setStep(6);
-      window.scrollTo({ top: 0, behavior: 'smooth' });
+  // Save Draft Notification
+  const handleSaveDraft = () => {
+    setIsSavedDraft(true);
+    setTimeout(() => setIsSavedDraft(false), 3000);
+  };
 
-      try {
-        confetti({
-          particleCount: 100,
-          spread: 70,
-          origin: { y: 0.6 }
-        });
-      } catch (e) {
-        // fallback
+  // Validate Step Inputs
+  const validateStep = (currentStep: number): boolean => {
+    const newErrors: Record<string, string> = {};
+
+    if (currentStep === 1) {
+      if (!formData.eventName.trim()) newErrors.eventName = "Event Name is required as per official rules.";
+      if (!formData.startDate) newErrors.startDate = "Start Date is required.";
+      if (!formData.endDate) newErrors.endDate = "End Date is required.";
+      if (!formData.expectedCrowd) newErrors.expectedCrowd = "Expected Crowd estimate is required.";
+    } else if (currentStep === 2) {
+      if (!formData.applicantName.trim()) newErrors.applicantName = "Applicant Full Name is required.";
+      if (!formData.mobile.trim()) {
+        newErrors.mobile = "10-Digit Mobile Number is required.";
+      } else if (!/^[6-9]\d{9}$/.test(formData.mobile.trim())) {
+        newErrors.mobile = "Invalid Indian Mobile Number (Must be 10 digits starting 6-9).";
+      }
+      if (!formData.email.trim()) {
+        newErrors.email = "Email Address is required for digital pass delivery.";
+      } else if (!/\S+@\S+\.\S+/.test(formData.email.trim())) {
+        newErrors.email = "Invalid Email Address format.";
+      }
+      if (!formData.address.trim()) newErrors.address = "Complete Applicant Address is required.";
+    } else if (currentStep === 3) {
+      if (!formData.venueName.trim()) newErrors.venueName = "Venue Name & Address is required.";
+      if (!formData.nearbyLandmark.trim()) newErrors.nearbyLandmark = "Nearby Landmark is required for emergency routing.";
+    } else if (currentStep === 4) {
+      if (!formData.soundDecibelAgree) newErrors.soundDecibelAgree = "You must agree to High Court Sound Rules (<55dB).";
+      if (!formData.flameRetardantAgree) newErrors.flameRetardantAgree = "You must agree to mandatory CFO Fire Retardant Coating.";
+    } else if (currentStep === 5) {
+      if (!formData.docAadhaar) newErrors.docAadhaar = "Aadhaar Card PDF upload is mandatory.";
+      if (!formData.docVenueLayout) newErrors.docVenueLayout = "Venue Layout CAD/Plan PDF upload is mandatory.";
+      if (!formData.docFireCert) newErrors.docFireCert = "Fire Retardant Self-Declaration PDF upload is mandatory.";
+    } else if (currentStep === 6) {
+      if (!formData.declarationAgreed) newErrors.declarationAgreed = "You must check the official Government legal declaration box.";
+      if (!formData.digitalSignature.trim()) newErrors.digitalSignature = "Digital Signature (Full Applicant Name) is required.";
+    }
+
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  };
+
+  const handleNextStep = () => {
+    if (validateStep(step)) {
+      if (step < 5) {
+        setStep(step + 1);
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      } else if (step === 5) {
+        setStep(6);
+        window.scrollTo({ top: 0, behavior: 'smooth' });
       }
     }
   };
 
   const handlePrevStep = () => {
-    if (step > 1 && step < 6) {
+    if (step > 1) {
       setStep(step - 1);
       window.scrollTo({ top: 0, behavior: 'smooth' });
     }
   };
 
+  const handleFinalSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (validateStep(6)) {
+      const randomRef = `MBMC/UECP/2026/${Math.floor(10000 + Math.random() * 90000)}`;
+      setSubmittedRef(randomRef);
+      setStep(7); // Final Certificate View
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+
+      try {
+        confetti({
+          particleCount: 120,
+          spread: 80,
+          origin: { y: 0.6 }
+        });
+      } catch (err) {
+        // Fallback if confetti fails
+      }
+    }
+  };
+
   return (
-    <div className="max-w-5xl mx-auto px-4 sm:px-8 py-8 font-sans space-y-8">
-      {/* HEADER BREADCRUMB */}
-      <div className="border-b border-gov-border pb-4 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-        <div>
-          <div className="flex items-center space-x-2 text-xs text-gov-textMuted font-medium">
-            <Link href="/" className="hover:underline">{t("Home", "मुख्य पृष्ठ")}</Link>
-            <span>/</span>
-            <span className="text-gov-primary font-bold">{t("Single Window Permission Form", "एकल खिडकी अर्ज फॉर्म")}</span>
+    <div className="min-h-screen bg-[#F6F8FC] font-sans text-[#1B2B4D] py-6 px-4 sm:px-8">
+      <div className="max-w-[1400px] mx-auto space-y-6">
+
+        {/* -------------------------------------------------
+            PAGE HEADER & BREADCRUMB HIERARCHY
+        ------------------------------------------------- */}
+        <div className="bg-white rounded-xs border border-[#D9E4F4] p-4 sm:p-6 shadow-xs space-y-4">
+          
+          {/* Official Hierarchy Breadcrumb */}
+          <div className="text-[11px] font-bold text-[#1E4F91] uppercase tracking-wider flex items-center space-x-1.5 flex-wrap gap-y-1">
+            <span>{t("Government of Maharashtra", "महाराष्ट्र शासन")}</span>
+            <ChevronRight className="w-3.5 h-3.5 text-slate-400" />
+            <span>{t("Mira Bhayandar Municipal Corporation", "मीरा भाईंदर महानगरपालिका")}</span>
+            <ChevronRight className="w-3.5 h-3.5 text-slate-400" />
+            <span>{t("Urban Event Permission Portal (UECP)", "नागरी कार्यक्रम परवानगी केंद्र")}</span>
+            <ChevronRight className="w-3.5 h-3.5 text-slate-400" />
+            <span className="text-slate-900 font-extrabold">{t("Apply for Event Permission", "कार्यक्रम परवानगी ऑनलाईन अर्ज")}</span>
           </div>
-          <h1 className="text-2xl sm:text-3xl font-extrabold text-gov-dark mt-1">
-            {t("Event Clearance & NOC Application (UECP)", "कार्यक्रम व परवानगी (NOC) डिजिटल अर्ज")}
-          </h1>
+
+          {/* Header Title & Reference Number Row */}
+          <div className="flex flex-col md:flex-row md:items-center justify-between border-t border-[#D9E4F4] pt-4 gap-4">
+            <div>
+              <div className="flex items-center space-x-2">
+                <span className="bg-[#123B7A] text-white text-[10px] font-extrabold px-2.5 py-0.5 rounded-xs uppercase tracking-wider">
+                  FORM E-PERMIT 2026
+                </span>
+                <span className="text-xs text-slate-600 font-mono font-bold">
+                  {t("Draft Reference: MBMC/UECP/2026/89412", "मसुदा संदर्भ: एमबीएमसी/यूईसीपी/२०२६/८९४१२")}
+                </span>
+              </div>
+
+              <h1 className="text-xl sm:text-2xl font-extrabold text-[#123B7A] mt-1">
+                {t("Application for Event & Sarvajanik Mandap Permission", "सार्वजनिक उत्सव व मंडप उभारणी ना-हरकत ऑनलाईन अर्ज")}
+              </h1>
+            </div>
+
+            {/* Header Actions */}
+            <div className="flex items-center space-x-2 text-xs font-bold self-start md:self-auto">
+              <button
+                onClick={handleSaveDraft}
+                className="bg-[#F6F8FC] border border-[#D9E4F4] text-[#123B7A] hover:bg-[#D9E4F4]/50 px-3 py-1.5 rounded-xs flex items-center space-x-1.5 transition cursor-pointer"
+              >
+                <Save className="w-3.5 h-3.5" />
+                <span>{isSavedDraft ? t("Draft Saved!", "मसुदा जतन झाला!") : t("Save Draft", "मसुदा जतन करा")}</span>
+              </button>
+
+              <button
+                onClick={() => window.print()}
+                className="bg-[#F6F8FC] border border-[#D9E4F4] text-[#123B7A] hover:bg-[#D9E4F4]/50 px-3 py-1.5 rounded-xs flex items-center space-x-1.5 transition cursor-pointer"
+              >
+                <Printer className="w-3.5 h-3.5" />
+                <span>{t("Print Application", "अर्जाची प्रत घ्या")}</span>
+              </button>
+
+              <a
+                href="#help-panel"
+                className="bg-[#123B7A] text-white hover:bg-[#1E4F91] px-3 py-1.5 rounded-xs flex items-center space-x-1.5 transition"
+              >
+                <HelpCircle className="w-3.5 h-3.5" />
+                <span>{t("Help", "मदत")}</span>
+              </a>
+            </div>
+          </div>
         </div>
-        <div className="text-xs bg-gov-badgeBg text-gov-badgeText border border-gov-badgeBorder px-3 py-1.5 rounded-lg font-semibold flex items-center space-x-1.5 self-start">
-          <Clock className="w-4 h-4 text-gov-primary" />
-          <span>{t("Guaranteed Clearance SLA: 72 Hours", "हमी दिलेला कालावधी: ७२ तास")}</span>
+
+        {/* -------------------------------------------------
+            SAVE DRAFT ALERT NOTIFICATION
+        ------------------------------------------------- */}
+        {isSavedDraft && (
+          <div className="bg-emerald-50 border border-emerald-300 text-emerald-900 text-xs font-bold p-3 rounded-xs flex items-center space-x-2">
+            <CheckCircle2 className="w-4 h-4 text-emerald-700 flex-shrink-0" />
+            <span>Application draft saved successfully. Reference Number: MBMC/UECP/2026/89412. You can resume anytime.</span>
+          </div>
+        )}
+
+        {/* -------------------------------------------------
+            GOVERNMENT WARNING NOTICE PANEL
+        ------------------------------------------------- */}
+        <div className="bg-amber-50 border-l-4 border-l-[#F4B400] border border-[#D9E4F4] p-4 rounded-xs text-xs space-y-1">
+          <div className="flex items-center space-x-2 text-amber-900 font-extrabold uppercase tracking-wider">
+            <AlertCircle className="w-4 h-4 text-amber-700 flex-shrink-0" />
+            <span>IMPORTANT GOVERNMENT NOTICE / महत्त्वाचे प्रशासकीय परिपत्रक</span>
+          </div>
+          <p className="text-amber-950 leading-relaxed font-medium pl-6">
+            {t(
+              "Submitting false information or forged documents is punishable under Indian Penal Code (IPC) & Disaster Management Act 2005. Please verify all uploaded documents before final submission.",
+              "खोटी माहिती देणे किंवा बनावट कागदपत्रे सादर करणे भारतीय न्याय संहिता व आपत्ती व्यवस्थापन कायद्यानुसार दंडनीय अपराध आहे. अंतिम सादरीकरणापूर्वी सर्व कागदपत्रांची पडताळणी करा."
+            )}
+          </p>
         </div>
-      </div>
 
-      {/* STEP PROGRESS BAR */}
-      <div className="bg-white p-4 sm:p-6 rounded-xl border border-gov-border shadow-gov-sm no-print">
-        <div className="grid grid-cols-6 gap-2 text-center text-xs font-semibold">
-          {[
-            { num: 1, label: t("Ward & Event", "प्रभाग व प्रकार") },
-            { num: 2, label: t("Applicant", "अर्जदार माहिती") },
-            { num: 3, label: t("Inter-Dept NOC", "विभाग मंजुरी") },
-            { num: 4, label: t("Safety & Sound", "सुरक्षा व ध्वनी") },
-            { num: 5, label: t("Fee & Docs", "शुल्क व कागदपत्रे") },
-            { num: 6, label: t("Receipt", "पावती / परवाना") }
-          ].map((s) => {
-            const isActive = step === s.num;
-            const isCompleted = step > s.num;
-            return (
-              <div key={s.num} className="flex flex-col items-center space-y-1.5">
-                <div
-                  className={`w-8 h-8 sm:w-9 sm:h-9 rounded-full flex items-center justify-center font-bold text-xs sm:text-sm transition ${
-                    isCompleted
-                      ? "bg-emerald-600 text-white"
-                      : isActive
-                      ? "bg-gov-primary text-yellow-400 ring-4 ring-blue-100"
-                      : "bg-gov-surface text-gov-textMuted border border-gov-border"
-                  }`}
-                >
-                  {isCompleted ? <Check className="w-4 h-4" /> : s.num}
-                </div>
-                <span
-                  className={`hidden sm:block text-[11px] leading-tight ${
-                    isActive ? "text-gov-primary font-bold" : "text-gov-textMuted"
-                  }`}
-                >
-                  {s.label}
-                </span>
-              </div>
-            );
-          })}
-        </div>
-      </div>
 
-      {/* FORM STEP CONTENT PANELS */}
-      <div className="bg-white rounded-xl border border-gov-border shadow-gov-md p-6 sm:p-8 space-y-6">
+        {/* -------------------------------------------------
+            MAIN 75% FORM & 25% SIDEBAR LAYOUT
+        ------------------------------------------------- */}
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
 
-        {step === 1 && (
-          <div className="space-y-6">
-            <div className="border-b border-gov-border pb-3">
-              <h2 className="text-lg font-bold text-gov-dark flex items-center space-x-2">
-                <Building2 className="w-5 h-5 text-gov-primary" />
-                <span>{t("Step 1: Event Categorization & MBMC Jurisdiction Ward", "टप्पा १: कार्यक्रमाचा प्रकार व मनपा प्रभाग निवड")}</span>
-              </h2>
-              <p className="text-xs text-gov-textMuted mt-1">
-                {t("Select the appropriate MBMC administrative ward where the event or structure will be located.", "कार्यक्रमाचे ठिकाण ज्या मीरा भाईंदर मनपा प्रभागात येते तो प्रभाग निवडा.")}
-              </p>
-            </div>
+          {/* -----------------------------------------------
+              FORM AREA (75% WIDTH)
+          ----------------------------------------------- */}
+          <div className="lg:col-span-9 space-y-6">
 
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              <div className="space-y-2">
-                <label className="text-xs font-bold text-gov-dark block">
-                  {t("MBMC Administrative Ward *", "मीरा भाईंदर मनपा प्रशासकीय प्रभाग *")}
-                </label>
-                <select
-                  value={formData.wardId}
-                  onChange={(e) => setFormData({ ...formData, wardId: e.target.value })}
-                  className="w-full bg-white border border-gov-border rounded-lg p-2.5 text-sm font-medium focus:ring-2 focus:ring-gov-primary outline-none"
-                >
-                  {MBMC_WARDS.map((w) => (
-                    <option key={w.id} value={w.id}>
-                      {t(w.name, w.nameMr)}
-                    </option>
-                  ))}
-                </select>
-                <p className="text-[11px] text-gov-textMuted">
-                  {MBMC_WARDS.find((w) => w.id === formData.wardId)?.headquarters}
-                </p>
-              </div>
-
-              <div className="space-y-2">
-                <label className="text-xs font-bold text-gov-dark block">
-                  {t("Event Category *", "कार्यक्रमाचा मुख्य प्रकार *")}
-                </label>
-                <select
-                  value={formData.eventType}
-                  onChange={(e) => setFormData({ ...formData, eventType: e.target.value })}
-                  className="w-full bg-white border border-gov-border rounded-lg p-2.5 text-sm font-medium focus:ring-2 focus:ring-gov-primary outline-none"
-                >
-                  <option value="Religious / Cultural Festival">{t("Religious / Cultural Festival (Ganesh Utsav, Garba, Eid)", "धार्मिक व सांस्कृतिक उत्सव (गणेशोत्सव, गरबा, ईद)")}</option>
-                  <option value="Commercial Exhibition & Trade Fair">{t("Commercial Exhibition & Trade Fair", "व्यावसायिक प्रदर्शन व ग्राहक मेळावा")}</option>
-                  <option value="Political Rally & Public Address Gathering">{t("Political Rally & Public Gathering", "राजकीय सभा व सार्वजनिक कार्यक्रम")}</option>
-                  <option value="Film, TV & Commercial Video Shooting">{t("Film & Web Series Shooting Permit", "चित्रपट व मालिका चित्रीकरण")}</option>
-                  <option value="Loudspeaker & Temporary Stage Permit">{t("Loudspeaker & Stage Mandap Permit Only", "ध्वनीक्षेपक व तात्पुरता मंडप परवाना")}</option>
-                  <option value="Sports Tournament & Community Marathon">{t("Sports & Public Marathon Event", "क्रीडा व नागरी मॅरेथॉन")}</option>
-                </select>
-              </div>
-
-              <div className="space-y-2 md:col-span-2">
-                <label className="text-xs font-bold text-gov-dark block">
-                  {t("Full Event Title / Festival Name *", "कार्यक्रमाचे / उत्सवाचे पूर्ण नाव *")}
-                </label>
-                <input
-                  type="text"
-                  value={formData.eventName}
-                  onChange={(e) => setFormData({ ...formData, eventName: e.target.value })}
-                  className="w-full bg-white border border-gov-border rounded-lg p-2.5 text-sm font-medium focus:ring-2 focus:ring-gov-primary outline-none"
-                  placeholder={t("e.g. Shanti Nagar Sarvajanik Ganeshotsav 2026", "उदा. शांती नगर सार्वजनिक गणेशोत्सव २०२६")}
-                />
-              </div>
-
-              <div className="space-y-2 md:col-span-2">
-                <label className="text-xs font-bold text-gov-dark block">
-                  {t("Exact Venue Field / Address *", "कार्यक्रमाचे नक्की ठिकाण / मैदान पत्ता *")}
-                </label>
-                <input
-                  type="text"
-                  value={formData.venueName}
-                  onChange={(e) => setFormData({ ...formData, venueName: e.target.value })}
-                  className="w-full bg-white border border-gov-border rounded-lg p-2.5 text-sm font-medium focus:ring-2 focus:ring-gov-primary outline-none"
-                  placeholder={t("e.g. Sector 3 Field, Shanti Nagar, Mira Road East", "उदा. सेक्टर ३ मैदान, शांती नगर, मीरा रोड पूर्व")}
-                />
-              </div>
-
-              <div className="space-y-2">
-                <label className="text-xs font-bold text-gov-dark block">
-                  {t("Event Commencement Date *", "कार्यक्रम सुरु होण्याची तारीख *")}
-                </label>
-                <input
-                  type="date"
-                  value={formData.startDate}
-                  onChange={(e) => setFormData({ ...formData, startDate: e.target.value })}
-                  className="w-full bg-white border border-gov-border rounded-lg p-2.5 text-sm font-medium focus:ring-2 focus:ring-gov-primary outline-none"
-                />
-              </div>
-
-              <div className="space-y-2">
-                <label className="text-xs font-bold text-gov-dark block">
-                  {t("Event Concluding Date *", "कार्यक्रम संपण्याची तारीख *")}
-                </label>
-                <input
-                  type="date"
-                  value={formData.endDate}
-                  onChange={(e) => setFormData({ ...formData, endDate: e.target.value })}
-                  className="w-full bg-white border border-gov-border rounded-lg p-2.5 text-sm font-medium focus:ring-2 focus:ring-gov-primary outline-none"
-                />
-              </div>
-            </div>
-          </div>
-        )}
-
-        {step === 2 && (
-          <div className="space-y-6">
-            <div className="border-b border-gov-border pb-3">
-              <h2 className="text-lg font-bold text-gov-dark flex items-center space-x-2">
-                <Users className="w-5 h-5 text-gov-primary" />
-                <span>{t("Step 2: Applicant & Organization Verification", "टप्पा २: अर्जदार व संस्था पडताळणी माहिती")}</span>
-              </h2>
-              <p className="text-xs text-gov-textMuted mt-1">
-                {t("Provide valid Identity & Registration details. All declarations are verified against UIDAI & PAN records.", "आधार व पॅन क्रमांकाची खरी माहिती द्या. माहितीची शासकीय पोर्टलद्वारे पडताळणी केली जाते.")}
-              </p>
-            </div>
-
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              <div className="space-y-2">
-                <label className="text-xs font-bold text-gov-dark block">
-                  {t("Applicant Category *", "अर्जदाराचा प्रकार *")}
-                </label>
-                <select
-                  value={formData.applicantType}
-                  onChange={(e) => setFormData({ ...formData, applicantType: e.target.value as any })}
-                  className="w-full bg-white border border-gov-border rounded-lg p-2.5 text-sm font-medium focus:ring-2 focus:ring-gov-primary outline-none"
-                >
-                  <option value="Trust">{t("Registered Public Trust / Mandal", "नोंदणीकृत ट्रस्ट / सार्वजनिक मंडळ")}</option>
-                  <option value="NGO">{t("Registered NGO / Non-Profit", "एनजीओ / सेवाभावी संस्था")}</option>
-                  <option value="Corporate">{t("Private Commercial Enterprise / Agency", "खाजगी कंपनी / इव्हेंट संस्था")}</option>
-                  <option value="Individual">{t("Individual Resident of MBMC", "वैयक्तिक रहिवासी")}</option>
-                </select>
-              </div>
-
-              <div className="space-y-2">
-                <label className="text-xs font-bold text-gov-dark block">
-                  {t("Registered Organization / Mandal Name *", "नोंदणीकृत संस्थेचे / मंडळाचे नाव *")}
-                </label>
-                <input
-                  type="text"
-                  value={formData.organizationName}
-                  onChange={(e) => setFormData({ ...formData, organizationName: e.target.value })}
-                  className="w-full bg-white border border-gov-border rounded-lg p-2.5 text-sm font-medium focus:ring-2 focus:ring-gov-primary outline-none"
-                />
-              </div>
-
-              <div className="space-y-2">
-                <label className="text-xs font-bold text-gov-dark block">
-                  {t("Authorized Contact Representative *", "अधिकृत प्रतिनिधीचे नाव *")}
-                </label>
-                <input
-                  type="text"
-                  value={formData.applicantName}
-                  onChange={(e) => setFormData({ ...formData, applicantName: e.target.value })}
-                  className="w-full bg-white border border-gov-border rounded-lg p-2.5 text-sm font-medium focus:ring-2 focus:ring-gov-primary outline-none"
-                />
-              </div>
-
-              <div className="space-y-2">
-                <label className="text-xs font-bold text-gov-dark block">
-                  {t("Primary Mobile Number (OTP Verified) *", "मोबाईल क्रमांक (ओटीपी द्वारे पडताळलेला) *")}
-                </label>
-                <input
-                  type="tel"
-                  value={formData.mobile}
-                  onChange={(e) => setFormData({ ...formData, mobile: e.target.value })}
-                  className="w-full bg-white border border-gov-border rounded-lg p-2.5 text-sm font-medium focus:ring-2 focus:ring-gov-primary outline-none font-mono"
-                />
-              </div>
-
-              <div className="space-y-2">
-                <label className="text-xs font-bold text-gov-dark block">
-                  {t("Official Email Address *", "अधिकृत ई-मेल आयडी *")}
-                </label>
-                <input
-                  type="email"
-                  value={formData.email}
-                  onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-                  className="w-full bg-white border border-gov-border rounded-lg p-2.5 text-sm font-medium focus:ring-2 focus:ring-gov-primary outline-none"
-                />
-              </div>
-
-              <div className="space-y-2">
-                <label className="text-xs font-bold text-gov-dark block">
-                  {t("Aadhaar No. / PAN No. *", "आधार क्रमांक / पॅन क्रमांक *")}
-                </label>
-                <input
-                  type="text"
-                  value={formData.aadhaarPan}
-                  onChange={(e) => setFormData({ ...formData, aadhaarPan: e.target.value })}
-                  className="w-full bg-white border border-gov-border rounded-lg p-2.5 text-sm font-medium focus:ring-2 focus:ring-gov-primary outline-none font-mono"
-                />
-              </div>
-
-              <div className="space-y-2 md:col-span-2">
-                <label className="text-xs font-bold text-gov-dark block">
-                  {t("Registered Address in Mira Bhayandar Jurisdiction *", "मीरा भाईंदर क्षेत्रातील नोंदणीकृत पूर्ण पत्ता *")}
-                </label>
-                <textarea
-                  rows={2}
-                  value={formData.address}
-                  onChange={(e) => setFormData({ ...formData, address: e.target.value })}
-                  className="w-full bg-white border border-gov-border rounded-lg p-2.5 text-sm font-medium focus:ring-2 focus:ring-gov-primary outline-none"
-                />
-              </div>
-            </div>
-          </div>
-        )}
-
-        {step === 3 && (
-          <div className="space-y-6">
-            <div className="border-b border-gov-border pb-3">
-              <h2 className="text-lg font-bold text-gov-dark flex items-center space-x-2">
-                <ShieldCheck className="w-5 h-5 text-gov-primary" />
-                <span>{t("Step 3: Inter-Departmental Clearance Auto-Routing", "टप्पा ३: स्वयंचलित आंतर-विभागीय परवानगी मार्गक्रमण")}</span>
-              </h2>
-              <p className="text-xs text-gov-textMuted mt-1">
-                {t(
-                  "Based on your event category, our single window engine routes your application concurrently to the required government departments.",
-                  "आपल्या कार्यक्रमाच्या स्वरूपानुसार सिस्टीमद्वारे आवश्यक त्या सर्व शासकीय विभागांकडे एकाच वेळी अर्ज पाठवला जाईल."
-                )}
-              </p>
-            </div>
-
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div className="p-4 rounded-xl border border-gov-border bg-blue-50/50 flex items-start space-x-3">
-                <CheckCircle2 className="w-5 h-5 text-emerald-600 flex-shrink-0 mt-0.5" />
-                <div>
-                  <h4 className="text-sm font-bold text-gov-dark">MBMC Public Works Department (Mandatory)</h4>
-                  <p className="text-xs text-gov-textMuted mt-0.5">Ground usage lease approval, structural height limits, and public boundary verification.</p>
-                  <span className="inline-block mt-2 text-[10px] bg-emerald-100 text-emerald-800 font-bold px-2 py-0.5 rounded">Auto-Routed</span>
-                </div>
-              </div>
-
-              <div className="p-4 rounded-xl border border-gov-border bg-white flex items-start space-x-3">
-                <input
-                  type="checkbox"
-                  checked={formData.needFireNoc}
-                  onChange={(e) => setFormData({ ...formData, needFireNoc: e.target.checked })}
-                  className="w-4 h-4 text-gov-primary mt-1 rounded border-gov-border"
-                />
-                <div>
-                  <h4 className="text-sm font-bold text-gov-dark">MBMC Fire & Rescue Services Brigade</h4>
-                  <p className="text-xs text-gov-textMuted mt-0.5">Fire safety audit, extinguisher counts, pandal material flame retardant check.</p>
-                </div>
-              </div>
-
-              <div className="p-4 rounded-xl border border-gov-border bg-white flex items-start space-x-3">
-                <input
-                  type="checkbox"
-                  checked={formData.needPoliceNoc}
-                  onChange={(e) => setFormData({ ...formData, needPoliceNoc: e.target.checked })}
-                  className="w-4 h-4 text-gov-primary mt-1 rounded border-gov-border"
-                />
-                <div>
-                  <h4 className="text-sm font-bold text-gov-dark">Mira-Bhayandar Vasai-Virar (MBVV) Police</h4>
-                  <p className="text-xs text-gov-textMuted mt-0.5">Law & order NOC, sound decibel limit audit (55dB), crowd management plan.</p>
-                </div>
-              </div>
-
-              <div className="p-4 rounded-xl border border-gov-border bg-white flex items-start space-x-3">
-                <input
-                  type="checkbox"
-                  checked={formData.needSanitationNoc}
-                  onChange={(e) => setFormData({ ...formData, needSanitationNoc: e.target.checked })}
-                  className="w-4 h-4 text-gov-primary mt-1 rounded border-gov-border"
-                />
-                <div>
-                  <h4 className="text-sm font-bold text-gov-dark">MBMC Solid Waste Management & Sanitation</h4>
-                  <p className="text-xs text-gov-textMuted mt-0.5">Bio-toilet installation deployment and post-event zero-litter cleanup deposit.</p>
-                </div>
-              </div>
-
-              <div className="p-4 rounded-xl border border-gov-border bg-white flex items-start space-x-3">
-                <input
-                  type="checkbox"
-                  checked={formData.needPowerNoc}
-                  onChange={(e) => setFormData({ ...formData, needPowerNoc: e.target.checked })}
-                  className="w-4 h-4 text-gov-primary mt-1 rounded border-gov-border"
-                />
-                <div>
-                  <h4 className="text-sm font-bold text-gov-dark">MSEDCL Temporary Electricity Load</h4>
-                  <p className="text-xs text-gov-textMuted mt-0.5">Sanction temporary 3-phase power load connection for stage lights & sound.</p>
-                </div>
-              </div>
-
-              <div className="p-4 rounded-xl border border-gov-border bg-white flex items-start space-x-3">
-                <input
-                  type="checkbox"
-                  checked={formData.needTrafficNoc}
-                  onChange={(e) => setFormData({ ...formData, needTrafficNoc: e.target.checked })}
-                  className="w-4 h-4 text-gov-primary mt-1 rounded border-gov-border"
-                />
-                <div>
-                  <h4 className="text-sm font-bold text-gov-dark">MBVV Police Traffic Control Branch</h4>
-                  <p className="text-xs text-gov-textMuted mt-0.5">Road closure permissions, traffic diversion advisory, and VIP parking setup.</p>
-                </div>
-              </div>
-            </div>
-          </div>
-        )}
-
-        {step === 4 && (
-          <div className="space-y-6">
-            <div className="border-b border-gov-border pb-3">
-              <h2 className="text-lg font-bold text-gov-dark flex items-center space-x-2">
-                <Flame className="w-5 h-5 text-gov-accent" />
-                <span>{t("Step 4: Infrastructure & Safety Declarations", "टप्पा ४: मंडप, सुरक्षा व ध्वनी घोषणापत्र")}</span>
-              </h2>
-              <p className="text-xs text-gov-textMuted mt-1">
-                {t("Declare stage dimensions, fire fighting gear, and noise control measures as per High Court guidelines.", "मंडप आकारमान, अग्निरोधक साहित्य व मा. उच्च न्यायालयाच्या ध्वनी प्रदूषण नियमांचे पालन बंधनकारक आहे.")}
-              </p>
-            </div>
-
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-              <div className="space-y-2">
-                <label className="text-xs font-bold text-gov-dark block">
-                  {t("Stage / Pandal Length (Feet) *", "मंडपाची लांबी (फूट) *")}
-                </label>
-                <input
-                  type="number"
-                  value={formData.stageLengthFt}
-                  onChange={(e) => setFormData({ ...formData, stageLengthFt: Number(e.target.value) })}
-                  className="w-full bg-white border border-gov-border rounded-lg p-2.5 text-sm font-medium focus:ring-2 focus:ring-gov-primary outline-none"
-                />
-              </div>
-
-              <div className="space-y-2">
-                <label className="text-xs font-bold text-gov-dark block">
-                  {t("Stage / Pandal Width (Feet) *", "मंडपाची रुंदी (फूट) *")}
-                </label>
-                <input
-                  type="number"
-                  value={formData.stageWidthFt}
-                  onChange={(e) => setFormData({ ...formData, stageWidthFt: Number(e.target.value) })}
-                  className="w-full bg-white border border-gov-border rounded-lg p-2.5 text-sm font-medium focus:ring-2 focus:ring-gov-primary outline-none"
-                />
-              </div>
-
-              <div className="space-y-2">
-                <label className="text-xs font-bold text-gov-dark block">
-                  {t("Expected Peak Visitor Count *", "अपेक्षित सर्वोच्च नागरिक संख्या *")}
-                </label>
-                <input
-                  type="number"
-                  value={formData.maxAttendance}
-                  onChange={(e) => setFormData({ ...formData, maxAttendance: Number(e.target.value) })}
-                  className="w-full bg-white border border-gov-border rounded-lg p-2.5 text-sm font-medium focus:ring-2 focus:ring-gov-primary outline-none"
-                />
-              </div>
-
-              <div className="space-y-2">
-                <label className="text-xs font-bold text-gov-dark block">
-                  {t("ABC Fire Extinguishers on-site *", "अग्निशामक उपकरणांची संख्या *")}
-                </label>
-                <input
-                  type="number"
-                  value={formData.fireExtinguishers}
-                  onChange={(e) => setFormData({ ...formData, fireExtinguishers: Number(e.target.value) })}
-                  className="w-full bg-white border border-gov-border rounded-lg p-2.5 text-sm font-medium focus:ring-2 focus:ring-gov-primary outline-none"
-                />
-              </div>
-
-              <div className="space-y-2">
-                <label className="text-xs font-bold text-gov-dark block">
-                  {t("CCTV Surveillance Cameras Installed *", "सीसीटीव्ही कॅमेऱ्यांची संख्या *")}
-                </label>
-                <input
-                  type="number"
-                  value={formData.cctvCount}
-                  onChange={(e) => setFormData({ ...formData, cctvCount: Number(e.target.value) })}
-                  className="w-full bg-white border border-gov-border rounded-lg p-2.5 text-sm font-medium focus:ring-2 focus:ring-gov-primary outline-none"
-                />
-              </div>
-
-              <div className="space-y-2">
-                <label className="text-xs font-bold text-gov-dark block">
-                  {t("Sound Output Capacity *", "ध्वनी प्रणाली क्षमता (RMS) *")}
-                </label>
-                <input
-                  type="text"
-                  value={formData.soundWattage}
-                  onChange={(e) => setFormData({ ...formData, soundWattage: e.target.value })}
-                  className="w-full bg-white border border-gov-border rounded-lg p-2.5 text-sm font-medium focus:ring-2 focus:ring-gov-primary outline-none font-mono"
-                />
-              </div>
-            </div>
-
-            <div className="space-y-3 bg-gov-bg p-4 rounded-xl border border-gov-border text-xs text-gov-text">
-              <h4 className="font-bold text-gov-dark uppercase text-[11px] tracking-wider">{t("Mandatory Compliance Declarations", "अनिवार्य कायदेशीर हमीपत्र")}</h4>
-              <label className="flex items-start space-x-2 cursor-pointer">
-                <input
-                  type="checkbox"
-                  checked={formData.soundDecibelAgree}
-                  onChange={(e) => setFormData({ ...formData, soundDecibelAgree: e.target.checked })}
-                  className="w-4 h-4 text-gov-primary rounded mt-0.5"
-                />
-                <span>
-                  {t(
-                    "I hereby undertake to strictly adhere to the Noise Pollution (Regulation and Control) Rules. Sound levels will not exceed 55 dB during daytime and 45 dB after 10:00 PM.",
-                    "मी अशी हमी देतो/देते की मा. न्यायालयाच्या ध्वनी प्रदूषण नियमांचे पालन केले जाईल. रात्री १०:०० नंतर ध्वनी मर्यादा ४५ डेसिबलपेक्षा जास्त असणार नाही."
-                  )}
-                </span>
-              </label>
-              <label className="flex items-start space-x-2 cursor-pointer">
-                <input
-                  type="checkbox"
-                  checked={formData.flameRetardantAgree}
-                  onChange={(e) => setFormData({ ...formData, flameRetardantAgree: e.target.checked })}
-                  className="w-4 h-4 text-gov-primary rounded mt-0.5"
-                />
-                <span>
-                  {t(
-                    "I certify that the pandal fabric, wooden supports, and electrical wiring installed are coated with certified fire-retardant solution as mandated by MBMC CFO.",
-                    "मी प्रमाणित करतो/करते की वापरलेले कापड व वीज जोडणी एमबीएमसी मुख्य अग्निशमन अधिकाऱ्यांच्या निकषानुसार अग्निरोधक द्रावणाने प्रक्रियाकृत आहे."
-                  )}
-                </span>
-              </label>
-            </div>
-          </div>
-        )}
-
-        {step === 5 && (
-          <div className="space-y-6">
-            <div className="border-b border-gov-border pb-3">
-              <h2 className="text-lg font-bold text-gov-dark flex items-center space-x-2">
-                <DollarSign className="w-5 h-5 text-emerald-600" />
-                <span>{t("Step 5: Document Submission & Fee Calculation Matrix", "टप्पा ५: कागदपत्रे अपलोड व शासकीय शुल्क गणित")}</span>
-              </h2>
-              <p className="text-xs text-gov-textMuted mt-1">
-                {t("Verify uploaded credentials and review the computed municipal fee breakdown.", "अपलोड केलेल्या कागदपत्रांची खात्री करा व गणलेले एकूण मनपा शुल्क तपासा.")}
-              </p>
-            </div>
-
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-              <div className="p-4 rounded-xl border border-gov-border bg-gov-bg flex flex-col justify-between space-y-3">
-                <div className="space-y-1">
-                  <span className="text-xs font-bold text-gov-dark block">{t("1. Aadhaar / PAN Proof", "१. आधार / पॅन पुरावा")}</span>
-                  <p className="text-[11px] text-gov-textMuted">PDF or JPG up to 5MB</p>
-                </div>
-                <div className="flex items-center space-x-2 text-xs text-emerald-700 font-bold bg-emerald-100 p-2 rounded">
-                  <CheckCircle2 className="w-4 h-4" />
-                  <span>Verified_Aadhaar_Doc.pdf</span>
-                </div>
-              </div>
-
-              <div className="p-4 rounded-xl border border-gov-border bg-gov-bg flex flex-col justify-between space-y-3">
-                <div className="space-y-1">
-                  <span className="text-xs font-bold text-gov-dark block">{t("2. Site Plan Layout", "२. मंडप व जागा आराखडा")}</span>
-                  <p className="text-[11px] text-gov-textMuted">CAD / PDF layout plan</p>
-                </div>
-                <div className="flex items-center space-x-2 text-xs text-emerald-700 font-bold bg-emerald-100 p-2 rounded">
-                  <CheckCircle2 className="w-4 h-4" />
-                  <span>Site_Layout_Drawing_2026.pdf</span>
-                </div>
-              </div>
-
-              <div className="p-4 rounded-xl border border-gov-border bg-gov-bg flex flex-col justify-between space-y-3">
-                <div className="space-y-1">
-                  <span className="text-xs font-bold text-gov-dark block">{t("3. Land Owner / Society NOC", "३. जागा मालकाचे ना हरकत प्रमाणपत्र")}</span>
-                  <p className="text-[11px] text-gov-textMuted">MBMC land lease consent copy</p>
-                </div>
-                <div className="flex items-center space-x-2 text-xs text-emerald-700 font-bold bg-emerald-100 p-2 rounded">
-                  <CheckCircle2 className="w-4 h-4" />
-                  <span>Society_NOC_Letter.pdf</span>
-                </div>
-              </div>
-            </div>
-
-            <div className="bg-gov-surface border border-gov-border rounded-xl p-5 space-y-4">
-              <h3 className="text-sm font-bold text-gov-primary uppercase tracking-wider flex items-center justify-between">
-                <span>{t("Computed Municipal Fee Breakdown", "मनपा शुल्क तपशील गणित")}</span>
-                <span className="text-xs font-normal text-gov-textMuted">Calculated for {daysCount} Days • {areaSqFt} sq.ft area</span>
-              </h3>
-
-              <div className="divide-y divide-gov-border text-xs">
-                <div className="py-2 flex justify-between">
-                  <span className="text-gov-textMuted">{t("MBMC Single Window Processing Base Fee", "मनपा एकल खिडकी मूळ प्रक्रिया शुल्क")}</span>
-                  <span className="font-mono font-bold">₹ {basePermitFee.toLocaleString()}</span>
-                </div>
-                <div className="py-2 flex justify-between">
-                  <span className="text-gov-textMuted">{t("Public Ground Lease Rate (Area × Days)", "सार्वजनिक जागा भाडे आकार (आकारमान × दिवस)")}</span>
-                  <span className="font-mono font-bold">₹ {groundLeaseFee.toLocaleString()}</span>
-                </div>
-                <div className="py-2 flex justify-between">
-                  <span className="text-gov-textMuted">{t("Sanitation Deposit (Refundable post Zero-Litter inspection)", "स्वच्छता अनामत रक्कम (परतफेडी योग्य)")}</span>
-                  <span className="font-mono font-bold">₹ {sanitationDeposit.toLocaleString()}</span>
-                </div>
-                <div className="py-2 flex justify-between">
-                  <span className="text-gov-textMuted">{t("MBMC Fire & Emergency Safety Audit Fee", "अग्निशमन दल सुरक्षा तपासणी शुल्क")}</span>
-                  <span className="font-mono font-bold">₹ {fireInspectionFee.toLocaleString()}</span>
-                </div>
-                <div className="py-2 flex justify-between">
-                  <span className="text-gov-textMuted">{t("Police Security Performance Assurance Bond", "पोलीस सुरक्षा अनामत हमी बंधपत्र")}</span>
-                  <span className="font-mono font-bold">₹ {policeSecurityBond.toLocaleString()}</span>
-                </div>
-                <div className="py-3 flex justify-between text-sm sm:text-base font-extrabold text-gov-dark bg-white p-3 rounded-lg border border-gov-border mt-2">
-                  <span className="text-gov-primary">{t("Total Payable Amount (INR)", "एकूण देय रक्कम (रुपये)")}</span>
-                  <span className="font-mono text-gov-primary text-lg">₹ {totalFeeCalculated.toLocaleString()}</span>
-                </div>
-              </div>
-            </div>
-          </div>
-        )}
-
-        {step === 6 && (
-          <div className="space-y-6 text-gov-text">
-            <div className="bg-emerald-50 border-2 border-emerald-500 rounded-xl p-6 text-center space-y-3">
-              <div className="w-12 h-12 bg-emerald-600 text-white rounded-full flex items-center justify-center mx-auto shadow-md">
-                <CheckCircle2 className="w-7 h-7" />
-              </div>
-              <h2 className="text-2xl font-extrabold text-emerald-950">
-                {t("Application Submitted Successfully!", "अर्ज यशस्वीरित्या सादर करण्यात आला आहे!")}
-              </h2>
-              <p className="text-xs text-emerald-800 max-w-xl mx-auto">
-                {t(
-                  "Your single-window clearance application has been registered with Mira Bhayandar Municipal Corporation and routed to Fire, Police, PWD, and Sanitation departments.",
-                  "आपला एकल खिडकी अर्ज मीरा भाईंदर महानगरपालिकेकडे नोंदवला गेला असून तो अग्निशमन, पोलीस, बांधकाम व आरोग्य विभागास पाठवण्यात आला आहे."
-                )}
-              </p>
-
-              <div className="inline-block bg-white border-2 border-emerald-600 px-6 py-2 rounded-lg text-lg font-mono font-extrabold text-gov-dark shadow-sm">
-                <span className="text-xs text-gov-textMuted block font-sans uppercase tracking-wider">
-                  {t("Unique Reference Number", "अद्वितीय संदर्भ क्रमांक")}
-                </span>
-                <span className="text-gov-primary">{submittedRef}</span>
-              </div>
-            </div>
-
-            <div className="bg-gov-bg p-6 rounded-xl border border-gov-border space-y-4">
-              <div className="flex items-center justify-between border-b border-gov-border pb-3">
-                <div className="flex items-center space-x-3">
-                  <img src="/images/MBMC logo.jpg" alt="MBMC Seal" className="w-10 h-10 object-contain rounded-full" />
-                  <div>
-                    <h3 className="text-sm font-bold text-gov-dark">Mira Bhayandar Municipal Corporation</h3>
-                    <p className="text-[11px] text-gov-textMuted">Digital Clearance Acknowledgement • 2026 Edition</p>
+            {/* IF COMPLETED: DISPLAY QR DIGITAL PASS CERTIFICATE */}
+            {step === 7 ? (
+              <div className="bg-white rounded-xs border-2 border-[#123B7A] p-6 sm:p-8 shadow-xs space-y-6">
+                
+                {/* Pass Header */}
+                <div className="text-center space-y-2 border-b-2 border-[#123B7A] pb-6">
+                  <div className="flex items-center justify-center space-x-3">
+                    <img src="/images/sher.png" alt="Emblem of India" className="w-5 h-8 object-contain" />
+                    <img src="/images/mbmc_updated logo.jpg" alt="MBMC Seal" className="w-12 h-12 object-contain" />
+                  </div>
+                  <h2 className="text-xl font-black text-[#123B7A] uppercase tracking-wider">
+                    MIRA BHAYANDAR MUNICIPAL CORPORATION
+                  </h2>
+                  <h3 className="text-sm font-extrabold text-slate-800 uppercase tracking-wide">
+                    OFFICIAL DIGITAL EVENT PERMISSION CERTIFICATE 2026
+                  </h3>
+                  <div className="inline-block bg-emerald-100 text-emerald-800 text-xs font-mono font-extrabold px-3 py-1 rounded border border-emerald-300">
+                    STATUS: APPROVED & VERIFIED (AUTHENTICATED)
                   </div>
                 </div>
-                <div className="text-right">
-                  <span className="text-xs font-mono font-bold bg-gov-primary text-yellow-400 px-2.5 py-1 rounded">
-                    STATUS: IN_REVIEW
-                  </span>
-                </div>
-              </div>
 
-              <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 text-xs">
-                <div>
-                  <span className="text-gov-textMuted block">{t("Applicant Name:", "अर्जदाराचे नाव:")}</span>
-                  <span className="font-bold text-gov-dark">{formData.applicantName}</span>
+                {/* Pass Details Grid */}
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-xs font-mono bg-slate-50 p-4 border border-[#D9E4F4] rounded-xs">
+                  <div><span className="font-bold text-slate-900">Application Ref:</span> {submittedRef}</div>
+                  <div><span className="font-bold text-slate-900">Issue Date:</span> {new Date().toLocaleDateString('en-IN')}</div>
+                  <div><span className="font-bold text-slate-900">Applicant:</span> {formData.applicantName}</div>
+                  <div><span className="font-bold text-slate-900">Organization:</span> {formData.organization}</div>
+                  <div><span className="font-bold text-slate-900">Event Name:</span> {formData.eventName}</div>
+                  <div><span className="font-bold text-slate-900">Ward:</span> {formData.wardId} ({formData.wardOffice})</div>
+                  <div><span className="font-bold text-slate-900">Venue:</span> {formData.venueName}</div>
+                  <div><span className="font-bold text-slate-900">Validity Period:</span> {formData.startDate} to {formData.endDate}</div>
+                  <div><span className="font-bold text-slate-900">Fire NOC:</span> APPROVED (CFO/2026/88)</div>
+                  <div><span className="font-bold text-slate-900">Police NOC:</span> SANCTIONED (MBVV/POL/41)</div>
+                  <div><span className="font-bold text-slate-900">Total Fee Paid:</span> ₹{totalFeeCalculated.toLocaleString()}</div>
+                  <div><span className="font-bold text-slate-900">Security Deposit:</span> ₹{sanitationDeposit.toLocaleString()} (Refundable)</div>
                 </div>
-                <div>
-                  <span className="text-gov-textMuted block">{t("Organization / Mandal:", "संस्था / मंडळ:")}</span>
-                  <span className="font-bold text-gov-dark">{formData.organizationName}</span>
-                </div>
-                <div>
-                  <span className="text-gov-textMuted block">{t("Event Type:", "प्रकार:")}</span>
-                  <span className="font-bold text-gov-dark">{formData.eventType}</span>
-                </div>
-                <div>
-                  <span className="text-gov-textMuted block">{t("Ward Jurisdiction:", "प्रभाग:")}</span>
-                  <span className="font-bold text-gov-dark">{MBMC_WARDS.find(w => w.id === formData.wardId)?.name}</span>
-                </div>
-                <div>
-                  <span className="text-gov-textMuted block">{t("Event Dates:", "तारखा:")}</span>
-                  <span className="font-bold text-gov-dark">{formData.startDate} to {formData.endDate}</span>
-                </div>
-                <div>
-                  <span className="text-gov-textMuted block">{t("Total Calculated Fee:", "एकूण फी:")}</span>
-                  <span className="font-mono font-extrabold text-gov-primary">₹ {totalFeeCalculated.toLocaleString()}</span>
-                </div>
-              </div>
 
-              <div className="pt-2 border-t border-gov-border flex flex-col sm:flex-row items-center justify-between gap-3 text-xs">
-                <span className="text-gov-textMuted">
-                  {t("Target SLA Completion: Within 72 Hours", "मंजुरी अंतिम मुदत: ७२ तासांच्या आत")}
-                </span>
-                <div className="flex items-center space-x-3 no-print">
+                {/* QR Code Security Stamp */}
+                <div className="flex flex-col sm:flex-row items-center justify-between border-t border-[#D9E4F4] pt-4 gap-4">
+                  <div className="space-y-1">
+                    <span className="text-xs font-bold text-[#123B7A] block">Encrypted Verification Stamp</span>
+                    <p className="text-[11px] text-slate-600">Police patrol and MBMC ward officers can scan this QR code live on mbmc.gov.in</p>
+                  </div>
+                  <div className="w-24 h-24 bg-slate-900 text-white flex items-center justify-center font-mono text-[10px] text-center p-2 rounded">
+                    [QR CODE STAMP VERIFIED]
+                  </div>
+                </div>
+
+                {/* Actions */}
+                <div className="flex items-center space-x-3 pt-2">
                   <button
                     onClick={() => window.print()}
-                    className="bg-gov-primary hover:bg-gov-dark text-white font-bold px-4 py-2 rounded-lg flex items-center space-x-1.5 transition cursor-pointer"
+                    className="bg-[#123B7A] text-white hover:bg-[#1E4F91] font-bold text-xs px-4 py-2 rounded-xs flex items-center space-x-1.5 transition"
                   >
                     <Printer className="w-4 h-4" />
-                    <span>{t("Print Receipt", "पावती मुद्रित करा")}</span>
+                    <span>Print QR Permission Pass</span>
                   </button>
 
-                  <Link
-                    href={`/track?ref=${encodeURIComponent(submittedRef)}`}
-                    className="bg-gov-accent hover:bg-amber-600 text-gov-dark font-bold px-4 py-2 rounded-lg flex items-center space-x-1.5 transition"
+                  <button
+                    onClick={() => setStep(1)}
+                    className="border border-[#123B7A] text-[#123B7A] hover:bg-[#123B7A]/10 font-bold text-xs px-4 py-2 rounded-xs transition"
                   >
-                    <CheckCircle2 className="w-4 h-4" />
-                    <span>{t("Track Live Workflow", "स्थितीचा पाठपुरावा करा")}</span>
-                  </Link>
+                    Apply New Permission
+                  </button>
+                </div>
+
+              </div>
+            ) : (
+
+              /* FORM STEP CONTAINER */
+              <div className="bg-white rounded-xs border border-[#D9E4F4] shadow-xs p-6 sm:p-8 space-y-6">
+
+                {/* STEP 1: EVENT DETAILS */}
+                {step === 1 && (
+                  <div className="space-y-6">
+                    {/* Section Header */}
+                    <div className="border-b-2 border-[#123B7A] pb-2 flex items-center justify-between">
+                      <h2 className="text-base sm:text-lg font-extrabold text-[#123B7A] tracking-wide uppercase">
+                        A. EVENT DETAILS & CLASSIFICATION
+                      </h2>
+                      <span className="text-xs font-bold text-[#1E4F91] font-mono">STEP 1 OF 6</span>
+                    </div>
+
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-xs">
+                      
+                      {/* Ward Selection */}
+                      <div>
+                        <label className="font-bold text-[#1B2B4D] mb-1.5 block">
+                          Ward Jurisdiction <span className="text-red-600">*</span>
+                        </label>
+                        <select
+                          value={formData.wardId}
+                          onChange={(e) => setFormData({ ...formData, wardId: e.target.value })}
+                          className="w-full border border-[#D9E4F4] p-2.5 rounded-xs bg-white text-slate-900 font-medium focus:outline-none focus:border-[#123B7A]"
+                        >
+                          {MBMC_WARDS.map((w) => (
+                            <option key={w.id} value={w.id}>
+                              {w.name}
+                            </option>
+                          ))}
+                        </select>
+                      </div>
+
+                      {/* Police Station */}
+                      <div>
+                        <label className="font-bold text-[#1B2B4D] mb-1.5 block">
+                          Local Police Station Jurisdiction <span className="text-red-600">*</span>
+                        </label>
+                        <select
+                          value={formData.policeStation}
+                          onChange={(e) => setFormData({ ...formData, policeStation: e.target.value })}
+                          className="w-full border border-[#D9E4F4] p-2.5 rounded-xs bg-white text-slate-900 font-medium focus:outline-none focus:border-[#123B7A]"
+                        >
+                          <option value="Kashimira Police Station">Kashimira Police Station</option>
+                          <option value="Naya Nagar Police Station">Naya Nagar Police Station</option>
+                          <option value="Bhayandar Police Station">Bhayandar Police Station</option>
+                          <option value="Navghar Police Station">Navghar Police Station</option>
+                          <option value="Uttan Coastal Police Station">Uttan Coastal Police Station</option>
+                        </select>
+                      </div>
+
+                      {/* Ward Office */}
+                      <div className="sm:col-span-2">
+                        <label className="font-bold text-[#1B2B4D] mb-1.5 block">
+                          Designated MBMC Ward Office <span className="text-red-600">*</span>
+                        </label>
+                        <input
+                          type="text"
+                          value={formData.wardOffice}
+                          onChange={(e) => setFormData({ ...formData, wardOffice: e.target.value })}
+                          className="w-full border border-[#D9E4F4] p-2.5 rounded-xs bg-slate-50 text-slate-900 font-medium focus:outline-none"
+                          readOnly
+                        />
+                      </div>
+
+                      {/* Event Category */}
+                      <div>
+                        <label className="font-bold text-[#1B2B4D] mb-1.5 block">
+                          Event Category <span className="text-red-600">*</span>
+                        </label>
+                        <select
+                          value={formData.eventCategory}
+                          onChange={(e) => setFormData({ ...formData, eventCategory: e.target.value })}
+                          className="w-full border border-[#D9E4F4] p-2.5 rounded-xs bg-white text-slate-900 font-medium focus:outline-none focus:border-[#123B7A]"
+                        >
+                          <option value="Religious / Cultural Festival">Religious / Cultural Festival</option>
+                          <option value="Public Exhibition / Fair">Public Exhibition / Fair</option>
+                          <option value="Social Gathering / Concert">Social Gathering / Concert</option>
+                          <option value="Political Rally / Public Speech">Political Rally / Public Speech</option>
+                        </select>
+                      </div>
+
+                      {/* Event Type */}
+                      <div>
+                        <label className="font-bold text-[#1B2B4D] mb-1.5 block">
+                          Event Type / Festival Title <span className="text-red-600">*</span>
+                        </label>
+                        <input
+                          type="text"
+                          value={formData.eventType}
+                          onChange={(e) => setFormData({ ...formData, eventType: e.target.value })}
+                          className="w-full border border-[#D9E4F4] p-2.5 rounded-xs bg-white text-slate-900 font-medium focus:outline-none focus:border-[#123B7A]"
+                        />
+                      </div>
+
+                      {/* Event Name */}
+                      <div className="sm:col-span-2">
+                        <label className="font-bold text-[#1B2B4D] mb-1.5 block">
+                          Official Event Name <span className="text-red-600">*</span>
+                        </label>
+                        <input
+                          type="text"
+                          value={formData.eventName}
+                          onChange={(e) => setFormData({ ...formData, eventName: e.target.value })}
+                          className={`w-full border p-2.5 rounded-xs bg-white text-slate-900 font-medium focus:outline-none focus:border-[#123B7A] ${
+                            errors.eventName ? "border-red-600 bg-red-50" : "border-[#D9E4F4]"
+                          }`}
+                        />
+                        {errors.eventName && <span className="text-[11px] font-bold text-red-600 mt-1 block">{errors.eventName}</span>}
+                      </div>
+
+                      {/* Event Description */}
+                      <div className="sm:col-span-2">
+                        <label className="font-bold text-[#1B2B4D] mb-1.5 block">
+                          Detailed Event Description
+                        </label>
+                        <textarea
+                          rows={3}
+                          value={formData.eventDescription}
+                          onChange={(e) => setFormData({ ...formData, eventDescription: e.target.value })}
+                          className="w-full border border-[#D9E4F4] p-2.5 rounded-xs bg-white text-slate-900 font-medium focus:outline-none focus:border-[#123B7A]"
+                        />
+                      </div>
+
+                      {/* Expected Crowd */}
+                      <div>
+                        <label className="font-bold text-[#1B2B4D] mb-1.5 block">
+                          Expected Daily Attendance / Crowd Estimate <span className="text-red-600">*</span>
+                        </label>
+                        <input
+                          type="number"
+                          value={formData.expectedCrowd}
+                          onChange={(e) => setFormData({ ...formData, expectedCrowd: e.target.value })}
+                          className={`w-full border p-2.5 rounded-xs bg-white text-slate-900 font-medium focus:outline-none focus:border-[#123B7A] ${
+                            errors.expectedCrowd ? "border-red-600 bg-red-50" : "border-[#D9E4F4]"
+                          }`}
+                        />
+                        {errors.expectedCrowd && <span className="text-[11px] font-bold text-red-600 mt-1 block">{errors.expectedCrowd}</span>}
+                      </div>
+
+                      {/* Empty Column */}
+                      <div />
+
+                      {/* Dates */}
+                      <div>
+                        <label className="font-bold text-[#1B2B4D] mb-1.5 block">
+                          Start Date <span className="text-red-600">*</span>
+                        </label>
+                        <input
+                          type="date"
+                          value={formData.startDate}
+                          onChange={(e) => setFormData({ ...formData, startDate: e.target.value })}
+                          className="w-full border border-[#D9E4F4] p-2.5 rounded-xs bg-white text-slate-900 font-medium focus:outline-none focus:border-[#123B7A]"
+                        />
+                      </div>
+
+                      <div>
+                        <label className="font-bold text-[#1B2B4D] mb-1.5 block">
+                          End Date <span className="text-red-600">*</span>
+                        </label>
+                        <input
+                          type="date"
+                          value={formData.endDate}
+                          onChange={(e) => setFormData({ ...formData, endDate: e.target.value })}
+                          className="w-full border border-[#D9E4F4] p-2.5 rounded-xs bg-white text-slate-900 font-medium focus:outline-none focus:border-[#123B7A]"
+                        />
+                      </div>
+
+                      {/* Times */}
+                      <div>
+                        <label className="font-bold text-[#1B2B4D] mb-1.5 block">
+                          Daily Program Start Time <span className="text-red-600">*</span>
+                        </label>
+                        <input
+                          type="time"
+                          value={formData.startTime}
+                          onChange={(e) => setFormData({ ...formData, startTime: e.target.value })}
+                          className="w-full border border-[#D9E4F4] p-2.5 rounded-xs bg-white text-slate-900 font-medium focus:outline-none focus:border-[#123B7A]"
+                        />
+                      </div>
+
+                      <div>
+                        <label className="font-bold text-[#1B2B4D] mb-1.5 block">
+                          Daily Loudspeaker Closure Time <span className="text-red-600">*</span>
+                        </label>
+                        <input
+                          type="time"
+                          value={formData.endTime}
+                          onChange={(e) => setFormData({ ...formData, endTime: e.target.value })}
+                          className="w-full border border-[#D9E4F4] p-2.5 rounded-xs bg-white text-slate-900 font-medium focus:outline-none focus:border-[#123B7A]"
+                        />
+                      </div>
+
+                    </div>
+                  </div>
+                )}
+
+
+                {/* STEP 2: APPLICANT DETAILS */}
+                {step === 2 && (
+                  <div className="space-y-6">
+                    {/* Section Header */}
+                    <div className="border-b-2 border-[#123B7A] pb-2 flex items-center justify-between">
+                      <h2 className="text-base sm:text-lg font-extrabold text-[#123B7A] tracking-wide uppercase">
+                        B. APPLICANT & TRUSTEE PARTICULARS
+                      </h2>
+                      <span className="text-xs font-bold text-[#1E4F91] font-mono">STEP 2 OF 6</span>
+                    </div>
+
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-xs">
+                      
+                      {/* Applicant Name */}
+                      <div>
+                        <label className="font-bold text-[#1B2B4D] mb-1.5 block">
+                          Applicant Full Name (As per Aadhaar) <span className="text-red-600">*</span>
+                        </label>
+                        <input
+                          type="text"
+                          value={formData.applicantName}
+                          onChange={(e) => setFormData({ ...formData, applicantName: e.target.value })}
+                          className={`w-full border p-2.5 rounded-xs bg-white text-slate-900 font-medium focus:outline-none focus:border-[#123B7A] ${
+                            errors.applicantName ? "border-red-600 bg-red-50" : "border-[#D9E4F4]"
+                          }`}
+                        />
+                        {errors.applicantName && <span className="text-[11px] font-bold text-red-600 mt-1 block">{errors.applicantName}</span>}
+                      </div>
+
+                      {/* Organization */}
+                      <div>
+                        <label className="font-bold text-[#1B2B4D] mb-1.5 block">
+                          Organization / Public Trust Name <span className="text-red-600">*</span>
+                        </label>
+                        <input
+                          type="text"
+                          value={formData.organization}
+                          onChange={(e) => setFormData({ ...formData, organization: e.target.value })}
+                          className="w-full border border-[#D9E4F4] p-2.5 rounded-xs bg-white text-slate-900 font-medium focus:outline-none focus:border-[#123B7A]"
+                        />
+                      </div>
+
+                      {/* Email */}
+                      <div>
+                        <label className="font-bold text-[#1B2B4D] mb-1.5 block">
+                          Email Address (For Digital Pass Delivery) <span className="text-red-600">*</span>
+                        </label>
+                        <input
+                          type="email"
+                          value={formData.email}
+                          onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+                          className={`w-full border p-2.5 rounded-xs bg-white text-slate-900 font-medium focus:outline-none focus:border-[#123B7A] ${
+                            errors.email ? "border-red-600 bg-red-50" : "border-[#D9E4F4]"
+                          }`}
+                        />
+                        {errors.email && <span className="text-[11px] font-bold text-red-600 mt-1 block">{errors.email}</span>}
+                      </div>
+
+                      {/* Mobile */}
+                      <div>
+                        <label className="font-bold text-[#1B2B4D] mb-1.5 block">
+                          10-Digit Mobile Number <span className="text-red-600">*</span>
+                        </label>
+                        <input
+                          type="tel"
+                          maxLength={10}
+                          value={formData.mobile}
+                          onChange={(e) => setFormData({ ...formData, mobile: e.target.value })}
+                          className={`w-full border p-2.5 rounded-xs bg-white text-slate-900 font-medium focus:outline-none focus:border-[#123B7A] ${
+                            errors.mobile ? "border-red-600 bg-red-50" : "border-[#D9E4F4]"
+                          }`}
+                        />
+                        {errors.mobile && <span className="text-[11px] font-bold text-red-600 mt-1 block">{errors.mobile}</span>}
+                      </div>
+
+                      {/* Alternate Mobile */}
+                      <div>
+                        <label className="font-bold text-[#1B2B4D] mb-1.5 block">
+                          Alternate Emergency Mobile Number
+                        </label>
+                        <input
+                          type="tel"
+                          maxLength={10}
+                          value={formData.alternateMobile}
+                          onChange={(e) => setFormData({ ...formData, alternateMobile: e.target.value })}
+                          className="w-full border border-[#D9E4F4] p-2.5 rounded-xs bg-white text-slate-900 font-medium focus:outline-none focus:border-[#123B7A]"
+                        />
+                      </div>
+
+                      {/* Identity Proof Type */}
+                      <div>
+                        <label className="font-bold text-[#1B2B4D] mb-1.5 block">
+                          Government Identity Proof Type <span className="text-red-600">*</span>
+                        </label>
+                        <select
+                          value={formData.identityProofType}
+                          onChange={(e) => setFormData({ ...formData, identityProofType: e.target.value })}
+                          className="w-full border border-[#D9E4F4] p-2.5 rounded-xs bg-white text-slate-900 font-medium focus:outline-none focus:border-[#123B7A]"
+                        >
+                          <option value="Aadhaar Card">Aadhaar Card</option>
+                          <option value="PAN Card">PAN Card</option>
+                          <option value="Voter ID">Voter ID</option>
+                          <option value="Passport">Passport</option>
+                        </select>
+                      </div>
+
+                      {/* Address */}
+                      <div className="sm:col-span-2">
+                        <label className="font-bold text-[#1B2B4D] mb-1.5 block">
+                          Complete Residence / Office Address <span className="text-red-600">*</span>
+                        </label>
+                        <input
+                          type="text"
+                          value={formData.address}
+                          onChange={(e) => setFormData({ ...formData, address: e.target.value })}
+                          className={`w-full border p-2.5 rounded-xs bg-white text-slate-900 font-medium focus:outline-none focus:border-[#123B7A] ${
+                            errors.address ? "border-red-600 bg-red-50" : "border-[#D9E4F4]"
+                          }`}
+                        />
+                        {errors.address && <span className="text-[11px] font-bold text-red-600 mt-1 block">{errors.address}</span>}
+                      </div>
+
+                      {/* City, State, PIN Code */}
+                      <div>
+                        <label className="font-bold text-[#1B2B4D] mb-1.5 block">City / Municipal Area</label>
+                        <input
+                          type="text"
+                          value={formData.city}
+                          onChange={(e) => setFormData({ ...formData, city: e.target.value })}
+                          className="w-full border border-[#D9E4F4] p-2.5 rounded-xs bg-slate-50 text-slate-900 font-medium focus:outline-none"
+                          readOnly
+                        />
+                      </div>
+
+                      <div>
+                        <label className="font-bold text-[#1B2B4D] mb-1.5 block">State</label>
+                        <input
+                          type="text"
+                          value={formData.state}
+                          onChange={(e) => setFormData({ ...formData, state: e.target.value })}
+                          className="w-full border border-[#D9E4F4] p-2.5 rounded-xs bg-slate-50 text-slate-900 font-medium focus:outline-none"
+                          readOnly
+                        />
+                      </div>
+
+                      <div>
+                        <label className="font-bold text-[#1B2B4D] mb-1.5 block">PIN Code <span className="text-red-600">*</span></label>
+                        <input
+                          type="text"
+                          maxLength={6}
+                          value={formData.pinCode}
+                          onChange={(e) => setFormData({ ...formData, pinCode: e.target.value })}
+                          className="w-full border border-[#D9E4F4] p-2.5 rounded-xs bg-white text-slate-900 font-medium focus:outline-none focus:border-[#123B7A]"
+                        />
+                      </div>
+
+                    </div>
+                  </div>
+                )}
+
+
+                {/* STEP 3: VENUE DETAILS */}
+                {step === 3 && (
+                  <div className="space-y-6">
+                    {/* Section Header */}
+                    <div className="border-b-2 border-[#123B7A] pb-2 flex items-center justify-between">
+                      <h2 className="text-base sm:text-lg font-extrabold text-[#123B7A] tracking-wide uppercase">
+                        C. VENUE & LOCATION SPECIFICATIONS
+                      </h2>
+                      <span className="text-xs font-bold text-[#1E4F91] font-mono">STEP 3 OF 6</span>
+                    </div>
+
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-xs">
+                      
+                      {/* Venue Name */}
+                      <div className="sm:col-span-2">
+                        <label className="font-bold text-[#1B2B4D] mb-1.5 block">
+                          Venue Name & Land Plot Details <span className="text-red-600">*</span>
+                        </label>
+                        <input
+                          type="text"
+                          value={formData.venueName}
+                          onChange={(e) => setFormData({ ...formData, venueName: e.target.value })}
+                          className={`w-full border p-2.5 rounded-xs bg-white text-slate-900 font-medium focus:outline-none focus:border-[#123B7A] ${
+                            errors.venueName ? "border-red-600 bg-red-50" : "border-[#D9E4F4]"
+                          }`}
+                        />
+                        {errors.venueName && <span className="text-[11px] font-bold text-red-600 mt-1 block">{errors.venueName}</span>}
+                      </div>
+
+                      {/* Coordinates */}
+                      <div>
+                        <label className="font-bold text-[#1B2B4D] mb-1.5 block">Geo Latitude</label>
+                        <input
+                          type="text"
+                          value={formData.latitude}
+                          onChange={(e) => setFormData({ ...formData, latitude: e.target.value })}
+                          className="w-full border border-[#D9E4F4] p-2.5 rounded-xs bg-slate-50 text-slate-900 font-medium focus:outline-none"
+                          readOnly
+                        />
+                      </div>
+
+                      <div>
+                        <label className="font-bold text-[#1B2B4D] mb-1.5 block">Geo Longitude</label>
+                        <input
+                          type="text"
+                          value={formData.longitude}
+                          onChange={(e) => setFormData({ ...formData, longitude: e.target.value })}
+                          className="w-full border border-[#D9E4F4] p-2.5 rounded-xs bg-slate-50 text-slate-900 font-medium focus:outline-none"
+                          readOnly
+                        />
+                      </div>
+
+                      {/* Google Map Link */}
+                      <div className="sm:col-span-2">
+                        <label className="font-bold text-[#1B2B4D] mb-1.5 block">
+                          Google Maps URL Link
+                        </label>
+                        <input
+                          type="text"
+                          value={formData.googleMapLink}
+                          onChange={(e) => setFormData({ ...formData, googleMapLink: e.target.value })}
+                          className="w-full border border-[#D9E4F4] p-2.5 rounded-xs bg-white text-slate-900 font-medium focus:outline-none focus:border-[#123B7A]"
+                        />
+                      </div>
+
+                      {/* Nearby Landmark */}
+                      <div className="sm:col-span-2">
+                        <label className="font-bold text-[#1B2B4D] mb-1.5 block">
+                          Nearby Landmark (For Emergency Fire Brigade & Ambulance Access) <span className="text-red-600">*</span>
+                        </label>
+                        <input
+                          type="text"
+                          value={formData.nearbyLandmark}
+                          onChange={(e) => setFormData({ ...formData, nearbyLandmark: e.target.value })}
+                          className={`w-full border p-2.5 rounded-xs bg-white text-slate-900 font-medium focus:outline-none focus:border-[#123B7A] ${
+                            errors.nearbyLandmark ? "border-red-600 bg-red-50" : "border-[#D9E4F4]"
+                          }`}
+                        />
+                        {errors.nearbyLandmark && <span className="text-[11px] font-bold text-red-600 mt-1 block">{errors.nearbyLandmark}</span>}
+                      </div>
+
+                      {/* Parking Availability */}
+                      <div>
+                        <label className="font-bold text-[#1B2B4D] mb-1.5 block">Parking Capacity</label>
+                        <input
+                          type="text"
+                          value={formData.parkingAvailability}
+                          onChange={(e) => setFormData({ ...formData, parkingAvailability: e.target.value })}
+                          className="w-full border border-[#D9E4F4] p-2.5 rounded-xs bg-white text-slate-900 font-medium focus:outline-none focus:border-[#123B7A]"
+                        />
+                      </div>
+
+                      {/* Emergency Exit */}
+                      <div>
+                        <label className="font-bold text-[#1B2B4D] mb-1.5 block">Emergency Exit Gates Setup</label>
+                        <input
+                          type="text"
+                          value={formData.emergencyExit}
+                          onChange={(e) => setFormData({ ...formData, emergencyExit: e.target.value })}
+                          className="w-full border border-[#D9E4F4] p-2.5 rounded-xs bg-white text-slate-900 font-medium focus:outline-none focus:border-[#123B7A]"
+                        />
+                      </div>
+
+                    </div>
+                  </div>
+                )}
+
+
+                {/* STEP 4: DEPARTMENT REQUIREMENTS */}
+                {step === 4 && (
+                  <div className="space-y-6">
+                    {/* Section Header */}
+                    <div className="border-b-2 border-[#123B7A] pb-2 flex items-center justify-between">
+                      <h2 className="text-base sm:text-lg font-extrabold text-[#123B7A] tracking-wide uppercase">
+                        D. DEPARTMENT SAFETY NOC & CLEARANCE REQUIREMENTS
+                      </h2>
+                      <span className="text-xs font-bold text-[#1E4F91] font-mono">STEP 4 OF 6</span>
+                    </div>
+
+                    <div className="space-y-4 text-xs">
+                      
+                      {/* Department NOC Checks */}
+                      <div className="bg-slate-50 p-4 border border-[#D9E4F4] rounded-xs space-y-3">
+                        <span className="font-bold text-[#123B7A] text-sm block">Select Required Single-Window Clearances:</span>
+
+                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                          <label className="flex items-center space-x-2 cursor-pointer">
+                            <input
+                              type="checkbox"
+                              checked={formData.needFireNoc}
+                              onChange={(e) => setFormData({ ...formData, needFireNoc: e.target.checked })}
+                              className="w-4 h-4 text-[#123B7A] rounded-xs"
+                            />
+                            <span className="font-bold text-slate-900">Chief Fire Officer (CFO) Fire Safety NOC</span>
+                          </label>
+
+                          <label className="flex items-center space-x-2 cursor-pointer">
+                            <input
+                              type="checkbox"
+                              checked={formData.needPoliceNoc}
+                              onChange={(e) => setFormData({ ...formData, needPoliceNoc: e.target.checked })}
+                              className="w-4 h-4 text-[#123B7A] rounded-xs"
+                            />
+                            <span className="font-bold text-slate-900">MBVV Police Law & Order Clearance</span>
+                          </label>
+
+                          <label className="flex items-center space-x-2 cursor-pointer">
+                            <input
+                              type="checkbox"
+                              checked={formData.needTrafficNoc}
+                              onChange={(e) => setFormData({ ...formData, needTrafficNoc: e.target.checked })}
+                              className="w-4 h-4 text-[#123B7A] rounded-xs"
+                            />
+                            <span className="font-bold text-slate-900">Traffic Route Diversion Clearance</span>
+                          </label>
+
+                          <label className="flex items-center space-x-2 cursor-pointer">
+                            <input
+                              type="checkbox"
+                              checked={formData.needHealthSanitationNoc}
+                              onChange={(e) => setFormData({ ...formData, needHealthSanitationNoc: e.target.checked })}
+                              className="w-4 h-4 text-[#123B7A] rounded-xs"
+                            />
+                            <span className="font-bold text-slate-900">MBMC Health & Sanitation Permit</span>
+                          </label>
+
+                          <label className="flex items-center space-x-2 cursor-pointer">
+                            <input
+                              type="checkbox"
+                              checked={formData.needElectricityNoc}
+                              onChange={(e) => setFormData({ ...formData, needElectricityNoc: e.target.checked })}
+                              className="w-4 h-4 text-[#123B7A] rounded-xs"
+                            />
+                            <span className="font-bold text-slate-900">MSEDCL Electrical Temporary Load Sanction</span>
+                          </label>
+
+                          <label className="flex items-center space-x-2 cursor-pointer">
+                            <input
+                              type="checkbox"
+                              checked={formData.needPublicWorksPermission}
+                              onChange={(e) => setFormData({ ...formData, needPublicWorksPermission: e.target.checked })}
+                              className="w-4 h-4 text-[#123B7A] rounded-xs"
+                            />
+                            <span className="font-bold text-slate-900">MBMC PWD Structural Stability Certificate</span>
+                          </label>
+                        </div>
+                      </div>
+
+                      {/* Safety Equipment Inputs */}
+                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                        <div>
+                          <label className="font-bold text-[#1B2B4D] mb-1.5 block">Stage Length (Feet)</label>
+                          <input
+                            type="number"
+                            value={formData.stageLengthFt}
+                            onChange={(e) => setFormData({ ...formData, stageLengthFt: Number(e.target.value) })}
+                            className="w-full border border-[#D9E4F4] p-2.5 rounded-xs bg-white text-slate-900 font-medium focus:outline-none focus:border-[#123B7A]"
+                          />
+                        </div>
+
+                        <div>
+                          <label className="font-bold text-[#1B2B4D] mb-1.5 block">Stage Width (Feet)</label>
+                          <input
+                            type="number"
+                            value={formData.stageWidthFt}
+                            onChange={(e) => setFormData({ ...formData, stageWidthFt: Number(e.target.value) })}
+                            className="w-full border border-[#D9E4F4] p-2.5 rounded-xs bg-white text-slate-900 font-medium focus:outline-none focus:border-[#123B7A]"
+                          />
+                        </div>
+
+                        <div>
+                          <label className="font-bold text-[#1B2B4D] mb-1.5 block">Mandatory CCTV Security Cameras</label>
+                          <input
+                            type="number"
+                            value={formData.cctvCount}
+                            onChange={(e) => setFormData({ ...formData, cctvCount: Number(e.target.value) })}
+                            className="w-full border border-[#D9E4F4] p-2.5 rounded-xs bg-white text-slate-900 font-medium focus:outline-none focus:border-[#123B7A]"
+                          />
+                        </div>
+
+                        <div>
+                          <label className="font-bold text-[#1B2B4D] mb-1.5 block">Fire Extinguishers Count (ABC Type)</label>
+                          <input
+                            type="number"
+                            value={formData.fireExtinguishers}
+                            onChange={(e) => setFormData({ ...formData, fireExtinguishers: Number(e.target.value) })}
+                            className="w-full border border-[#D9E4F4] p-2.5 rounded-xs bg-white text-slate-900 font-medium focus:outline-none focus:border-[#123B7A]"
+                          />
+                        </div>
+                      </div>
+
+                      {/* Statutory Declarations */}
+                      <div className="space-y-3 pt-2">
+                        <label className={`p-3 border rounded-xs flex items-start space-x-2 cursor-pointer ${
+                          errors.soundDecibelAgree ? "bg-red-50 border-red-400" : "bg-white border-[#D9E4F4]"
+                        }`}>
+                          <input
+                            type="checkbox"
+                            checked={formData.soundDecibelAgree}
+                            onChange={(e) => setFormData({ ...formData, soundDecibelAgree: e.target.checked })}
+                            className="w-4 h-4 text-[#123B7A] rounded-xs mt-0.5"
+                          />
+                          <div>
+                            <span className="font-bold text-slate-900 block">High Court Decibel Rule Undertaking <span className="text-red-600">*</span></span>
+                            <span className="text-[11px] text-slate-600">I undertake to maintain sound levels strictly below 55 dB daytime and shut down loudspeakers by 10:00 PM.</span>
+                          </div>
+                        </label>
+                        {errors.soundDecibelAgree && <span className="text-[11px] font-bold text-red-600 block">{errors.soundDecibelAgree}</span>}
+
+                        <label className={`p-3 border rounded-xs flex items-start space-x-2 cursor-pointer ${
+                          errors.flameRetardantAgree ? "bg-red-50 border-red-400" : "bg-white border-[#D9E4F4]"
+                        }`}>
+                          <input
+                            type="checkbox"
+                            checked={formData.flameRetardantAgree}
+                            onChange={(e) => setFormData({ ...formData, flameRetardantAgree: e.target.checked })}
+                            className="w-4 h-4 text-[#123B7A] rounded-xs mt-0.5"
+                          />
+                          <div>
+                            <span className="font-bold text-slate-900 block">CFO Fire Retardant Mandate Undertaking <span className="text-red-600">*</span></span>
+                            <span className="text-[11px] text-slate-600">I confirm that all pandal canvas and wooden structures have been treated with ammonium phosphate fire-retardant solution.</span>
+                          </div>
+                        </label>
+                        {errors.flameRetardantAgree && <span className="text-[11px] font-bold text-red-600 block">{errors.flameRetardantAgree}</span>}
+                      </div>
+
+                    </div>
+                  </div>
+                )}
+
+
+                {/* STEP 5: DOCUMENTS UPLOAD */}
+                {step === 5 && (
+                  <div className="space-y-6">
+                    {/* Section Header */}
+                    <div className="border-b-2 border-[#123B7A] pb-2 flex items-center justify-between">
+                      <h2 className="text-base sm:text-lg font-extrabold text-[#123B7A] tracking-wide uppercase">
+                        E. UPLOAD MANDATORY SUPPORTING DOCUMENTS
+                      </h2>
+                      <span className="text-xs font-bold text-[#1E4F91] font-mono">STEP 5 OF 6</span>
+                    </div>
+
+                    <div className="space-y-4 text-xs">
+                      
+                      <div className="bg-blue-50 border border-blue-200 p-3 rounded-xs text-[#123B7A] font-medium flex items-center space-x-2">
+                        <Info className="w-4 h-4 flex-shrink-0" />
+                        <span>Accepted File Formats: <strong>PDF, JPG, PNG</strong>. Maximum File Size: <strong>5 MB per document</strong>.</span>
+                      </div>
+
+                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                        
+                        {/* Aadhaar */}
+                        <div className="p-3.5 border border-[#D9E4F4] rounded-xs space-y-2 bg-slate-50">
+                          <div className="flex items-center justify-between">
+                            <span className="font-bold text-slate-900">1. Applicant Aadhaar Card <span className="text-red-600">*</span></span>
+                            <span className="text-emerald-700 font-extrabold text-[10px]">✔ ATTACHED</span>
+                          </div>
+                          <input type="file" accept=".pdf,.jpg,.png" className="w-full text-xs text-slate-700 cursor-pointer" />
+                        </div>
+
+                        {/* PAN Card */}
+                        <div className="p-3.5 border border-[#D9E4F4] rounded-xs space-y-2 bg-slate-50">
+                          <div className="flex items-center justify-between">
+                            <span className="font-bold text-slate-900">2. Organization PAN Card <span className="text-red-600">*</span></span>
+                            <span className="text-emerald-700 font-extrabold text-[10px]">✔ ATTACHED</span>
+                          </div>
+                          <input type="file" accept=".pdf,.jpg,.png" className="w-full text-xs text-slate-700 cursor-pointer" />
+                        </div>
+
+                        {/* Society NOC */}
+                        <div className="p-3.5 border border-[#D9E4F4] rounded-xs space-y-2 bg-slate-50">
+                          <div className="flex items-center justify-between">
+                            <span className="font-bold text-slate-900">3. Land Owner / Society NOC <span className="text-red-600">*</span></span>
+                            <span className="text-emerald-700 font-extrabold text-[10px]">✔ ATTACHED</span>
+                          </div>
+                          <input type="file" accept=".pdf,.jpg,.png" className="w-full text-xs text-slate-700 cursor-pointer" />
+                        </div>
+
+                        {/* Venue Layout CAD Plan */}
+                        <div className="p-3.5 border border-[#D9E4F4] rounded-xs space-y-2 bg-slate-50">
+                          <div className="flex items-center justify-between">
+                            <span className="font-bold text-slate-900">4. Venue Layout CAD / Plan <span className="text-red-600">*</span></span>
+                            <span className="text-emerald-700 font-extrabold text-[10px]">✔ ATTACHED</span>
+                          </div>
+                          <input type="file" accept=".pdf,.jpg,.png" className="w-full text-xs text-slate-700 cursor-pointer" />
+                        </div>
+
+                        {/* Fire Retardant Self Declaration */}
+                        <div className="p-3.5 border border-[#D9E4F4] rounded-xs space-y-2 bg-slate-50">
+                          <div className="flex items-center justify-between">
+                            <span className="font-bold text-slate-900">5. Fire Retardant Certificate <span className="text-red-600">*</span></span>
+                            <span className="text-emerald-700 font-extrabold text-[10px]">✔ ATTACHED</span>
+                          </div>
+                          <input type="file" accept=".pdf,.jpg,.png" className="w-full text-xs text-slate-700 cursor-pointer" />
+                        </div>
+
+                        {/* Event Insurance Policy */}
+                        <div className="p-3.5 border border-[#D9E4F4] rounded-xs space-y-2 bg-slate-50">
+                          <div className="flex items-center justify-between">
+                            <span className="font-bold text-slate-900">6. Public Liability Insurance</span>
+                            <span className="text-slate-500 font-extrabold text-[10px]">OPTIONAL</span>
+                          </div>
+                          <input type="file" accept=".pdf,.jpg,.png" className="w-full text-xs text-slate-700 cursor-pointer" />
+                        </div>
+
+                      </div>
+                    </div>
+                  </div>
+                )}
+
+
+                {/* STEP 6: DECLARATION & SUBMISSION */}
+                {step === 6 && (
+                  <form onSubmit={handleFinalSubmit} className="space-y-6">
+                    {/* Section Header */}
+                    <div className="border-b-2 border-[#123B7A] pb-2 flex items-center justify-between">
+                      <h2 className="text-base sm:text-lg font-extrabold text-[#123B7A] tracking-wide uppercase">
+                        F. STATUTORY GOVERNMENT DECLARATION & FINAL SUBMISSION
+                      </h2>
+                      <span className="text-xs font-bold text-[#1E4F91] font-mono">STEP 6 OF 6</span>
+                    </div>
+
+                    <div className="space-y-4 text-xs">
+                      
+                      {/* Legal Declaration Text Box */}
+                      <div className="bg-slate-50 border border-slate-300 p-4 rounded-xs text-slate-800 leading-relaxed font-mono space-y-2 max-h-48 overflow-y-auto">
+                        <span className="font-bold text-[#123B7A] block uppercase text-xs">FORM OF LEGAL UNDERTAKING (MAHARASHTRA MUNICIPAL CORPORATIONS ACT)</span>
+                        <p>
+                          I, <strong>{formData.applicantName}</strong>, representing <strong>{formData.organization}</strong>, hereby solemnly affirm and declare that the statements made in this online application for <strong>{formData.eventName}</strong> at <strong>{formData.venueName}</strong> are true, correct and complete to the best of my knowledge and belief.
+                        </p>
+                        <p>
+                          I agree to abide strictly by all conditions imposed by the Chief Fire Officer, Mira-Bhayandar Police Commissionerate, MBMC Public Works Department, and Maharashtra Pollution Control Board.
+                        </p>
+                      </div>
+
+                      {/* Declaration Checkbox */}
+                      <label className={`p-4 border rounded-xs flex items-start space-x-3 cursor-pointer ${
+                        errors.declarationAgreed ? "bg-red-50 border-red-500" : "bg-white border-[#D9E4F4]"
+                      }`}>
+                        <input
+                          type="checkbox"
+                          checked={formData.declarationAgreed}
+                          onChange={(e) => setFormData({ ...formData, declarationAgreed: e.target.checked })}
+                          className="w-4 h-4 text-[#123B7A] rounded-xs mt-0.5"
+                        />
+                        <div className="text-xs">
+                          <span className="font-extrabold text-[#123B7A] block">
+                            I ACCEPT THE LEGAL DECLARATION & UNDERTAKING <span className="text-red-600">*</span>
+                          </span>
+                          <span className="text-slate-600">I understand that any misrepresentation will lead to instant cancellation of NOC and legal proceedings.</span>
+                        </div>
+                      </label>
+                      {errors.declarationAgreed && <span className="text-[11px] font-bold text-red-600 block">{errors.declarationAgreed}</span>}
+
+                      {/* Signature, Place & Date Grid */}
+                      <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 pt-2">
+                        
+                        <div>
+                          <label className="font-bold text-[#1B2B4D] mb-1.5 block">
+                            Digital Signature (Full Name) <span className="text-red-600">*</span>
+                          </label>
+                          <input
+                            type="text"
+                            placeholder="Type Applicant Name"
+                            value={formData.digitalSignature}
+                            onChange={(e) => setFormData({ ...formData, digitalSignature: e.target.value })}
+                            className={`w-full border p-2.5 rounded-xs bg-white text-slate-900 font-mono font-bold focus:outline-none focus:border-[#123B7A] ${
+                              errors.digitalSignature ? "border-red-600 bg-red-50" : "border-[#D9E4F4]"
+                            }`}
+                          />
+                          {errors.digitalSignature && <span className="text-[11px] font-bold text-red-600 mt-1 block">{errors.digitalSignature}</span>}
+                        </div>
+
+                        <div>
+                          <label className="font-bold text-[#1B2B4D] mb-1.5 block">Place of Submission</label>
+                          <input
+                            type="text"
+                            value={formData.declarationPlace}
+                            onChange={(e) => setFormData({ ...formData, declarationPlace: e.target.value })}
+                            className="w-full border border-[#D9E4F4] p-2.5 rounded-xs bg-slate-50 text-slate-900 font-medium focus:outline-none"
+                            readOnly
+                          />
+                        </div>
+
+                        <div>
+                          <label className="font-bold text-[#1B2B4D] mb-1.5 block">Submission Date</label>
+                          <input
+                            type="date"
+                            value={formData.declarationDate}
+                            className="w-full border border-[#D9E4F4] p-2.5 rounded-xs bg-slate-50 text-slate-900 font-medium focus:outline-none"
+                            readOnly
+                          />
+                        </div>
+
+                      </div>
+
+                    </div>
+                  </form>
+                )}
+
+
+                {/* FORM WIZARD NAVIGATION BUTTONS */}
+                <div className="pt-6 border-t border-[#D9E4F4] flex items-center justify-between gap-3 text-xs">
+                  
+                  {/* Previous Button */}
+                  <button
+                    type="button"
+                    onClick={handlePrevStep}
+                    disabled={step === 1}
+                    className={`px-4 py-2.5 rounded-xs font-bold transition flex items-center space-x-1.5 cursor-pointer ${
+                      step === 1
+                        ? "bg-slate-100 text-slate-400 border border-slate-200 cursor-not-allowed"
+                        : "bg-white border border-[#123B7A] text-[#123B7A] hover:bg-[#123B7A]/10"
+                    }`}
+                  >
+                    <ArrowLeft className="w-4 h-4" />
+                    <span>{t("Previous Step", "मागील टप्पा")}</span>
+                  </button>
+
+                  {/* Save Draft & Next / Submit Buttons */}
+                  <div className="flex items-center space-x-2">
+                    
+                    <button
+                      type="button"
+                      onClick={handleSaveDraft}
+                      className="hidden sm:flex border border-[#D9E4F4] text-[#123B7A] hover:bg-slate-100 px-4 py-2.5 rounded-xs font-bold transition items-center space-x-1.5 cursor-pointer"
+                    >
+                      <Save className="w-4 h-4" />
+                      <span>{t("Save Draft", "मसुदा जतन करा")}</span>
+                    </button>
+
+                    {step < 6 ? (
+                      <button
+                        type="button"
+                        onClick={handleNextStep}
+                        className="bg-[#123B7A] hover:bg-[#1E4F91] text-white px-5 py-2.5 rounded-xs font-extrabold transition flex items-center space-x-1.5 shadow-xs cursor-pointer"
+                      >
+                        <span>{t("Save & Continue", "पुढील टप्पा")}</span>
+                        <ArrowRight className="w-4 h-4" />
+                      </button>
+                    ) : (
+                      <button
+                        type="button"
+                        onClick={handleFinalSubmit}
+                        className="bg-emerald-700 hover:bg-emerald-800 text-white px-6 py-2.5 rounded-xs font-extrabold transition flex items-center space-x-1.5 shadow-md cursor-pointer uppercase tracking-wider"
+                      >
+                        <FileCheck2 className="w-4 h-4" />
+                        <span>{t("Submit Application", "अंतिम अर्ज सादर करा")}</span>
+                      </button>
+                    )}
+
+                  </div>
+
+                </div>
+
+              </div>
+
+            )}
+
+          </div>
+
+
+          {/* -----------------------------------------------
+              RIGHT SIDEBAR (25% WIDTH - GOVERNMENT PROGRESS & HELP)
+          ----------------------------------------------- */}
+          <div className="lg:col-span-3 space-y-6">
+
+            {/* 1. APPLICATION PROGRESS TRACKER */}
+            <div className="bg-white rounded-xs border border-[#D9E4F4] p-4 shadow-xs space-y-3">
+              <div className="border-b border-[#D9E4F4] pb-2 flex items-center justify-between">
+                <span className="text-xs font-extrabold text-[#123B7A] uppercase tracking-wider block">
+                  APPLICATION PROGRESS
+                </span>
+                <span className="text-[11px] font-mono font-bold text-[#1E4F91]">
+                  STEP {step} / 6
+                </span>
+              </div>
+
+              <div className="space-y-2 text-xs font-bold">
+                {[
+                  { num: 1, label: "A. Event Details" },
+                  { num: 2, label: "B. Applicant Details" },
+                  { num: 3, label: "C. Venue Details" },
+                  { num: 4, label: "D. Department Requirements" },
+                  { num: 5, label: "E. Upload Documents" },
+                  { num: 6, label: "F. Final Declaration" },
+                ].map((s) => (
+                  <button
+                    key={s.num}
+                    onClick={() => {
+                      if (s.num <= step) setStep(s.num);
+                    }}
+                    disabled={s.num > step}
+                    className={`w-full text-left p-2 rounded-xs flex items-center space-x-2 transition ${
+                      step === s.num
+                        ? "bg-[#123B7A] text-white"
+                        : step > s.num
+                        ? "bg-emerald-50 text-emerald-900 border border-emerald-200 cursor-pointer"
+                        : "bg-slate-50 text-slate-400 border border-slate-200 cursor-not-allowed"
+                    }`}
+                  >
+                    <span className={`w-5 h-5 rounded-full flex items-center justify-center text-[10px] ${
+                      step === s.num
+                        ? "bg-[#F4B400] text-slate-900 font-black"
+                        : step > s.num
+                        ? "bg-emerald-700 text-white font-bold"
+                        : "bg-slate-200 text-slate-600"
+                    }`}>
+                      {step > s.num ? "✓" : s.num}
+                    </span>
+                    <span className="truncate">{s.label}</span>
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            {/* 2. FEE SUMMARY SUMMARY BOX */}
+            <div className="bg-white rounded-xs border border-[#D9E4F4] p-4 shadow-xs space-y-3">
+              <span className="text-xs font-extrabold text-[#123B7A] uppercase tracking-wider block border-b border-[#D9E4F4] pb-2">
+                ESTIMATED STATUTORY FEES
+              </span>
+
+              <div className="space-y-1.5 text-xs text-slate-700 font-mono">
+                <div className="flex justify-between">
+                  <span>Base Permit Fee:</span>
+                  <span className="font-bold">₹{basePermitFee.toLocaleString()}</span>
+                </div>
+                <div className="flex justify-between">
+                  <span>Ground Lease ({daysCount}d):</span>
+                  <span className="font-bold">₹{groundLeaseFee.toLocaleString()}</span>
+                </div>
+                <div className="flex justify-between">
+                  <span>CFO Fire Audit:</span>
+                  <span className="font-bold">₹{fireInspectionFee.toLocaleString()}</span>
+                </div>
+                <div className="flex justify-between">
+                  <span>Sanitation Deposit:</span>
+                  <span className="font-bold text-amber-700">₹{sanitationDeposit.toLocaleString()}</span>
+                </div>
+                <div className="flex justify-between border-t border-[#D9E4F4] pt-2 text-slate-900 font-bold">
+                  <span>TOTAL ESTIMATED:</span>
+                  <span className="text-[#123B7A] font-extrabold text-sm">₹{totalFeeCalculated.toLocaleString()}</span>
                 </div>
               </div>
             </div>
 
-          </div>
-        )}
+            {/* 3. NEED HELP & EMERGENCY HELP DESK */}
+            <div id="help-panel" className="bg-white rounded-xs border border-[#D9E4F4] p-4 shadow-xs space-y-3 text-xs">
+              <span className="font-extrabold text-[#123B7A] uppercase tracking-wider block border-b border-[#D9E4F4] pb-2 flex items-center space-x-1.5">
+                <PhoneCall className="w-3.5 h-3.5 text-red-600" />
+                <span>MBMC HELP DESK & HOURS</span>
+              </span>
 
-        {step < 6 && (
-          <div className="flex items-center justify-between pt-4 border-t border-gov-border no-print">
-            <button
-              onClick={handlePrevStep}
-              disabled={step === 1}
-              className={`flex items-center space-x-2 px-5 py-2.5 rounded-lg text-xs sm:text-sm font-bold transition ${
-                step === 1
-                  ? "bg-gov-surface text-gov-textMuted cursor-not-allowed"
-                  : "bg-gov-surface hover:bg-gov-border text-gov-dark cursor-pointer"
-              }`}
-            >
-              <ArrowLeft className="w-4 h-4" />
-              <span>{t("Previous Step", "मागील टप्पा")}</span>
-            </button>
+              <div className="space-y-2 text-slate-800">
+                <div>
+                  <span className="font-bold text-slate-900 block">Toll-Free Helpline:</span>
+                  <span className="font-mono font-bold text-[#123B7A] text-sm block">1800-22-3424</span>
+                </div>
 
-            <div className="text-xs text-gov-textMuted font-medium">
-              {t(`Step ${step} of 5`, `टप्पा ${step} पैकी ५`)}
+                <div>
+                  <span className="font-bold text-slate-900 block">Helpdesk Email:</span>
+                  <span className="font-mono text-slate-700">support.uecp@mbmc.gov.in</span>
+                </div>
+
+                <div>
+                  <span className="font-bold text-slate-900 block">Office Timings:</span>
+                  <span className="text-slate-600 block">Mon - Sat: 09:45 AM to 05:30 PM</span>
+                  <span className="text-[10px] text-slate-500 block">(Closed on 2nd & 4th Saturdays)</span>
+                </div>
+              </div>
             </div>
 
-            <button
-              onClick={handleNextStep}
-              className="bg-gov-primary hover:bg-gov-dark text-white font-bold px-6 py-2.5 rounded-lg text-xs sm:text-sm flex items-center space-x-2 transition shadow-gov-md cursor-pointer"
-            >
-              <span>{step === 5 ? t("Submit & Generate Receipt", "अर्ज सबमिट करा व पावती मिळवा") : t("Save & Continue", "पुढे जा")}</span>
-              <ArrowRight className="w-4 h-4 text-yellow-400" />
-            </button>
+            {/* 4. DOWNLOAD GUIDELINES & SAMPLE FORM */}
+            <div className="bg-white rounded-xs border border-[#D9E4F4] p-4 shadow-xs space-y-2 text-xs">
+              <span className="font-extrabold text-[#123B7A] uppercase tracking-wider block border-b border-[#D9E4F4] pb-2">
+                OFFICIAL DOWNLOADS
+              </span>
+
+              <Link
+                href="/guidelines"
+                className="w-full text-left p-2 bg-slate-50 border border-slate-200 hover:bg-slate-100 rounded-xs font-bold text-[#123B7A] flex items-center justify-between transition block"
+              >
+                <span>Download Sample Form</span>
+                <Download className="w-3.5 h-3.5" />
+              </Link>
+
+              <Link
+                href="/guidelines"
+                className="w-full text-left p-2 bg-slate-50 border border-slate-200 hover:bg-slate-100 rounded-xs font-bold text-[#123B7A] flex items-center justify-between transition block"
+              >
+                <span>Event Guidelines PDF</span>
+                <Download className="w-3.5 h-3.5" />
+              </Link>
+            </div>
+
           </div>
-        )}
+
+        </div>
 
       </div>
     </div>
@@ -812,7 +1397,11 @@ function ApplyFormContent() {
 
 export default function ApplyPage() {
   return (
-    <Suspense fallback={<div className="p-8 text-center text-gov-primary font-bold">Loading Single Window Portal...</div>}>
+    <Suspense fallback={
+      <div className="p-8 text-center font-mono text-xs text-gov-primary font-bold">
+        Loading MBMC e-Governance Application Form...
+      </div>
+    }>
       <ApplyFormContent />
     </Suspense>
   );
