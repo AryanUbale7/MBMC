@@ -60,7 +60,7 @@ export default function PublicCertificateVerifyPage() {
         ) : appRecord && appRecord.status === "APPROVED" ? (
           
           /* VERIFIED VALID CERTIFICATE CARD */
-          <div className="bg-white rounded-xs border-2 border-emerald-600 p-6 sm:p-8 shadow-md space-y-6">
+          <div className="printable-pass bg-white rounded-xs border-2 border-emerald-600 p-6 sm:p-8 shadow-md space-y-6">
             
             {/* Status Stamp */}
             <div className="bg-emerald-50 border border-emerald-300 p-4 rounded-xs text-center space-y-1">
@@ -81,14 +81,14 @@ export default function PublicCertificateVerifyPage() {
 
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 bg-slate-50 p-4 border border-[#D9E4F4] rounded-xs text-slate-800">
                 <div><span className="font-bold text-slate-900">Application Ref ID:</span> <span className="text-[#123B7A] font-extrabold">{appRecord.id}</span></div>
-                <div><span className="font-bold text-slate-900">Certificate No:</span> {appRecord.certificateNo || 'CERT-MBMC-2026-98104'}</div>
+                <div><span className="font-bold text-slate-900">Certificate No:</span> {appRecord.certificateNo}</div>
                 <div><span className="font-bold text-slate-900">Applicant Full Name:</span> {appRecord.applicantName}</div>
                 <div><span className="font-bold text-slate-900">Organization:</span> {appRecord.organizationName}</div>
                 <div><span className="font-bold text-slate-900">Event Title:</span> {appRecord.eventName}</div>
                 <div><span className="font-bold text-slate-900">Ward Jurisdiction:</span> {appRecord.wardName}</div>
                 <div><span className="font-bold text-slate-900">Sanctioned Venue:</span> {appRecord.venueName}</div>
                 <div><span className="font-bold text-slate-900">Validity Schedule:</span> {appRecord.startDate} to {appRecord.endDate}</div>
-                <div><span className="font-bold text-slate-900">Approved Date:</span> {appRecord.approvedAt || '2026-08-06'}</div>
+                <div><span className="font-bold text-slate-900">Approved Date:</span> {appRecord.approvedAt}</div>
                 <div><span className="font-bold text-slate-900">Approved Authority:</span> {appRecord.approvedBy}</div>
               </div>
             </div>

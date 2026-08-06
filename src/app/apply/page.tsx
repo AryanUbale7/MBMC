@@ -5,7 +5,7 @@ import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useAccessibility } from "@/context/AccessibilityContext";
 import { useAuth } from "@/context/AuthContext";
-import { saveApplication, addNotification } from "@/lib/govStore";
+import { createNewApplication, addNotification, UploadedDoc } from "@/lib/govStore";
 import { MBMC_WARDS, MBMC_VENUES, DEPARTMENTS } from "@/data/mbmcData";
 import confetti from "canvas-confetti";
 import {
@@ -54,6 +54,31 @@ function ApplyFormContent() {
   // Wizard Step State (1 to 6)
   const [step, setStep] = useState<number>(1);
   const [submittedRef, setSubmittedRef] = useState<string>("");
+  const [uploadedFiles, setUploadedFiles] = useState<Record<string, UploadedDoc>>({});
+
+  // Handle real file upload — read as base64 dataUrl
+  const handleFileUpload = (key: string, label: string, file: File | null) => {
+    if (!file) return;
+    if (file.size > 5 * 1024 * 1024) { alert(`${label}: File exceeds 5 MB limit.`); return; }
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      const sizeFmt = file.size < 1024 * 1024
+        ? `${Math.round(file.size / 1024)} KB`
+        : `${(file.size / (1024 * 1024)).toFixed(1)} MB`;
+      setUploadedFiles((prev) => ({
+        ...prev,
+        [key]: {
+          key,
+          label,
+          fileName: file.name,
+          fileSize: sizeFmt,
+          uploadedAt: new Date().toLocaleString("en-IN"),
+          dataUrl: e.target?.result as string
+        }
+      }));
+    };
+    reader.readAsDataURL(file);
+  };
   const [isSavedDraft, setIsSavedDraft] = useState<boolean>(false);
 
   // Validation Error State
@@ -214,8 +239,11 @@ function ApplyFormContent() {
       const randomRef = `MBMC/UECP/2026/${Math.floor(10000 + Math.random() * 90000)}`;
       setSubmittedRef(randomRef);
 
-      // Save to Persistent Store
-      saveApplication({
+      // Build uploaded docs array from state
+      const uploadedDocsArr: UploadedDoc[] = Object.values(uploadedFiles);
+
+      // Save to Persistent Store with all 8 departments + timeline
+      createNewApplication({
         id: randomRef,
         citizenId: citizen?.id || "CIT-GUEST",
         eventName: formData.eventName,
@@ -242,10 +270,13 @@ function ApplyFormContent() {
         totalFeeCalculated: totalFeeCalculated,
         paymentStatus: "PAID",
         status: "PENDING_SCRUTINY",
-        submittedAt: new Date().toLocaleDateString('en-IN') + ' ' + new Date().toLocaleTimeString('en-IN'),
+        submittedAt: new Date().toLocaleDateString("en-IN") + " " + new Date().toLocaleTimeString("en-IN"),
         cfoFireStatus: "PENDING",
         policeStatus: "PENDING",
         trafficStatus: "PENDING",
+        pwdStatus: "PENDING",
+        healthStatus: "PENDING",
+        electricityStatus: "PENDING",
         wardStatus: "PENDING",
         commissionerSanction: false,
         officerRemarks: "Logged into single-window clearance cell. Desk audit in progress."
@@ -1120,59 +1151,65 @@ function ApplyFormContent() {
                       </div>
 
                       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                        
+
                         {/* Aadhaar */}
                         <div className="p-3.5 border border-[#D9E4F4] rounded-xs space-y-2 bg-slate-50">
                           <div className="flex items-center justify-between">
                             <span className="font-bold text-slate-900">1. Applicant Aadhaar Card <span className="text-red-600">*</span></span>
-                            <span className="text-emerald-700 font-extrabold text-[10px]">✔ ATTACHED</span>
+                            {uploadedFiles["aadhaar"] ? <span className="text-emerald-700 font-extrabold text-[10px]">✔ UPLOADED</span> : <span className="text-slate-400 font-bold text-[10px]">PENDING</span>}
                           </div>
-                          <input type="file" accept=".pdf,.jpg,.png" className="w-full text-xs text-slate-700 cursor-pointer" />
+                          <input type="file" accept=".pdf,.jpg,.png" className="w-full text-xs text-slate-700 cursor-pointer" onChange={(e) => handleFileUpload("aadhaar", "Applicant Aadhaar Card", e.target.files?.[0] || null)} />
+                          {uploadedFiles["aadhaar"] && <span className="text-[10px] text-emerald-700 font-mono block">{uploadedFiles["aadhaar"].fileName} ({uploadedFiles["aadhaar"].fileSize})</span>}
                         </div>
 
                         {/* PAN Card */}
                         <div className="p-3.5 border border-[#D9E4F4] rounded-xs space-y-2 bg-slate-50">
                           <div className="flex items-center justify-between">
                             <span className="font-bold text-slate-900">2. Organization PAN Card <span className="text-red-600">*</span></span>
-                            <span className="text-emerald-700 font-extrabold text-[10px]">✔ ATTACHED</span>
+                            {uploadedFiles["pan"] ? <span className="text-emerald-700 font-extrabold text-[10px]">✔ UPLOADED</span> : <span className="text-slate-400 font-bold text-[10px]">PENDING</span>}
                           </div>
-                          <input type="file" accept=".pdf,.jpg,.png" className="w-full text-xs text-slate-700 cursor-pointer" />
+                          <input type="file" accept=".pdf,.jpg,.png" className="w-full text-xs text-slate-700 cursor-pointer" onChange={(e) => handleFileUpload("pan", "Organization PAN Card", e.target.files?.[0] || null)} />
+                          {uploadedFiles["pan"] && <span className="text-[10px] text-emerald-700 font-mono block">{uploadedFiles["pan"].fileName} ({uploadedFiles["pan"].fileSize})</span>}
                         </div>
 
                         {/* Society NOC */}
                         <div className="p-3.5 border border-[#D9E4F4] rounded-xs space-y-2 bg-slate-50">
                           <div className="flex items-center justify-between">
                             <span className="font-bold text-slate-900">3. Land Owner / Society NOC <span className="text-red-600">*</span></span>
-                            <span className="text-emerald-700 font-extrabold text-[10px]">✔ ATTACHED</span>
+                            {uploadedFiles["society_noc"] ? <span className="text-emerald-700 font-extrabold text-[10px]">✔ UPLOADED</span> : <span className="text-slate-400 font-bold text-[10px]">PENDING</span>}
                           </div>
-                          <input type="file" accept=".pdf,.jpg,.png" className="w-full text-xs text-slate-700 cursor-pointer" />
+                          <input type="file" accept=".pdf,.jpg,.png" className="w-full text-xs text-slate-700 cursor-pointer" onChange={(e) => handleFileUpload("society_noc", "Land Owner / Society NOC", e.target.files?.[0] || null)} />
+                          {uploadedFiles["society_noc"] && <span className="text-[10px] text-emerald-700 font-mono block">{uploadedFiles["society_noc"].fileName} ({uploadedFiles["society_noc"].fileSize})</span>}
                         </div>
 
-                        {/* Venue Layout CAD Plan */}
+                        {/* Venue Layout */}
                         <div className="p-3.5 border border-[#D9E4F4] rounded-xs space-y-2 bg-slate-50">
                           <div className="flex items-center justify-between">
                             <span className="font-bold text-slate-900">4. Venue Layout CAD / Plan <span className="text-red-600">*</span></span>
-                            <span className="text-emerald-700 font-extrabold text-[10px]">✔ ATTACHED</span>
+                            {uploadedFiles["venue_layout"] ? <span className="text-emerald-700 font-extrabold text-[10px]">✔ UPLOADED</span> : <span className="text-slate-400 font-bold text-[10px]">PENDING</span>}
                           </div>
-                          <input type="file" accept=".pdf,.jpg,.png" className="w-full text-xs text-slate-700 cursor-pointer" />
+                          <input type="file" accept=".pdf,.jpg,.png" className="w-full text-xs text-slate-700 cursor-pointer" onChange={(e) => handleFileUpload("venue_layout", "Venue Layout CAD / Plan", e.target.files?.[0] || null)} />
+                          {uploadedFiles["venue_layout"] && <span className="text-[10px] text-emerald-700 font-mono block">{uploadedFiles["venue_layout"].fileName} ({uploadedFiles["venue_layout"].fileSize})</span>}
                         </div>
 
-                        {/* Fire Retardant Self Declaration */}
+                        {/* Fire Certificate */}
                         <div className="p-3.5 border border-[#D9E4F4] rounded-xs space-y-2 bg-slate-50">
                           <div className="flex items-center justify-between">
                             <span className="font-bold text-slate-900">5. Fire Retardant Certificate <span className="text-red-600">*</span></span>
-                            <span className="text-emerald-700 font-extrabold text-[10px]">✔ ATTACHED</span>
+                            {uploadedFiles["fire_cert"] ? <span className="text-emerald-700 font-extrabold text-[10px]">✔ UPLOADED</span> : <span className="text-slate-400 font-bold text-[10px]">PENDING</span>}
                           </div>
-                          <input type="file" accept=".pdf,.jpg,.png" className="w-full text-xs text-slate-700 cursor-pointer" />
+                          <input type="file" accept=".pdf,.jpg,.png" className="w-full text-xs text-slate-700 cursor-pointer" onChange={(e) => handleFileUpload("fire_cert", "Fire Retardant Certificate", e.target.files?.[0] || null)} />
+                          {uploadedFiles["fire_cert"] && <span className="text-[10px] text-emerald-700 font-mono block">{uploadedFiles["fire_cert"].fileName} ({uploadedFiles["fire_cert"].fileSize})</span>}
                         </div>
 
-                        {/* Event Insurance Policy */}
+                        {/* Insurance */}
                         <div className="p-3.5 border border-[#D9E4F4] rounded-xs space-y-2 bg-slate-50">
                           <div className="flex items-center justify-between">
                             <span className="font-bold text-slate-900">6. Public Liability Insurance</span>
-                            <span className="text-slate-500 font-extrabold text-[10px]">OPTIONAL</span>
+                            {uploadedFiles["insurance"] ? <span className="text-emerald-700 font-extrabold text-[10px]">✔ UPLOADED</span> : <span className="text-slate-400 font-bold text-[10px]">OPTIONAL</span>}
                           </div>
-                          <input type="file" accept=".pdf,.jpg,.png" className="w-full text-xs text-slate-700 cursor-pointer" />
+                          <input type="file" accept=".pdf,.jpg,.png" className="w-full text-xs text-slate-700 cursor-pointer" onChange={(e) => handleFileUpload("insurance", "Public Liability Insurance", e.target.files?.[0] || null)} />
+                          {uploadedFiles["insurance"] && <span className="text-[10px] text-emerald-700 font-mono block">{uploadedFiles["insurance"].fileName} ({uploadedFiles["insurance"].fileSize})</span>}
                         </div>
 
                       </div>

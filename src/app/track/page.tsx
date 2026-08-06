@@ -5,7 +5,7 @@ import Link from "next/link";
 import { useSearchParams, useRouter } from "next/navigation";
 import { useAccessibility } from "@/context/AccessibilityContext";
 import { useAuth } from "@/context/AuthContext";
-import { getApplications, ApplicationRecord } from "@/lib/govStore";
+import { getApplications, ApplicationRecord, TimelineEntry } from "@/lib/govStore";
 import { QRCodeSVG } from "qrcode.react";
 import {
   Search,
@@ -136,7 +136,7 @@ function TrackContent() {
           </div>
         ) : (
           <div className="bg-white rounded-xs border border-[#D9E4F4] p-6 sm:p-8 shadow-xs space-y-6 print:hidden">
-            
+
             {/* Header Status Bar */}
             <div className="border-b border-[#D9E4F4] pb-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
               <div>
@@ -144,126 +144,131 @@ function TrackContent() {
                 <h2 className="text-lg sm:text-xl font-extrabold text-[#123B7A]">{activeApp.eventName}</h2>
                 <span className="text-xs font-mono text-[#1E4F91] font-bold">Ref No: {activeApp.id}</span>
               </div>
+              <div className="text-left sm:text-right">
+                <span className="text-[10px] text-slate-500 font-bold block">CURRENT E-GOVERNANCE STATUS</span>
+                <span className={`text-xs font-mono font-extrabold px-3 py-1 rounded border inline-block ${
+                  activeApp.status === "APPROVED"
+                    ? "bg-emerald-100 text-emerald-800 border-emerald-300"
+                    : activeApp.status === "REJECTED"
+                    ? "bg-red-100 text-red-800 border-red-300"
+                    : activeApp.status === "CORRECTION_REQUIRED"
+                    ? "bg-amber-100 text-amber-900 border-amber-300"
+                    : "bg-blue-100 text-blue-900 border-blue-300"
+                }`}>
+                  {activeApp.status === "APPROVED" ? "SANCTIONED & ISSUED"
+                    : activeApp.status === "REJECTED" ? "REJECTED"
+                    : activeApp.status === "CORRECTION_REQUIRED" ? "CORRECTION REQUIRED"
+                    : "UNDER SCRUTINY"}
+                </span>
+              </div>
+            </div>
 
-            <div className="text-left sm:text-right">
-              <span className="text-[10px] text-slate-500 font-bold block">CURRENT E-GOVERNANCE STATUS</span>
-              <span className={`text-xs font-mono font-extrabold px-3 py-1 rounded border inline-block ${
-                activeApp.status === "APPROVED"
-                  ? "bg-emerald-100 text-emerald-800 border-emerald-300"
-                  : "bg-amber-100 text-amber-900 border-amber-300"
-              }`}>
-                STATUS: {activeApp.status === "APPROVED" ? "SANCTIONED & ISSUED" : "PENDING SCRUTINY"}
+            {/* 11-STAGE DYNAMIC APPROVAL TIMELINE */}
+            <div className="space-y-3 bg-slate-50 border border-[#D9E4F4] p-4 rounded-xs">
+              <span className="text-xs font-extrabold text-[#123B7A] uppercase tracking-wider block">
+                11-STAGE MULTI-DEPARTMENTAL APPROVAL TIMELINE
               </span>
+
+              <div className="space-y-2 text-xs font-mono">
+                {(activeApp.timeline && activeApp.timeline.length > 0
+                  ? activeApp.timeline
+                  : [
+                      { stage: "Application Submitted", status: "COMPLETED", date: activeApp.submittedAt, time: "", remarks: "" },
+                      { stage: "Pending Scrutiny (Desk Audit)", status: "IN_PROGRESS", date: "", time: "", remarks: "" },
+                      { stage: "Fire Department Review", status: "PENDING", date: "", time: "", remarks: "" },
+                      { stage: "Police Department Review", status: "PENDING", date: "", time: "", remarks: "" },
+                      { stage: "Traffic Department Review", status: "PENDING", date: "", time: "", remarks: "" },
+                      { stage: "Public Works Department (PWD) Review", status: "PENDING", date: "", time: "", remarks: "" },
+                      { stage: "Health & Sanitation Review", status: "PENDING", date: "", time: "", remarks: "" },
+                      { stage: "Electricity Department Review", status: "PENDING", date: "", time: "", remarks: "" },
+                      { stage: "Ward Officer Approval", status: "PENDING", date: "", time: "", remarks: "" },
+                      { stage: "Commissioner Sanction", status: "PENDING", date: "", time: "", remarks: "" },
+                      { stage: "Permission Certificate Issued", status: "PENDING", date: "", time: "", remarks: "" }
+                    ] as TimelineEntry[]
+                ).map((entry, idx) => {
+                  const isCompleted = entry.status === "COMPLETED";
+                  const isInProgress = entry.status === "IN_PROGRESS";
+                  const isRejected = entry.status === "REJECTED";
+                  const isReturned = entry.status === "RETURNED";
+
+                  return (
+                    <div key={idx} className={`p-2.5 rounded-xs border flex flex-col gap-1 ${
+                      isCompleted ? "bg-emerald-50 border-emerald-200 text-emerald-900"
+                      : isInProgress ? "bg-amber-50 border-amber-200 text-amber-900"
+                      : isRejected ? "bg-red-50 border-red-200 text-red-900"
+                      : isReturned ? "bg-orange-50 border-orange-200 text-orange-900"
+                      : "bg-white border-slate-200 text-slate-500"
+                    }`}>
+                      <div className="flex items-center justify-between">
+                        <span className="flex items-center space-x-2 font-bold">
+                          {isInProgress && <span className="w-2 h-2 rounded-full bg-amber-500 animate-ping flex-shrink-0" />}
+                          <span>{idx + 1}. {entry.stage}</span>
+                        </span>
+                        <span className={`text-[9px] font-extrabold px-2 py-0.5 rounded whitespace-nowrap ${
+                          isCompleted ? "bg-emerald-700 text-white"
+                          : isInProgress ? "bg-amber-600 text-white"
+                          : isRejected ? "bg-red-700 text-white"
+                          : isReturned ? "bg-orange-600 text-white"
+                          : "bg-slate-200 text-slate-600"
+                        }`}>
+                          {entry.status}
+                        </span>
+                      </div>
+                      {(entry.date || entry.officerName || entry.remarks) && (
+                        <div className="text-[10px] text-current opacity-75 pl-4 space-y-0.5">
+                          {entry.date && <span className="block">📅 {entry.date} {entry.time}</span>}
+                          {entry.officerName && <span className="block">👤 {entry.officerName}</span>}
+                          {entry.remarks && <span className="block">💬 {entry.remarks}</span>}
+                        </div>
+                      )}
+                    </div>
+                  );
+                })}
+              </div>
             </div>
-          </div>
 
-          {/* 7-STAGE APPROVAL TIMELINE PIPELINE */}
-          <div className="space-y-3 bg-slate-50 border border-[#D9E4F4] p-4 rounded-xs">
-            <span className="text-xs font-extrabold text-[#123B7A] uppercase tracking-wider block">
-              7-STAGE MULTI-DEPARTMENTAL APPROVAL TIMELINE PIPELINE
-            </span>
-
-            <div className="space-y-2 text-xs font-mono">
-              
-              {/* Stage 1 */}
-              <div className="flex items-center justify-between p-2 bg-emerald-50 border border-emerald-200 text-emerald-900 font-bold rounded-xs">
-                <span>1. Citizen Application Form Submission</span>
-                <span className="bg-emerald-700 text-white text-[10px] px-2 py-0.5 rounded">COMPLETED ({activeApp.submittedAt})</span>
+            {/* 8-Department NOC Status Summary */}
+            <div className="space-y-2 bg-slate-50 border border-[#D9E4F4] p-4 rounded-xs">
+              <span className="text-xs font-extrabold text-[#123B7A] uppercase tracking-wider block">DEPARTMENT NOC STATUS SUMMARY</span>
+              <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 text-[10px] font-mono">
+                {[
+                  { label: "🔥 Fire (CFO)", val: activeApp.cfoFireStatus },
+                  { label: "👮 Police", val: activeApp.policeStatus },
+                  { label: "🚥 Traffic", val: activeApp.trafficStatus },
+                  { label: "🏗️ PWD", val: activeApp.pwdStatus },
+                  { label: "🏥 Health", val: activeApp.healthStatus },
+                  { label: "⚡ Electricity", val: activeApp.electricityStatus },
+                  { label: "🏛️ Ward Office", val: activeApp.wardStatus },
+                  { label: "⭐ Commissioner", val: activeApp.commissionerSanction ? "APPROVED" : "PENDING" },
+                ].map((d, i) => (
+                  <div key={i} className={`p-2 border rounded-xs text-center ${
+                    d.val === "APPROVED" ? "bg-emerald-50 border-emerald-300 text-emerald-800"
+                    : d.val === "REJECTED" ? "bg-red-50 border-red-300 text-red-800"
+                    : d.val === "UNDER_REVIEW" ? "bg-blue-50 border-blue-300 text-blue-800"
+                    : "bg-white border-slate-200 text-slate-500"
+                  }`}>
+                    <div className="font-bold">{d.label}</div>
+                    <div className="font-extrabold uppercase">{d.val || "PENDING"}</div>
+                  </div>
+                ))}
               </div>
-
-              {/* Stage 2 */}
-              <div className={`flex items-center justify-between p-2 rounded-xs border font-bold ${
-                activeApp.status === "APPROVED" ? "bg-emerald-50 border-emerald-200 text-emerald-900" : "bg-amber-50 border-amber-200 text-amber-900"
-              }`}>
-                <span className="flex items-center space-x-2">
-                  {activeApp.status !== "APPROVED" && <span className="w-2 h-2 rounded-full bg-amber-600 animate-ping" />}
-                  <span>2. Desk Scrutiny & CAD Layout Plan Audit</span>
-                </span>
-                <span className={`text-[10px] px-2 py-0.5 rounded ${
-                  activeApp.status === "APPROVED" ? "bg-emerald-700 text-white" : "bg-amber-600 text-white"
-                }`}>
-                  {activeApp.status === "APPROVED" ? "VERIFIED" : "IN PROGRESS"}
-                </span>
-              </div>
-
-              {/* Stage 3 */}
-              <div className={`flex items-center justify-between p-2 rounded-xs border font-bold ${
-                activeApp.cfoFireStatus === "APPROVED" ? "bg-emerald-50 border-emerald-200 text-emerald-900" : "bg-white border-slate-200 text-slate-600"
-              }`}>
-                <span>3. Chief Fire Officer (CFO) Fire Safety NOC</span>
-                <span className={`text-[10px] px-2 py-0.5 rounded ${
-                  activeApp.cfoFireStatus === "APPROVED" ? "bg-emerald-700 text-white" : "bg-slate-200 text-slate-700"
-                }`}>
-                  {activeApp.cfoFireStatus === "APPROVED" ? "SANCTIONED (CFO/2026/88)" : "PENDING AUDIT"}
-                </span>
-              </div>
-
-              {/* Stage 4 */}
-              <div className={`flex items-center justify-between p-2 rounded-xs border font-bold ${
-                activeApp.policeStatus === "APPROVED" ? "bg-emerald-50 border-emerald-200 text-emerald-900" : "bg-white border-slate-200 text-slate-600"
-              }`}>
-                <span>4. MBVV Police Law & Order Clearance</span>
-                <span className={`text-[10px] px-2 py-0.5 rounded ${
-                  activeApp.policeStatus === "APPROVED" ? "bg-emerald-700 text-white" : "bg-slate-200 text-slate-700"
-                }`}>
-                  {activeApp.policeStatus === "APPROVED" ? "SANCTIONED (MBVV/POL/41)" : "PENDING AUDIT"}
-                </span>
-              </div>
-
-              {/* Stage 5 */}
-              <div className={`flex items-center justify-between p-2 rounded-xs border font-bold ${
-                activeApp.trafficStatus === "APPROVED" ? "bg-emerald-50 border-emerald-200 text-emerald-900" : "bg-white border-slate-200 text-slate-600"
-              }`}>
-                <span>5. MBVV Traffic Route Diversion Audit</span>
-                <span className={`text-[10px] px-2 py-0.5 rounded ${
-                  activeApp.trafficStatus === "APPROVED" ? "bg-emerald-700 text-white" : "bg-slate-200 text-slate-700"
-                }`}>
-                  {activeApp.trafficStatus === "APPROVED" ? "SANCTIONED (TFR/2026/19)" : "PENDING AUDIT"}
-                </span>
-              </div>
-
-              {/* Stage 6 */}
-              <div className={`flex items-center justify-between p-2 rounded-xs border font-bold ${
-                activeApp.wardStatus === "APPROVED" ? "bg-emerald-50 border-emerald-200 text-emerald-900" : "bg-white border-slate-200 text-slate-600"
-              }`}>
-                <span>6. MBMC Ward Officer Field Recommendation</span>
-                <span className={`text-[10px] px-2 py-0.5 rounded ${
-                  activeApp.wardStatus === "APPROVED" ? "bg-emerald-700 text-white" : "bg-slate-200 text-slate-700"
-                }`}>
-                  {activeApp.wardStatus === "APPROVED" ? "RECOMMENDED (WARD/2026/04)" : "PENDING RECOMMENDATION"}
-                </span>
-              </div>
-
-              {/* Stage 7 */}
-              <div className={`flex items-center justify-between p-2 rounded-xs border font-bold ${
-                activeApp.commissionerSanction ? "bg-emerald-50 border-emerald-400 text-emerald-950 font-extrabold" : "bg-white border-slate-200 text-slate-600"
-              }`}>
-                <span>7. Municipal Commissioner Final Sanction & QR Pass Generation</span>
-                <span className={`text-[10px] px-2 py-0.5 rounded ${
-                  activeApp.commissionerSanction ? "bg-emerald-700 text-white" : "bg-slate-200 text-slate-700"
-                }`}>
-                  {activeApp.commissionerSanction ? "SANCTIONED & GENERATED" : "PENDING SANCTION"}
-                </span>
-              </div>
-
             </div>
-          </div>
 
-          {/* Quick Simulation Link for Testing */}
-          <div className="bg-blue-50 border border-blue-200 p-3 rounded-xs text-xs flex items-center justify-between">
-            <span className="text-[#123B7A] font-medium">
-              Want to simulate Officer Approval for this file? Use the Officer Admin Portal.
-            </span>
-            <Link
-              href={`/department?ref=${encodeURIComponent(activeApp.id)}`}
-              className="bg-[#123B7A] hover:bg-[#1E4F91] text-white font-bold px-3 py-1.5 rounded-xs transition flex items-center space-x-1"
-            >
-              <span>Go to Officer Portal</span>
-              <ExternalLink className="w-3.5 h-3.5" />
-            </Link>
-          </div>
+            {/* Officer Portal Link */}
+            <div className="bg-blue-50 border border-blue-200 p-3 rounded-xs text-xs flex items-center justify-between">
+              <span className="text-[#123B7A] font-medium">
+                Want to simulate Officer Approval for this file? Use the Officer Admin Portal.
+              </span>
+              <Link
+                href="/officer/login"
+                className="bg-[#123B7A] hover:bg-[#1E4F91] text-white font-bold px-3 py-1.5 rounded-xs transition flex items-center space-x-1"
+              >
+                <span>Go to Officer Portal</span>
+                <ExternalLink className="w-3.5 h-3.5" />
+              </Link>
+            </div>
 
-        </div>
+          </div>
         )}
 
 

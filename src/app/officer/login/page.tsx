@@ -92,6 +92,9 @@ export default function OfficerLoginPage() {
                 <option value="CFO_FIRE">🔥 Chief Fire Officer (CFO) Services</option>
                 <option value="POLICE">👮 MBVV Police Commissionerate</option>
                 <option value="TRAFFIC">🚥 MBVV Traffic Control Branch</option>
+                <option value="PWD">🏗️ Public Works Department (PWD)</option>
+                <option value="HEALTH">🏥 Health &amp; Sanitation Department</option>
+                <option value="ELECTRICITY">⚡ Electricity &amp; Infrastructure Department</option>
                 <option value="WARD">🏛️ MBMC Ward Office Jurisdiction</option>
                 <option value="COMMISSIONER">⭐ Municipal Commissioner (Competent Sanction)</option>
               </select>

@@ -59,17 +59,17 @@ export default function GovPreloader() {
         <img
           src="/images/sher.png"
           alt="Emblem of India"
-          style={{ width: "36px", height: "56px", objectFit: "contain", opacity: 0.88 }}
+          style={{ width: "52px", height: "80px", objectFit: "contain", opacity: 0.88 }}
         />
 
         {/* Vertical Divider */}
-        <div style={{ width: "1px", height: "64px", backgroundColor: "#D0D9E8" }} />
+        <div style={{ width: "1px", height: "90px", backgroundColor: "#D0D9E8" }} />
 
         {/* MBMC Logo */}
         <img
           src="/images/mbmc_updated logo.jpg"
           alt="MBMC Logo"
-          style={{ width: "72px", height: "72px", objectFit: "contain" }}
+          style={{ width: "110px", height: "110px", objectFit: "contain" }}
         />
 
         {/* Vertical Divider */}

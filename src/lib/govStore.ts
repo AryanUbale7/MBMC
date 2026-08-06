@@ -1,4 +1,5 @@
 // MBMC UECP Government e-Governance Persistence Engine (localStorage)
+// Final Refinement Phase — All 8 Departments + Timeline + Document Upload
 
 export interface CitizenUser {
   id: string;
@@ -15,8 +16,29 @@ export interface OfficerUser {
   empId: string;
   officerName: string;
   designation: string;
-  departmentCode: "CFO_FIRE" | "POLICE" | "TRAFFIC" | "WARD" | "COMMISSIONER";
+  departmentCode: "CFO_FIRE" | "POLICE" | "TRAFFIC" | "PWD" | "HEALTH" | "ELECTRICITY" | "WARD" | "COMMISSIONER";
   departmentName: string;
+}
+
+export type DeptStatus = "PENDING" | "UNDER_REVIEW" | "APPROVED" | "REJECTED" | "RETURNED";
+
+export interface UploadedDoc {
+  key: string;          // e.g. "aadhaar"
+  label: string;        // e.g. "Aadhaar Card"
+  fileName: string;     // actual file name
+  fileSize: string;     // e.g. "245 KB"
+  uploadedAt: string;
+  dataUrl?: string;     // base64 data URL for preview/download
+}
+
+export interface TimelineEntry {
+  stage: string;
+  status: "PENDING" | "IN_PROGRESS" | "COMPLETED" | "REJECTED" | "RETURNED";
+  date: string;
+  time: string;
+  officerName?: string;
+  department?: string;
+  remarks?: string;
 }
 
 export interface ApplicationRecord {
@@ -47,19 +69,30 @@ export interface ApplicationRecord {
   paymentStatus: "PAID" | "PENDING";
   status: "PENDING_SCRUTINY" | "UNDER_VERIFICATION" | "APPROVED" | "REJECTED" | "CORRECTION_REQUIRED";
   submittedAt: string;
-  
-  // Department Sign-off Matrix
-  cfoFireStatus: "PENDING" | "APPROVED" | "REJECTED";
-  policeStatus: "PENDING" | "APPROVED" | "REJECTED";
-  trafficStatus: "PENDING" | "APPROVED" | "REJECTED";
-  wardStatus: "PENDING" | "APPROVED" | "REJECTED";
+
+  // Full 8-Department Sign-off Matrix
+  cfoFireStatus: DeptStatus;
+  policeStatus: DeptStatus;
+  trafficStatus: DeptStatus;
+  pwdStatus: DeptStatus;
+  healthStatus: DeptStatus;
+  electricityStatus: DeptStatus;
+  wardStatus: DeptStatus;
   commissionerSanction: boolean;
-  
+
+  // Uploaded Documents
+  uploadedDocs: UploadedDoc[];
+
+  // Government Approval Timeline
+  timeline: TimelineEntry[];
+
   officerRemarks?: string;
   correctionNote?: string;
   approvedAt?: string;
   approvedBy?: string;
   certificateNo?: string;
+  commissionerName?: string;
+  commissionerDesignation?: string;
 }
 
 export interface CitizenNotification {
@@ -81,7 +114,6 @@ const STORAGE_KEYS = {
   NOTIFICATIONS: "mbmc_notifications_db"
 };
 
-// Check if running in browser
 const isClient = typeof window !== "undefined";
 
 // ----------------------------------------------------
@@ -105,11 +137,11 @@ export function setCitizenSession(user: CitizenUser | null) {
 export function registerCitizen(data: Omit<CitizenUser, "id" | "registeredAt">): CitizenUser {
   if (!isClient) throw new Error("Client execution required");
   const existingUsers: CitizenUser[] = JSON.parse(localStorage.getItem(STORAGE_KEYS.REGISTERED_CITIZENS) || "[]");
-  
+
   const newUser: CitizenUser = {
     ...data,
     id: `CIT-${Math.floor(10000 + Math.random() * 90000)}`,
-    registeredAt: new Date().toLocaleDateString('en-IN')
+    registeredAt: new Date().toLocaleDateString("en-IN")
   };
 
   existingUsers.push(newUser);
@@ -121,12 +153,11 @@ export function registerCitizen(data: Omit<CitizenUser, "id" | "registeredAt">):
 export function loginCitizen(mobileOrEmail: string): CitizenUser | null {
   if (!isClient) return null;
   const existingUsers: CitizenUser[] = JSON.parse(localStorage.getItem(STORAGE_KEYS.REGISTERED_CITIZENS) || "[]");
-  
+
   let user = existingUsers.find(
     (u) => u.email.toLowerCase() === mobileOrEmail.toLowerCase() || u.mobile === mobileOrEmail
   );
 
-  // If not registered yet, auto-create account for smooth prototype testing
   if (!user && mobileOrEmail.trim()) {
     user = registerCitizen({
       fullName: "Registered Citizen",
@@ -164,6 +195,9 @@ export function loginOfficer(deptCode: OfficerUser["departmentCode"], empId: str
     CFO_FIRE: "Chief Fire Officer (CFO) Services",
     POLICE: "MBVV Police Commissionerate",
     TRAFFIC: "MBVV Traffic Control Branch",
+    PWD: "Public Works Department (PWD)",
+    HEALTH: "Health & Sanitation Department",
+    ELECTRICITY: "Electricity & Infrastructure Department",
     WARD: "MBMC Ward Office Jurisdiction",
     COMMISSIONER: "Municipal Commissionerate, MBMC"
   };
@@ -172,12 +206,15 @@ export function loginOfficer(deptCode: OfficerUser["departmentCode"], empId: str
     CFO_FIRE: "Chief Fire Officer",
     POLICE: "Deputy Commissioner of Police",
     TRAFFIC: "Assistant Commissioner of Police (Traffic)",
+    PWD: "Executive Engineer (PWD)",
+    HEALTH: "Medical Officer of Health",
+    ELECTRICITY: "Executive Engineer (Electrical)",
     WARD: "Ward Executive Officer",
     COMMISSIONER: "Municipal Commissioner & Competent Authority"
   };
 
   const officer: OfficerUser = {
-    id: `OFF-${empId || '8810'}`,
+    id: `OFF-${empId || "8810"}`,
     empId: empId || "MBMC-OFF-8810",
     officerName: `Authorized ${designations[deptCode]}`,
     designation: designations[deptCode],
@@ -188,6 +225,40 @@ export function loginOfficer(deptCode: OfficerUser["departmentCode"], empId: str
   setOfficerSession(officer);
   return officer;
 }
+
+// ----------------------------------------------------
+// TIMELINE HELPER
+// ----------------------------------------------------
+function buildInitialTimeline(): TimelineEntry[] {
+  const now = new Date();
+  const dateStr = now.toLocaleDateString("en-IN");
+  const timeStr = now.toLocaleTimeString("en-IN");
+  return [
+    { stage: "Application Submitted", status: "COMPLETED", date: dateStr, time: timeStr, remarks: "Application logged into Single-Window Clearance System." },
+    { stage: "Pending Scrutiny (Desk Audit)", status: "IN_PROGRESS", date: dateStr, time: timeStr, remarks: "Application under initial desk scrutiny." },
+    { stage: "Fire Department Review", status: "PENDING", date: "", time: "", remarks: "" },
+    { stage: "Police Department Review", status: "PENDING", date: "", time: "", remarks: "" },
+    { stage: "Traffic Department Review", status: "PENDING", date: "", time: "", remarks: "" },
+    { stage: "Public Works Department (PWD) Review", status: "PENDING", date: "", time: "", remarks: "" },
+    { stage: "Health & Sanitation Review", status: "PENDING", date: "", time: "", remarks: "" },
+    { stage: "Electricity Department Review", status: "PENDING", date: "", time: "", remarks: "" },
+    { stage: "Ward Officer Approval", status: "PENDING", date: "", time: "", remarks: "" },
+    { stage: "Commissioner Sanction", status: "PENDING", date: "", time: "", remarks: "" },
+    { stage: "Permission Certificate Issued", status: "PENDING", date: "", time: "", remarks: "" }
+  ];
+}
+
+// Map department code to timeline stage index
+const DEPT_TIMELINE_INDEX: Record<string, number> = {
+  CFO_FIRE: 2,
+  POLICE: 3,
+  TRAFFIC: 4,
+  PWD: 5,
+  HEALTH: 6,
+  ELECTRICITY: 7,
+  WARD: 8,
+  COMMISSIONER: 9
+};
 
 // ----------------------------------------------------
 // APPLICATIONS DB STORE
@@ -210,35 +281,96 @@ export function saveApplication(app: ApplicationRecord) {
   localStorage.setItem(STORAGE_KEYS.APPLICATIONS, JSON.stringify(list));
 }
 
+export function createNewApplication(data: Omit<ApplicationRecord, "uploadedDocs" | "timeline">): ApplicationRecord {
+  const app: ApplicationRecord = {
+    ...data,
+    uploadedDocs: [],
+    timeline: buildInitialTimeline()
+  };
+  saveApplication(app);
+  return app;
+}
+
 export function updateApplicationStatus(
   appId: string,
   updates: Partial<ApplicationRecord>,
-  officerName: string
+  officerName: string,
+  deptCode?: string
 ): ApplicationRecord | null {
   if (!isClient) return null;
   const list = getApplications();
   const app = list.find((a) => a.id === appId);
   if (!app) return null;
 
+  const now = new Date();
+  const dateStr = now.toLocaleDateString("en-IN");
+  const timeStr = now.toLocaleTimeString("en-IN");
+
   const updatedApp: ApplicationRecord = {
     ...app,
     ...updates,
-    officerRemarks: updates.officerRemarks || `Action recorded by ${officerName} at ${new Date().toLocaleTimeString('en-IN')}`
+    officerRemarks: updates.officerRemarks || `Action recorded by ${officerName} at ${timeStr}`
   };
 
-  // Check if fully approved by all departments & commissioner
-  const allDepts = updatedApp.cfoFireStatus === "APPROVED" &&
-                   updatedApp.policeStatus === "APPROVED" &&
-                   updatedApp.trafficStatus === "APPROVED" &&
-                   updatedApp.wardStatus === "APPROVED";
-  
+  // Update timeline for the relevant department stage
+  if (deptCode && DEPT_TIMELINE_INDEX[deptCode] !== undefined) {
+    const stageIdx = DEPT_TIMELINE_INDEX[deptCode];
+    const timeline = [...(updatedApp.timeline || buildInitialTimeline())];
+
+    const newStatus =
+      updates.status === "REJECTED" ? "REJECTED"
+      : updates.status === "CORRECTION_REQUIRED" ? "RETURNED"
+      : "COMPLETED";
+
+    timeline[stageIdx] = {
+      ...timeline[stageIdx],
+      status: newStatus,
+      date: dateStr,
+      time: timeStr,
+      officerName,
+      remarks: updates.officerRemarks || `Reviewed by ${officerName}`
+    };
+
+    // Set next stage to IN_PROGRESS if current is COMPLETED
+    if (newStatus === "COMPLETED" && stageIdx + 1 < timeline.length) {
+      timeline[stageIdx + 1] = {
+        ...timeline[stageIdx + 1],
+        status: "IN_PROGRESS",
+        date: dateStr,
+        time: timeStr
+      };
+    }
+
+    updatedApp.timeline = timeline;
+  }
+
+  // Check if fully approved by all 8 departments + commissioner
+  const allDepts =
+    updatedApp.cfoFireStatus === "APPROVED" &&
+    updatedApp.policeStatus === "APPROVED" &&
+    updatedApp.trafficStatus === "APPROVED" &&
+    updatedApp.pwdStatus === "APPROVED" &&
+    updatedApp.healthStatus === "APPROVED" &&
+    updatedApp.electricityStatus === "APPROVED" &&
+    updatedApp.wardStatus === "APPROVED";
+
   if (allDepts && updatedApp.commissionerSanction) {
     updatedApp.status = "APPROVED";
-    updatedApp.approvedAt = new Date().toLocaleDateString('en-IN') + ' ' + new Date().toLocaleTimeString('en-IN');
+    updatedApp.approvedAt = dateStr + " " + timeStr;
     updatedApp.approvedBy = "Municipal Commissioner & Competent Authority, MBMC";
     updatedApp.certificateNo = `CERT-MBMC-2026-${Math.floor(100000 + Math.random() * 900000)}`;
 
-    // Create Notification
+    // Finalize certificate stage in timeline
+    const timeline = [...(updatedApp.timeline || buildInitialTimeline())];
+    timeline[10] = {
+      ...timeline[10],
+      status: "COMPLETED",
+      date: dateStr,
+      time: timeStr,
+      remarks: `Certificate No: ${updatedApp.certificateNo} issued.`
+    };
+    updatedApp.timeline = timeline;
+
     addNotification({
       citizenId: updatedApp.citizenId,
       applicationId: updatedApp.id,
@@ -287,7 +419,7 @@ export function addNotification(noti: Omit<CitizenNotification, "id" | "timestam
   const newNoti: CitizenNotification = {
     ...noti,
     id: `NOTI-${Math.floor(10000 + Math.random() * 90000)}`,
-    timestamp: new Date().toLocaleDateString('en-IN') + ' ' + new Date().toLocaleTimeString('en-IN'),
+    timestamp: new Date().toLocaleDateString("en-IN") + " " + new Date().toLocaleTimeString("en-IN"),
     read: false
   };
   list.unshift(newNoti);
