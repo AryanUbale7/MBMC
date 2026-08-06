@@ -559,7 +559,7 @@ export default function HomePage() {
             <img
               src="/images/mbmc_updated logo.jpg"
               alt="MBMC Watermark"
-              className="w-[650px] h-[650px] object-contain"
+              className="max-w-full max-h-full w-[650px] h-[650px] object-contain"
               loading="lazy"
               width="650"
               height="650"
@@ -996,7 +996,7 @@ export default function HomePage() {
           
           {/* Subtle Emergency Shield Watermark (3% Opacity) */}
           <div className="absolute inset-0 pointer-events-none flex items-center justify-center opacity-[0.03] z-0 overflow-hidden">
-            <ShieldAlert className="w-[450px] h-[450px] text-red-600" />
+            <ShieldAlert className="max-w-full max-h-full w-[450px] h-[450px] text-red-600" />
           </div>
 
           {/* Section Header */}

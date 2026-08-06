@@ -21,7 +21,8 @@ import {
   HelpCircle,
   X,
   Lock,
-  Key
+  Key,
+  Menu
 } from "lucide-react";
 
 export default function GovHeader() {
@@ -33,6 +34,7 @@ export default function GovHeader() {
   const [topSearch, setTopSearch] = useState("");
   const [showCitizenModal, setShowCitizenModal] = useState(false);
   const [showOfficerModal, setShowOfficerModal] = useState(false);
+  const [isMobileNavOpen, setIsMobileNavOpen] = useState(false);
 
   const handleTopSearch = (e: React.FormEvent) => {
     e.preventDefault();
@@ -47,46 +49,46 @@ export default function GovHeader() {
       {/* -------------------------------------------------
           SECTION 1: UTILITY HEADER
       ------------------------------------------------- */}
-      <div className="bg-[#E89B00] text-gov-footer text-xs py-1.5 px-4 sm:px-8 border-b border-amber-600 font-bold shadow-xs">
-        <div className="w-full flex flex-wrap items-center justify-between gap-3 px-2 sm:px-6">
+      <div className="bg-[#E89B00] text-gov-footer text-xs py-1.5 px-3 sm:px-6 border-b border-amber-600 font-bold shadow-xs w-full overflow-hidden">
+        <div className="max-w-[1440px] mx-auto flex flex-col md:flex-row items-center justify-between gap-2">
           
           {/* Left: Government Emblem & Authority */}
-          <div className="flex items-center space-x-3">
-            <div className="relative w-4 h-6 flex-shrink-0">
+          <div className="flex items-center space-x-2 text-[11px] sm:text-xs text-center md:text-left flex-wrap justify-center md:justify-start">
+            <div className="relative w-3.5 h-5 flex-shrink-0">
               <img
                 src="/images/sher.png"
                 alt="Emblem of India"
                 className="w-full h-full object-contain filter drop-shadow-xs"
-                width="16"
-                height="24"
+                width="14"
+                height="20"
               />
             </div>
-            <div className="flex items-center space-x-2 font-extrabold tracking-wide text-gov-footer">
-              <span>{t("Government of Maharashtra", "महाराष्ट्र शासन")}</span>
+            <div className="flex items-center space-x-1.5 font-extrabold tracking-wide text-gov-footer">
+              <span>{t("Govt of Maharashtra", "महाराष्ट्र शासन")}</span>
               <span className="text-amber-900">|</span>
               <span className="text-amber-950 font-black">{t("Mira Bhayandar Municipal Corporation", "मीरा भाईंदर महानगरपालिका")}</span>
             </div>
           </div>
 
-          {/* Center/Right: Helpline, Search, Accessibility & Language */}
-          <div className="flex items-center flex-wrap gap-3 sm:gap-4">
+          {/* Right: Helpline, Search, Accessibility & Language */}
+          <div className="flex items-center flex-wrap justify-center md:justify-end gap-2 text-[11px]">
             
             {/* Helpline */}
-            <div className="hidden md:flex items-center space-x-1 bg-amber-900/20 px-2.5 py-0.5 rounded border border-amber-700/40 text-[11px] text-gov-footer font-extrabold">
+            <div className="hidden sm:flex items-center space-x-1 bg-amber-900/20 px-2 py-0.5 rounded border border-amber-700/40 text-gov-footer font-extrabold">
               <PhoneCall className="w-3 h-3 text-gov-footer" />
-              <span>{t("Toll-Free Helpline: 1800-22-3424", "टोल-फ्री हेल्पलाइन: १८००-२२-३४२४")}</span>
+              <span>{t("Helpline: 1800-22-3424", "हेल्पलाइन: १८००-२२-३४२४")}</span>
             </div>
 
             {/* Quick Header Search */}
-            <form onSubmit={handleTopSearch} className="relative hidden lg:flex items-center">
+            <form onSubmit={handleTopSearch} className="relative hidden md:flex items-center">
               <input
                 type="text"
                 value={topSearch}
                 onChange={(e) => setTopSearch(e.target.value)}
-                placeholder={t("Search Ref / Portal...", "अर्जाचा क्रमांक शोधा...")}
-                className="bg-white/90 text-gov-footer placeholder-amber-900/70 text-[11px] rounded pl-2.5 pr-7 py-0.5 outline-none border border-amber-700/40 focus:ring-1 focus:ring-gov-footer w-48 font-bold"
+                placeholder={t("Search Ref...", "अर्जाचा क्र...")}
+                className="bg-white/90 text-gov-footer placeholder-amber-900/70 text-[11px] rounded pl-2 pr-6 py-0.5 outline-none border border-amber-700/40 w-28 lg:w-36 font-bold"
               />
-              <button type="submit" className="absolute right-1.5 text-gov-footer hover:text-black">
+              <button type="submit" className="absolute right-1 text-gov-footer hover:text-black">
                 <Search className="w-3 h-3" />
               </button>
             </form>
@@ -94,7 +96,7 @@ export default function GovHeader() {
             {/* High Contrast Toggle */}
             <button
               onClick={() => setHighContrast(!highContrast)}
-              className={`flex items-center space-x-1 px-2 py-0.5 rounded text-[11px] font-extrabold transition border ${
+              className={`flex items-center space-x-1 px-1.5 py-0.5 rounded text-[11px] font-extrabold transition border ${
                 highContrast
                   ? "bg-black text-white border-black"
                   : "bg-amber-900/20 hover:bg-amber-900/30 text-gov-footer border-amber-700/40"
@@ -105,7 +107,7 @@ export default function GovHeader() {
             </button>
 
             {/* Font Size Adjusters */}
-            <div className="flex items-center space-x-1 bg-amber-900/20 px-1.5 py-0.5 rounded border border-amber-700/40">
+            <div className="flex items-center space-x-0.5 bg-amber-900/20 px-1 py-0.5 rounded border border-amber-700/40">
               <span className="text-[10px] text-gov-footer mr-0.5 font-bold">{t("Font:", "फॉन्ट:")}</span>
               <button
                 onClick={() => setFontSize("sm")}
@@ -128,13 +130,13 @@ export default function GovHeader() {
             </div>
 
             {/* Language Switcher */}
-            <div className="flex items-center space-x-1 bg-amber-900/20 px-2 py-0.5 rounded border border-amber-700/40 text-xs font-bold">
+            <div className="flex items-center space-x-1 bg-amber-900/20 px-1.5 py-0.5 rounded border border-amber-700/40 text-xs font-bold">
               <Globe className="w-3 h-3 text-gov-footer" />
               <button
                 onClick={() => setLanguage("EN")}
                 className={`px-1 text-xs font-extrabold ${language === "EN" ? "text-gov-footer underline" : "text-amber-950 hover:text-black"}`}
               >
-                English
+                EN
               </button>
               <span className="text-amber-800">/</span>
               <button
@@ -146,7 +148,7 @@ export default function GovHeader() {
             </div>
 
             {/* Academic Prototype Badge */}
-            <span className="hidden xl:inline-block px-2 py-0.5 bg-gov-footer text-white rounded text-[10px] font-black uppercase tracking-wider">
+            <span className="hidden xl:inline-block px-1.5 py-0.5 bg-gov-footer text-white rounded text-[10px] font-black uppercase tracking-wider">
               {t("Academic Prototype", "शैक्षणिक नमुना")}
             </span>
           </div>
@@ -157,40 +159,38 @@ export default function GovHeader() {
       {/* -------------------------------------------------
           SECTION 2: MAIN HEADER
       ------------------------------------------------- */}
-      <div className="bg-white py-5 px-4 sm:px-8 border-b border-gov-border">
-        <div className="w-full flex flex-col md:flex-row items-center justify-between gap-4 px-2 sm:px-6">
+      <div className="bg-white py-3 sm:py-4 px-4 sm:px-8 border-b border-gov-border w-full overflow-hidden">
+        <div className="max-w-[1440px] mx-auto flex flex-col xl:flex-row items-center justify-between gap-4">
           
           {/* MBMC Logo & Portal Title */}
-          <div className="flex items-center space-x-4">
-            <div className="relative w-24 h-24 sm:w-32 sm:h-32 flex-shrink-0">
-              <img
-                src="/images/mbmc_updated logo.jpg"
-                alt="MBMC Official Logo"
-                className="w-full h-full object-contain"
-                width="128"
-                height="128"
-              />
-            </div>
-            <div>
-              <div className="flex items-center space-x-2">
+          <div className="flex items-center space-x-3 sm:space-x-4 w-full xl:w-auto text-left">
+            <img
+              src="/images/mbmc_updated logo.jpg"
+              alt="MBMC Official Logo"
+              className="w-16 h-16 sm:w-20 sm:h-20 lg:w-24 lg:h-24 object-contain flex-shrink-0"
+              width="96"
+              height="96"
+            />
+            <div className="min-w-0 flex-1">
+              <div className="flex items-center space-x-2 flex-wrap gap-y-1">
                 <span className="px-2 py-0.5 text-[10px] font-extrabold uppercase tracking-wider bg-gov-primary text-white rounded">
                   {t("MBMC e-Governance", "एमबीएमसी ई-गव्हर्नन्स")}
                 </span>
-                <span className="text-xs text-gov-muted font-medium">
+                <span className="text-[11px] sm:text-xs text-gov-muted font-medium">
                   {t("Unified Single-Window Clearance Portal", "एककृत एकल खिडकी परवानगी पोर्टल")}
                 </span>
               </div>
-              <h1 className="text-xl sm:text-2xl md:text-3xl font-black text-black tracking-tight leading-tight mt-0.5">
+              <h1 className="text-base sm:text-xl lg:text-2xl font-black text-black tracking-tight leading-tight mt-0.5 break-words">
                 {t("Urban Event Permission & Coordination Platform (UECP)", "नागरी कार्यक्रम परवानगी व समन्वय प्रणाली (यूईसीपी)")}
               </h1>
-              <p className="text-xs sm:text-sm text-gov-muted font-medium mt-0.5">
+              <p className="text-[11px] sm:text-xs text-gov-muted font-medium mt-0.5 hidden sm:block">
                 {t("Department of Urban Governance & Citizen Services • Mira Bhayandar Municipal Corporation", "नगर प्रशासन व नागरी सुविधा विभाग • मीरा भाईंदर महानगरपालिका")}
               </p>
             </div>
           </div>
 
           {/* Right Action Logins & Academic Seals */}
-          <div className="flex items-center space-x-3">
+          <div className="flex flex-wrap items-center justify-center sm:justify-end gap-3 w-full xl:w-auto">
             {/* Citizen Login / Dashboard Button */}
             {citizen ? (
               <Link
@@ -229,31 +229,31 @@ export default function GovHeader() {
               </Link>
             )}
 
-            {/* Divider & Prominent Header Logos (State Emblem, SLRTCE & IT Dept) */}
-            <div className="hidden lg:flex items-center space-x-4 border-l-2 border-gov-border pl-5 ml-2">
+            {/* Seals */}
+            <div className="hidden 2xl:flex items-center space-x-3 border-l-2 border-gov-border pl-4 ml-2">
               <img
                 src="/images/sher.png"
                 alt="Emblem of India"
-                className="h-20 sm:h-26 w-auto object-contain"
+                className="h-16 w-auto object-contain"
                 title="State Emblem of India"
-                width="70"
-                height="104"
+                width="50"
+                height="64"
               />
               <img
                 src="/images/SLRTCElogo.png"
                 alt="SLRTCE Logo"
-                className="h-20 sm:h-26 w-20 sm:w-26 object-contain"
+                className="h-16 w-16 object-contain"
                 title="Shree L. R. Tiwari College of Engineering"
-                width="104"
-                height="104"
+                width="64"
+                height="64"
               />
               <img
                 src="/images/IT.png"
                 alt="IT Department Seal"
-                className="h-20 sm:h-26 w-20 sm:w-26 object-contain"
+                className="h-16 w-16 object-contain"
                 title="Department of Information Technology"
-                width="104"
-                height="104"
+                width="64"
+                height="64"
               />
             </div>
           </div>
@@ -262,83 +262,184 @@ export default function GovHeader() {
       </div>
 
       {/* -------------------------------------------------
-          SECTION 3: NAVIGATION BAR
+          SECTION 3: NAVIGATION BAR WITH MOBILE TOGGLE
       ------------------------------------------------- */}
-      <nav className="bg-gov-navbar text-white shadow-gov-md">
-        <div className="w-full px-2 sm:px-6 flex items-center justify-between overflow-x-auto">
-          <div className="flex items-center space-x-1 sm:space-x-2 py-1">
-            <Link
-              href="/"
-              className={`flex items-center space-x-2 px-3.5 py-2.5 text-xs sm:text-sm font-semibold rounded-md transition-colors whitespace-nowrap ${
-                pathname === "/" ? "bg-[#252BB0] text-gov-accent border-b-2 border-gov-accent font-bold shadow-xs" : "hover:bg-[#343AB8] text-white"
-              }`}
-            >
-              <Building2 className="w-4 h-4" />
-              <span>{t("Home", "मुख्य पृष्ठ")}</span>
-            </Link>
+      <nav className="bg-gov-navbar text-white shadow-gov-md w-full">
+        <div className="max-w-[1440px] mx-auto px-4 sm:px-6">
+          <div className="flex items-center justify-between py-1.5 lg:py-1">
+            
+            {/* Desktop Navigation Items */}
+            <div className="hidden lg:flex items-center space-x-1 xl:space-x-2 py-1 flex-wrap">
+              <Link
+                href="/"
+                className={`flex items-center space-x-2 px-3 py-2 text-xs sm:text-sm font-semibold rounded-md transition-colors ${
+                  pathname === "/" ? "bg-[#252BB0] text-gov-accent border-b-2 border-gov-accent font-bold shadow-xs" : "hover:bg-[#343AB8] text-white"
+                }`}
+              >
+                <Building2 className="w-4 h-4" />
+                <span>{t("Home", "मुख्य पृष्ठ")}</span>
+              </Link>
 
-            <Link
-              href="/apply"
-              className={`flex items-center space-x-2 px-3.5 py-2.5 text-xs sm:text-sm font-semibold rounded-md transition-colors whitespace-nowrap ${
-                pathname === "/apply" ? "bg-[#252BB0] text-gov-accent border-b-2 border-gov-accent font-bold shadow-xs" : "hover:bg-[#343AB8] text-white"
-              }`}
-            >
-              <FileText className="w-4 h-4" />
-              <span>{t("Apply Permission", "परवानगी अर्ज करा")}</span>
-            </Link>
+              <Link
+                href="/apply"
+                className={`flex items-center space-x-2 px-3 py-2 text-xs sm:text-sm font-semibold rounded-md transition-colors ${
+                  pathname === "/apply" ? "bg-[#252BB0] text-gov-accent border-b-2 border-gov-accent font-bold shadow-xs" : "hover:bg-[#343AB8] text-white"
+                }`}
+              >
+                <FileText className="w-4 h-4" />
+                <span>{t("Apply Permission", "परवानगी अर्ज करा")}</span>
+              </Link>
 
-            <Link
-              href="/track"
-              className={`flex items-center space-x-2 px-3.5 py-2.5 text-xs sm:text-sm font-semibold rounded-md transition-colors whitespace-nowrap ${
-                pathname === "/track" ? "bg-[#252BB0] text-gov-accent border-b-2 border-gov-accent font-bold shadow-xs" : "hover:bg-[#343AB8] text-white"
-              }`}
-            >
-              <CheckCircle2 className="w-4 h-4" />
-              <span>{t("Track Application", "अर्जाची स्थिती खेळा")}</span>
-            </Link>
+              <Link
+                href="/track"
+                className={`flex items-center space-x-2 px-3 py-2 text-xs sm:text-sm font-semibold rounded-md transition-colors ${
+                  pathname === "/track" ? "bg-[#252BB0] text-gov-accent border-b-2 border-gov-accent font-bold shadow-xs" : "hover:bg-[#343AB8] text-white"
+                }`}
+              >
+                <CheckCircle2 className="w-4 h-4" />
+                <span>{t("Track Application", "अर्जाची स्थिती खेळा")}</span>
+              </Link>
 
-            <Link
-              href="/officer/login"
-              className={`flex items-center space-x-2 px-3.5 py-2.5 text-xs sm:text-sm font-semibold rounded-md transition-colors whitespace-nowrap ${
-                pathname.startsWith("/officer") ? "bg-[#252BB0] text-gov-accent border-b-2 border-gov-accent font-bold shadow-xs" : "hover:bg-[#343AB8] text-white"
-              }`}
-            >
-              <ShieldCheck className="w-4 h-4 text-gov-accent" />
-              <span>{t("Officer Portal", "अधिकारी दालन")}</span>
-            </Link>
+              <Link
+                href="/officer/login"
+                className={`flex items-center space-x-2 px-3 py-2 text-xs sm:text-sm font-semibold rounded-md transition-colors ${
+                  pathname.startsWith("/officer") ? "bg-[#252BB0] text-gov-accent border-b-2 border-gov-accent font-bold shadow-xs" : "hover:bg-[#343AB8] text-white"
+                }`}
+              >
+                <ShieldCheck className="w-4 h-4 text-gov-accent" />
+                <span>{t("Officer Portal", "अधिकारी दालन")}</span>
+              </Link>
 
-            <Link
-              href="/venues"
-              className={`flex items-center space-x-2 px-3.5 py-2.5 text-xs sm:text-sm font-semibold rounded-md transition-colors whitespace-nowrap ${
-                pathname === "/venues" ? "bg-[#252BB0] text-gov-accent border-b-2 border-gov-accent font-bold shadow-xs" : "hover:bg-[#343AB8] text-white"
-              }`}
-            >
-              <Calendar className="w-4 h-4" />
-              <span>{t("Public Notices", "सार्वजनिक सूचना")}</span>
-            </Link>
+              <Link
+                href="/venues"
+                className={`flex items-center space-x-2 px-3 py-2 text-xs sm:text-sm font-semibold rounded-md transition-colors ${
+                  pathname === "/venues" ? "bg-[#252BB0] text-gov-accent border-b-2 border-gov-accent font-bold shadow-xs" : "hover:bg-[#343AB8] text-white"
+                }`}
+              >
+                <Calendar className="w-4 h-4" />
+                <span>{t("Public Notices", "सार्वजनिक सूचना")}</span>
+              </Link>
 
-            <Link
-              href="/downloads"
-              className={`flex items-center space-x-2 px-3.5 py-2.5 text-xs sm:text-sm font-semibold rounded-md transition-colors whitespace-nowrap ${
-                pathname === "/downloads" ? "bg-[#252BB0] text-gov-accent border-b-2 border-gov-accent font-bold shadow-xs" : "hover:bg-[#343AB8] text-white"
-              }`}
-            >
-              <Download className="w-4 h-4" />
-              <span>{t("Downloads", "फॉर्म्स व डाऊनलोड्स")}</span>
-            </Link>
+              <Link
+                href="/downloads"
+                className={`flex items-center space-x-2 px-3 py-2 text-xs sm:text-sm font-semibold rounded-md transition-colors ${
+                  pathname === "/downloads" ? "bg-[#252BB0] text-gov-accent border-b-2 border-gov-accent font-bold shadow-xs" : "hover:bg-[#343AB8] text-white"
+                }`}
+              >
+                <Download className="w-4 h-4" />
+                <span>{t("Downloads", "फॉर्म्स व डाऊनलोड्स")}</span>
+              </Link>
 
-            <a
-              href="/#emergency-contacts"
-              className="flex items-center space-x-2 px-3.5 py-2.5 text-xs sm:text-sm font-semibold rounded-md transition-colors whitespace-nowrap hover:bg-[#343AB8] text-white"
-            >
-              <PhoneCall className="w-4 h-4 text-gov-accent" />
-              <span>{t("Contact", "संपर्क व आपत्कालीन")}</span>
-            </a>
+              <a
+                href="/#emergency-contacts"
+                className="flex items-center space-x-2 px-3 py-2 text-xs sm:text-sm font-semibold rounded-md transition-colors hover:bg-[#343AB8] text-white"
+              >
+                <PhoneCall className="w-4 h-4 text-gov-accent" />
+                <span>{t("Contact", "संपर्क व आपत्कालीन")}</span>
+              </a>
+            </div>
+
+            <div className="hidden xl:flex items-center space-x-2 text-xs text-blue-200">
+              <span>{t("STQC Certified • WCAG 2.1 AAA", "एसटीक्यूसी प्रमाणित • डब्ल्यूसीएजी २.१ एएए")}</span>
+            </div>
+
+            {/* Mobile Hamburger Toggle */}
+            <div className="flex lg:hidden items-center justify-between w-full py-1">
+              <span className="text-xs font-bold uppercase tracking-wider text-gov-accent flex items-center space-x-1">
+                <Building2 className="w-4 h-4" />
+                <span>MBMC Portal Menu</span>
+              </span>
+              <button
+                onClick={() => setIsMobileNavOpen(!isMobileNavOpen)}
+                className="p-1.5 rounded-md bg-[#252BB0] text-white hover:bg-[#343AB8] focus:outline-none"
+                aria-label="Toggle Navigation Menu"
+              >
+                {isMobileNavOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
+              </button>
+            </div>
+
           </div>
 
-          <div className="hidden xl:flex items-center space-x-2 text-xs text-blue-200">
-            <span>{t("STQC Certified • WCAG 2.1 AAA", "एसटीक्यूसी प्रमाणित • डब्ल्यूसीएजी २.१ एएए")}</span>
-          </div>
+          {/* Mobile Accordion Drawer */}
+          {isMobileNavOpen && (
+            <div className="lg:hidden border-t border-blue-800 py-3 space-y-2 flex flex-col">
+              <Link
+                href="/"
+                onClick={() => setIsMobileNavOpen(false)}
+                className={`flex items-center space-x-2 px-3 py-2 text-xs font-bold rounded-md ${
+                  pathname === "/" ? "bg-[#252BB0] text-gov-accent" : "hover:bg-[#343AB8] text-white"
+                }`}
+              >
+                <Building2 className="w-4 h-4" />
+                <span>{t("Home", "मुख्य पृष्ठ")}</span>
+              </Link>
+
+              <Link
+                href="/apply"
+                onClick={() => setIsMobileNavOpen(false)}
+                className={`flex items-center space-x-2 px-3 py-2 text-xs font-bold rounded-md ${
+                  pathname === "/apply" ? "bg-[#252BB0] text-gov-accent" : "hover:bg-[#343AB8] text-white"
+                }`}
+              >
+                <FileText className="w-4 h-4" />
+                <span>{t("Apply Permission", "परवानगी अर्ज करा")}</span>
+              </Link>
+
+              <Link
+                href="/track"
+                onClick={() => setIsMobileNavOpen(false)}
+                className={`flex items-center space-x-2 px-3 py-2 text-xs font-bold rounded-md ${
+                  pathname === "/track" ? "bg-[#252BB0] text-gov-accent" : "hover:bg-[#343AB8] text-white"
+                }`}
+              >
+                <CheckCircle2 className="w-4 h-4" />
+                <span>{t("Track Application", "अर्जाची स्थिती खेळा")}</span>
+              </Link>
+
+              <Link
+                href="/officer/login"
+                onClick={() => setIsMobileNavOpen(false)}
+                className={`flex items-center space-x-2 px-3 py-2 text-xs font-bold rounded-md ${
+                  pathname.startsWith("/officer") ? "bg-[#252BB0] text-gov-accent" : "hover:bg-[#343AB8] text-white"
+                }`}
+              >
+                <ShieldCheck className="w-4 h-4 text-gov-accent" />
+                <span>{t("Officer Portal", "अधिकारी दालन")}</span>
+              </Link>
+
+              <Link
+                href="/venues"
+                onClick={() => setIsMobileNavOpen(false)}
+                className={`flex items-center space-x-2 px-3 py-2 text-xs font-bold rounded-md ${
+                  pathname === "/venues" ? "bg-[#252BB0] text-gov-accent" : "hover:bg-[#343AB8] text-white"
+                }`}
+              >
+                <Calendar className="w-4 h-4" />
+                <span>{t("Public Notices", "सार्वजनिक सूचना")}</span>
+              </Link>
+
+              <Link
+                href="/downloads"
+                onClick={() => setIsMobileNavOpen(false)}
+                className={`flex items-center space-x-2 px-3 py-2 text-xs font-bold rounded-md ${
+                  pathname === "/downloads" ? "bg-[#252BB0] text-gov-accent" : "hover:bg-[#343AB8] text-white"
+                }`}
+              >
+                <Download className="w-4 h-4" />
+                <span>{t("Downloads", "फॉर्म्स व डाऊनलोड्स")}</span>
+              </Link>
+
+              <a
+                href="/#emergency-contacts"
+                onClick={() => setIsMobileNavOpen(false)}
+                className="flex items-center space-x-2 px-3 py-2 text-xs font-bold rounded-md hover:bg-[#343AB8] text-white"
+              >
+                <PhoneCall className="w-4 h-4 text-gov-accent" />
+                <span>{t("Contact", "संपर्क व आपत्कालीन")}</span>
+              </a>
+            </div>
+          )}
+
         </div>
       </nav>
 
