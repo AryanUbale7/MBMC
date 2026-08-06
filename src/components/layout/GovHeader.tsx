@@ -318,7 +318,7 @@ export default function GovHeader() {
             </Link>
 
             <a
-              href="#emergency-contacts"
+              href="/#emergency-contacts"
               className="flex items-center space-x-2 px-3.5 py-2.5 text-xs sm:text-sm font-semibold rounded-md transition-colors whitespace-nowrap hover:bg-[#343AB8] text-white"
             >
               <PhoneCall className="w-4 h-4 text-gov-accent" />
