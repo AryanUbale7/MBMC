@@ -308,9 +308,9 @@ export default function GovHeader() {
             </Link>
 
             <Link
-              href="/guidelines"
+              href="/downloads"
               className={`flex items-center space-x-2 px-3.5 py-2.5 text-xs sm:text-sm font-semibold rounded-md transition-colors whitespace-nowrap ${
-                pathname === "/guidelines" ? "bg-[#252BB0] text-gov-accent border-b-2 border-gov-accent font-bold shadow-xs" : "hover:bg-[#343AB8] text-white"
+                pathname === "/downloads" ? "bg-[#252BB0] text-gov-accent border-b-2 border-gov-accent font-bold shadow-xs" : "hover:bg-[#343AB8] text-white"
               }`}
             >
               <Download className="w-4 h-4" />
