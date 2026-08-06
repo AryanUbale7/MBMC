@@ -34,61 +34,61 @@ export default function GovFooter() {
             {t("MIRA BHAYANDAR MUNICIPAL CORPORATION • ACADEMIC E-GOVERNANCE PROTOTYPE", "मीरा भाईंदर महानगरपालिका • शैक्षणिक ई-प्रशासकीय नमुना")}
           </span>
 
-          {/* Centered Extra-Large Logos Row */}
-          <div className="flex flex-wrap items-center justify-center gap-6 sm:gap-10 py-2">
+          {/* Centered Extra-Large Logos Row (Uniform Equal Size) */}
+          <div className="flex flex-wrap items-center justify-center gap-6 sm:gap-10 py-4">
             
             {/* Emblem of India */}
-            <div className="flex flex-col items-center space-y-1.5">
-              <div className="bg-white p-1">
+            <div className="flex flex-col items-center space-y-2">
+              <div className="w-24 h-24 sm:w-28 sm:h-28 flex items-center justify-center">
                 <img
                   src="/images/sher.png"
                   alt="State Emblem of India"
-                  className="h-16 sm:h-20 w-auto object-contain"
+                  className="w-full h-full object-contain"
                 />
               </div>
-              <span className="text-[10px] text-gov-primary font-extrabold uppercase tracking-wider">{t("Emblem of India", "भारत राजमुद्रा")}</span>
+              <span className="text-xs text-gov-primary font-extrabold uppercase tracking-wider">{t("Emblem of India", "भारत राजमुद्रा")}</span>
             </div>
 
-            <div className="hidden sm:block h-16 w-px bg-slate-400" />
+            <div className="hidden sm:block h-20 w-px bg-slate-400/80" />
 
             {/* MBMC Official Seal */}
-            <div className="flex flex-col items-center space-y-1.5">
-              <div className="bg-white p-1">
+            <div className="flex flex-col items-center space-y-2">
+              <div className="w-24 h-24 sm:w-28 sm:h-28 flex items-center justify-center">
                 <img
                   src="/images/mbmc_updated logo.jpg"
                   alt="MBMC Official Seal"
-                  className="w-18 h-18 sm:w-22 sm:h-22 object-contain"
+                  className="w-full h-full object-contain"
                 />
               </div>
-              <span className="text-[10px] text-gov-primary font-black uppercase tracking-wider">{t("MBMC Municipal Seal", "मीरा भाईंदर मनपा मुद्रा")}</span>
+              <span className="text-xs text-gov-primary font-black uppercase tracking-wider">{t("MBMC Municipal Seal", "मीरा भाईंदर मनपा मुद्रा")}</span>
             </div>
 
-            <div className="hidden sm:block h-16 w-px bg-slate-400" />
+            <div className="hidden sm:block h-20 w-px bg-slate-400/80" />
 
             {/* SLRTCE College Logo */}
-            <div className="flex flex-col items-center space-y-1.5">
-              <div className="bg-white p-1">
+            <div className="flex flex-col items-center space-y-2">
+              <div className="w-24 h-24 sm:w-28 sm:h-28 flex items-center justify-center">
                 <img
                   src="/images/SLRTCElogo.png"
                   alt="SLRTCE College Logo"
-                  className="w-16 h-16 sm:w-20 sm:h-20 object-contain"
+                  className="w-full h-full object-contain"
                 />
               </div>
-              <span className="text-[10px] text-gov-primary font-extrabold uppercase tracking-wider">SLRTCE Mumbai</span>
+              <span className="text-xs text-gov-primary font-extrabold uppercase tracking-wider">SLRTCE Mumbai</span>
             </div>
 
-            <div className="hidden sm:block h-16 w-px bg-slate-400" />
+            <div className="hidden sm:block h-20 w-px bg-slate-400/80" />
 
             {/* IT Department Seal */}
-            <div className="flex flex-col items-center space-y-1.5">
-              <div className="bg-white p-1">
+            <div className="flex flex-col items-center space-y-2">
+              <div className="w-24 h-24 sm:w-28 sm:h-28 flex items-center justify-center">
                 <img
                   src="/images/IT.png"
                   alt="IT Department Seal"
-                  className="w-16 h-16 sm:w-20 sm:h-20 object-contain"
+                  className="w-full h-full object-contain"
                 />
               </div>
-              <span className="text-[10px] text-gov-primary font-extrabold uppercase tracking-wider">IT Department</span>
+              <span className="text-xs text-gov-primary font-extrabold uppercase tracking-wider">IT Department</span>
             </div>
 
           </div>
