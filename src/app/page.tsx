@@ -34,7 +34,9 @@ import {
   ShieldAlert,
   ArrowUpRight,
   Radio,
-  Bell
+  Bell,
+  Eye,
+  FileCode
 } from "lucide-react";
 
 export default function HomePage() {
@@ -72,8 +74,8 @@ export default function HomePage() {
   const nextSlide = () => setCurrentSlide((prev) => (prev + 1) % heroSlides.length);
   const prevSlide = () => setCurrentSlide((prev) => (prev - 1 + heroSlides.length) % heroSlides.length);
 
-  // Important Notices Tab State
-  const [activeNoticeTab, setActiveNoticeTab] = useState<"circulars" | "tenders" | "emergency" | "announcements">("circulars");
+  // Official Government Notice Board Category State
+  const [activeNoticeTab, setActiveNoticeTab] = useState<"circulars" | "tenders" | "public_notices" | "emergency">("circulars");
 
   return (
     <div className="space-y-8 pb-16 font-sans text-gov-text bg-gov-bg">
@@ -178,7 +180,7 @@ export default function HomePage() {
 
 
       {/* -------------------------------------------------
-          SECTION 5: QUICK CITIZEN SERVICES DIRECTORY (REDESIGNED WITH REAL SERVICE THUMBNAILS)
+          SECTION 5: QUICK CITIZEN SERVICES DIRECTORY (REAL SERVICE THUMBNAILS)
       ------------------------------------------------- */}
       <section className="max-w-[1440px] mx-auto px-4 sm:px-8 space-y-4">
         <div className="border-b border-gov-border pb-3 flex items-center justify-between">
@@ -194,12 +196,11 @@ export default function HomePage() {
 
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
           
-          {/* Service Card 1: Apply Event Permission */}
+          {/* Card 1: Apply Event Permission */}
           <Link
             href="/apply"
             className="bg-white rounded-[16px] border border-[#DCE6F7] shadow-gov-sm overflow-hidden flex flex-col justify-between group hover:border-gov-primary hover:shadow-gov-md transition-all duration-300 block"
           >
-            {/* Top Thumbnail Image (38-42% Height) */}
             <div className="relative h-44 sm:h-48 w-full overflow-hidden bg-slate-100">
               <img
                 src="/images/services/apply.png"
@@ -212,7 +213,6 @@ export default function HomePage() {
               </div>
             </div>
 
-            {/* Bottom Content Body */}
             <div className="p-5 flex-1 flex flex-col justify-between space-y-3">
               <div className="space-y-1.5">
                 <h3 className="text-base sm:text-lg font-bold text-gov-text group-hover:text-gov-primary transition-colors">
@@ -232,12 +232,11 @@ export default function HomePage() {
             </div>
           </Link>
 
-          {/* Service Card 2: Track NOC Approval Status */}
+          {/* Card 2: Track NOC Approval Status */}
           <Link
             href="/track"
             className="bg-white rounded-[16px] border border-[#DCE6F7] shadow-gov-sm overflow-hidden flex flex-col justify-between group hover:border-gov-primary hover:shadow-gov-md transition-all duration-300 block"
           >
-            {/* Top Thumbnail Image */}
             <div className="relative h-44 sm:h-48 w-full overflow-hidden bg-slate-100">
               <img
                 src="/images/services/track.png"
@@ -250,7 +249,6 @@ export default function HomePage() {
               </div>
             </div>
 
-            {/* Bottom Content Body */}
             <div className="p-5 flex-1 flex flex-col justify-between space-y-3">
               <div className="space-y-1.5">
                 <h3 className="text-base sm:text-lg font-bold text-gov-text group-hover:text-gov-primary transition-colors">
@@ -270,12 +268,11 @@ export default function HomePage() {
             </div>
           </Link>
 
-          {/* Service Card 3: Required Documents Checklist */}
+          {/* Card 3: Required Documents Checklist */}
           <Link
             href="#required-documents"
             className="bg-white rounded-[16px] border border-[#DCE6F7] shadow-gov-sm overflow-hidden flex flex-col justify-between group hover:border-gov-primary hover:shadow-gov-md transition-all duration-300 block"
           >
-            {/* Top Thumbnail Image */}
             <div className="relative h-44 sm:h-48 w-full overflow-hidden bg-slate-100">
               <img
                 src="/images/services/required.png"
@@ -288,7 +285,6 @@ export default function HomePage() {
               </div>
             </div>
 
-            {/* Bottom Content Body */}
             <div className="p-5 flex-1 flex flex-col justify-between space-y-3">
               <div className="space-y-1.5">
                 <h3 className="text-base sm:text-lg font-bold text-gov-text group-hover:text-gov-primary transition-colors">
@@ -308,12 +304,11 @@ export default function HomePage() {
             </div>
           </Link>
 
-          {/* Service Card 4: Public Ground Availability */}
+          {/* Card 4: Public Ground Availability */}
           <Link
             href="/venues"
             className="bg-white rounded-[16px] border border-[#DCE6F7] shadow-gov-sm overflow-hidden flex flex-col justify-between group hover:border-gov-primary hover:shadow-gov-md transition-all duration-300 block"
           >
-            {/* Top Thumbnail Image */}
             <div className="relative h-44 sm:h-48 w-full overflow-hidden bg-slate-100">
               <img
                 src="/images/services/public_ground.png"
@@ -326,7 +321,6 @@ export default function HomePage() {
               </div>
             </div>
 
-            {/* Bottom Content Body */}
             <div className="p-5 flex-1 flex flex-col justify-between space-y-3">
               <div className="space-y-1.5">
                 <h3 className="text-base sm:text-lg font-bold text-gov-text group-hover:text-gov-primary transition-colors">
@@ -346,12 +340,11 @@ export default function HomePage() {
             </div>
           </Link>
 
-          {/* Service Card 5: NOC Rules & Sound Guidelines */}
+          {/* Card 5: NOC Rules & Sound Guidelines */}
           <Link
             href="/guidelines"
             className="bg-white rounded-[16px] border border-[#DCE6F7] shadow-gov-sm overflow-hidden flex flex-col justify-between group hover:border-gov-primary hover:shadow-gov-md transition-all duration-300 block"
           >
-            {/* Top Thumbnail Image */}
             <div className="relative h-44 sm:h-48 w-full overflow-hidden bg-slate-100">
               <img
                 src="/images/services/noc.png"
@@ -364,7 +357,6 @@ export default function HomePage() {
               </div>
             </div>
 
-            {/* Bottom Content Body */}
             <div className="p-5 flex-1 flex flex-col justify-between space-y-3">
               <div className="space-y-1.5">
                 <h3 className="text-base sm:text-lg font-bold text-gov-text group-hover:text-gov-primary transition-colors">
@@ -384,12 +376,11 @@ export default function HomePage() {
             </div>
           </Link>
 
-          {/* Service Card 6: Help Centre & Emergency Contacts */}
+          {/* Card 6: Help Centre & Emergency Contacts */}
           <a
             href="#emergency-contacts"
             className="bg-white rounded-[16px] border border-[#DCE6F7] shadow-gov-sm overflow-hidden flex flex-col justify-between group hover:border-gov-primary hover:shadow-gov-md transition-all duration-300 block"
           >
-            {/* Top Thumbnail Image */}
             <div className="relative h-44 sm:h-48 w-full overflow-hidden bg-slate-100">
               <img
                 src="/images/services/help.png"
@@ -402,7 +393,6 @@ export default function HomePage() {
               </div>
             </div>
 
-            {/* Bottom Content Body */}
             <div className="p-5 flex-1 flex flex-col justify-between space-y-3">
               <div className="space-y-1.5">
                 <h3 className="text-base sm:text-lg font-bold text-gov-text group-hover:text-gov-primary transition-colors">
@@ -427,117 +417,289 @@ export default function HomePage() {
 
 
       {/* -------------------------------------------------
-          SECTION 6: IMPORTANT NOTICES, CIRCULARS & ADVISORIES
+          SECTION 6: OFFICIAL GOVERNMENT NOTICE BOARD (REDESIGNED FOR MBMC / MAHARASHTRA GOVT E-GOVERNANCE)
       ------------------------------------------------- */}
       <section className="max-w-[1440px] mx-auto px-4 sm:px-8">
-        <div className="bg-white rounded-gov-card border border-gov-border shadow-gov-sm p-6 space-y-4">
+        <div className="bg-white rounded-gov-card border border-[#DCE6F7] shadow-gov-sm overflow-hidden relative">
           
-          <div className="flex flex-col sm:flex-row sm:items-center justify-between border-b border-gov-border pb-3 gap-3">
-            <div className="flex items-center space-x-2">
-              <ShieldAlert className="w-5 h-5 text-gov-primary" />
-              <h3 className="text-lg font-bold text-gov-text">
-                {t("Official Government Notices & Tenders", "अधिकृत मनपा सूचना व परिपत्रके")}
-              </h3>
-            </div>
-
-            <div className="flex items-center space-x-1 bg-gov-bg p-1 rounded-gov-sm border border-gov-border text-xs">
-              <button
-                onClick={() => setActiveNoticeTab("circulars")}
-                className={`px-3 py-1 rounded-sm font-bold transition cursor-pointer ${
-                  activeNoticeTab === "circulars" ? "bg-gov-primary text-white" : "text-gov-muted hover:text-gov-text"
-                }`}
-              >
-                {t("Circulars", "परिपत्रके")}
-              </button>
-              <button
-                onClick={() => setActiveNoticeTab("tenders")}
-                className={`px-3 py-1 rounded-sm font-bold transition cursor-pointer ${
-                  activeNoticeTab === "tenders" ? "bg-gov-primary text-white" : "text-gov-muted hover:text-gov-text"
-                }`}
-              >
-                {t("Tenders", "निविदा")}
-              </button>
-              <button
-                onClick={() => setActiveNoticeTab("emergency")}
-                className={`px-3 py-1 rounded-sm font-bold transition cursor-pointer ${
-                  activeNoticeTab === "emergency" ? "bg-gov-primary text-white" : "text-gov-muted hover:text-gov-text"
-                }`}
-              >
-                {t("Emergency Advisories", "आपत्कालीन सूचना")}
-              </button>
-            </div>
+          {/* Subtle MBMC Logo Watermark Background (2.5% Opacity) */}
+          <div className="absolute inset-0 pointer-events-none flex items-center justify-center opacity-[0.025] z-0 overflow-hidden">
+            <img
+              src="/images/mbmc_updated logo.jpg"
+              alt="MBMC Watermark"
+              className="w-[600px] h-[600px] object-contain"
+            />
           </div>
 
-          <div className="divide-y divide-gov-border text-xs">
+          <div className="relative z-10 p-6 sm:p-8 space-y-5">
             
-            {activeNoticeTab === "circulars" && (
-              <>
-                <div className="py-3 flex flex-col sm:flex-row sm:items-center justify-between gap-2">
-                  <div className="flex items-center space-x-3">
-                    <span className="bg-blue-100 text-gov-primary font-mono font-bold px-2 py-0.5 rounded text-[11px]">
-                      05-AUG-2026
-                    </span>
-                    <span className="font-semibold text-gov-text">
-                      {t(
-                        "MBMC Circular No. 42: Mandatory Fire Retardant Coating for Sarvajanik Ganeshotsav Pandals 2026.",
-                        "एमबीएमसी परिपत्रक क्र. ४२: सार्वजनिक गणेशोत्सव मंडपांसाठी अग्निरोधक द्रावण प्रक्रिया सक्तीची."
-                      )}
-                    </span>
-                  </div>
-                  <Link href="/guidelines" className="text-gov-primary font-bold hover:underline flex items-center space-x-1 text-[11px] self-start sm:self-auto">
-                    <span>{t("Download PDF", "पीडीएफ डाऊनलोड")}</span>
-                    <Download className="w-3.5 h-3.5" />
-                  </Link>
-                </div>
-
-                <div className="py-3 flex flex-col sm:flex-row sm:items-center justify-between gap-2">
-                  <div className="flex items-center space-x-3">
-                    <span className="bg-blue-100 text-gov-primary font-mono font-bold px-2 py-0.5 rounded text-[11px]">
-                      01-AUG-2026
-                    </span>
-                    <span className="font-semibold text-gov-text">
-                      {t(
-                        "Noise Pollution Compliance Directive: Sound limit 55 dB daytime, 45 dB post 10:00 PM.",
-                        "ध्वनी प्रदूषण अनुपालन आदेश: रात्री १०:०० नंतर ४५ डेसिबल मर्यादा लागू."
-                      )}
-                    </span>
-                  </div>
-                  <Link href="/guidelines" className="text-gov-primary font-bold hover:underline flex items-center space-x-1 text-[11px] self-start sm:self-auto">
-                    <span>{t("Download PDF", "पीडीएफ डाऊनलोड")}</span>
-                    <Download className="w-3.5 h-3.5" />
-                  </Link>
-                </div>
-              </>
-            )}
-
-            {activeNoticeTab === "tenders" && (
-              <div className="py-3 flex flex-col sm:flex-row sm:items-center justify-between gap-2">
-                <div className="flex items-center space-x-3">
-                  <span className="bg-amber-100 text-amber-900 font-mono font-bold px-2 py-0.5 rounded text-[11px]">
-                    TENDER-MBMC-2026
-                  </span>
-                  <span className="font-semibold text-gov-text">
-                    {t(
-                      "Tender Notice: Deployment of Mobile Bio-Toilet Units & CCTV Monitoring for Festival Grounds.",
-                      "निविदा सूचना: उत्सव मैदानांसाठी मोबाईल बायो-टॉयलेट व सीसीटीव्ही यंत्रणा पुरवठा."
-                    )}
-                  </span>
-                </div>
-                <span className="text-gov-muted text-[11px]">Last Date: 20-AUG-2026</span>
-              </div>
-            )}
-
-            {activeNoticeTab === "emergency" && (
-              <div className="py-3 flex items-center space-x-3 text-red-700 bg-red-50 p-2.5 rounded">
-                <AlertTriangle className="w-4 h-4 flex-shrink-0" />
-                <span className="font-bold">
-                  {t(
-                    "High Tide Advisory: Coastal event organizers near Uttan & Murda Beach must coordinate with MBMC Disaster Cell.",
-                    "उधाणाची भरती इशारा: उत्तन व मुर्धा चौपाटी परिसरातील आयोजकांनी आपत्ती कक्षाशी संपर्क ठेवावा."
-                  )}
+            {/* Header Row: Title + Subtitle & View All Link */}
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between border-b border-gov-border pb-4 gap-3">
+              <div>
+                <span className="text-[11px] font-extrabold text-gov-primary uppercase tracking-widest block">
+                  {t("E-GOVERNANCE NOTICE BOARD", "ई-प्रशासकीय सूचना फलक")}
                 </span>
+                <h2 className="text-xl sm:text-2xl font-extrabold text-gov-text mt-0.5">
+                  {t("Official Government Notices", "अधिकृत मनपा सूचना फलक")}
+                </h2>
+                <p className="text-xs text-gov-muted font-medium mt-0.5">
+                  {t(
+                    "Latest Circulars, Public Notices, Government Orders & Tenders issued by MBMC & Law Enforcement Authorities.",
+                    "मीरा भाईंदर मनपा व पोलीस प्रशासनाचे अद्ययावत परिपत्रक, सार्वजनिक सूचना व निविदा."
+                  )}
+                </p>
               </div>
-            )}
+
+              <Link
+                href="/guidelines"
+                className="text-xs font-extrabold text-gov-primary hover:underline flex items-center space-x-1.5 self-start sm:self-auto whitespace-nowrap bg-gov-surface border border-gov-border px-3.5 py-2 rounded-gov-sm transition"
+              >
+                <span>{t("View All Official Notices", "सर्व सूचना पहा")}</span>
+                <ArrowRight className="w-4 h-4 text-gov-accent" />
+              </Link>
+            </div>
+
+            {/* Official Government Category Tab Bar (Underline Style) */}
+            <div className="flex items-center space-x-6 border-b border-[#DCE6F7] text-xs sm:text-sm font-bold overflow-x-auto pt-1">
+              <button
+                onClick={() => setActiveNoticeTab("circulars")}
+                className={`pb-2.5 transition-colors whitespace-nowrap cursor-pointer flex items-center space-x-2 ${
+                  activeNoticeTab === "circulars"
+                    ? "border-b-2 border-[#123B7A] text-[#123B7A] font-extrabold"
+                    : "text-gov-muted hover:text-gov-text border-b-2 border-transparent font-medium"
+                }`}
+              >
+                <FileText className="w-4 h-4" />
+                <span>{t("Circulars", "परिपत्रके")}</span>
+              </button>
+
+              <button
+                onClick={() => setActiveNoticeTab("tenders")}
+                className={`pb-2.5 transition-colors whitespace-nowrap cursor-pointer flex items-center space-x-2 ${
+                  activeNoticeTab === "tenders"
+                    ? "border-b-2 border-[#123B7A] text-[#123B7A] font-extrabold"
+                    : "text-gov-muted hover:text-gov-text border-b-2 border-transparent font-medium"
+                }`}
+              >
+                <FileSpreadsheet className="w-4 h-4" />
+                <span>{t("Tenders", "निविदा")}</span>
+              </button>
+
+              <button
+                onClick={() => setActiveNoticeTab("public_notices")}
+                className={`pb-2.5 transition-colors whitespace-nowrap cursor-pointer flex items-center space-x-2 ${
+                  activeNoticeTab === "public_notices"
+                    ? "border-b-2 border-[#123B7A] text-[#123B7A] font-extrabold"
+                    : "text-gov-muted hover:text-gov-text border-b-2 border-transparent font-medium"
+                }`}
+              >
+                <ShieldAlert className="w-4 h-4" />
+                <span>{t("Public Notices", "सार्वजनिक सूचना")}</span>
+              </button>
+
+              <button
+                onClick={() => setActiveNoticeTab("emergency")}
+                className={`pb-2.5 transition-colors whitespace-nowrap cursor-pointer flex items-center space-x-2 ${
+                  activeNoticeTab === "emergency"
+                    ? "border-b-2 border-[#123B7A] text-[#123B7A] font-extrabold"
+                    : "text-gov-muted hover:text-gov-text border-b-2 border-transparent font-medium"
+                }`}
+              >
+                <AlertTriangle className="w-4 h-4 text-red-600" />
+                <span>{t("Emergency Advisories", "आपत्कालीन सूचना")}</span>
+              </button>
+            </div>
+
+            {/* Notice Rows List */}
+            <div className="divide-y divide-[#DCE6F7] border border-[#DCE6F7] rounded-gov-sm overflow-hidden bg-white">
+              
+              {/* TAB 1: CIRCULARS */}
+              {activeNoticeTab === "circulars" && (
+                <>
+                  {/* Row 1 */}
+                  <div className="bg-white hover:bg-[#F8FAFC] px-4 sm:px-6 py-[18px] transition-colors duration-150 flex flex-col md:flex-row md:items-center justify-between gap-3">
+                    <div className="flex items-start sm:items-center space-x-3 flex-1">
+                      {/* Date Badge (#EAF2FF / #123B7A / rounded 6px) */}
+                      <span className="bg-[#EAF2FF] text-[#123B7A] rounded-[6px] text-[12px] font-bold font-mono px-2.5 py-1 whitespace-nowrap flex-shrink-0">
+                        05-AUG-2026
+                      </span>
+
+                      {/* Category Tag & Title */}
+                      <div className="flex flex-wrap items-center gap-2">
+                        <span className="bg-blue-100 text-blue-900 border border-blue-200 text-[10px] font-extrabold px-2 py-0.5 rounded uppercase tracking-wider">
+                          CIRCULAR
+                        </span>
+                        <span className="bg-red-600 text-white text-[10px] font-extrabold px-1.5 py-0.5 rounded-[4px] uppercase tracking-wider animate-pulse">
+                          NEW
+                        </span>
+                        <h4 className="text-xs sm:text-sm font-bold text-gov-text leading-snug">
+                          {t(
+                            "MBMC Circular No. 42: Mandatory Ammonium Phosphate Fire Retardant Coating for Sarvajanik Ganeshotsav Pandals 2026.",
+                            "एमबीएमसी परिपत्रक क्र. ४२: सार्वजनिक गणेशोत्सव मंडपांसाठी अग्निरोधक द्रावण प्रक्रिया सक्तीची."
+                          )}
+                        </h4>
+                      </div>
+                    </div>
+
+                    {/* Right Buttons */}
+                    <div className="flex items-center space-x-3 self-end md:self-auto flex-shrink-0">
+                      <Link
+                        href="/guidelines"
+                        className="border border-[#123B7A] text-[#123B7A] hover:bg-[#123B7A] hover:text-white rounded px-3 py-1.5 text-xs font-bold transition-colors flex items-center space-x-1.5"
+                      >
+                        <Download className="w-3.5 h-3.5" />
+                        <span>Download PDF</span>
+                      </Link>
+                      <Link href="/guidelines" className="text-[#123B7A] hover:underline text-xs font-bold flex items-center space-x-1">
+                        <span>View Details</span>
+                        <ChevronRight className="w-3.5 h-3.5" />
+                      </Link>
+                    </div>
+                  </div>
+
+                  {/* Row 2 */}
+                  <div className="bg-white hover:bg-[#F8FAFC] px-4 sm:px-6 py-[18px] transition-colors duration-150 flex flex-col md:flex-row md:items-center justify-between gap-3">
+                    <div className="flex items-start sm:items-center space-x-3 flex-1">
+                      <span className="bg-[#EAF2FF] text-[#123B7A] rounded-[6px] text-[12px] font-bold font-mono px-2.5 py-1 whitespace-nowrap flex-shrink-0">
+                        01-AUG-2026
+                      </span>
+
+                      <div className="flex flex-wrap items-center gap-2">
+                        <span className="bg-blue-100 text-blue-900 border border-blue-200 text-[10px] font-extrabold px-2 py-0.5 rounded uppercase tracking-wider">
+                          CIRCULAR
+                        </span>
+                        <span className="bg-red-600 text-white text-[10px] font-extrabold px-1.5 py-0.5 rounded-[4px] uppercase tracking-wider animate-pulse">
+                          NEW
+                        </span>
+                        <h4 className="text-xs sm:text-sm font-bold text-gov-text leading-snug">
+                          {t(
+                            "High Court Noise Pollution Compliance Directive: Sound limit 55 dB daytime, 45 dB post 10:00 PM strictly enforced.",
+                            "ध्वनी प्रदूषण अनुपालन आदेश: रात्री १०:०० नंतर ४५ डेसिबल मर्यादा लागू."
+                          )}
+                        </h4>
+                      </div>
+                    </div>
+
+                    <div className="flex items-center space-x-3 self-end md:self-auto flex-shrink-0">
+                      <Link
+                        href="/guidelines"
+                        className="border border-[#123B7A] text-[#123B7A] hover:bg-[#123B7A] hover:text-white rounded px-3 py-1.5 text-xs font-bold transition-colors flex items-center space-x-1.5"
+                      >
+                        <Download className="w-3.5 h-3.5" />
+                        <span>Download PDF</span>
+                      </Link>
+                      <Link href="/guidelines" className="text-[#123B7A] hover:underline text-xs font-bold flex items-center space-x-1">
+                        <span>View Details</span>
+                        <ChevronRight className="w-3.5 h-3.5" />
+                      </Link>
+                    </div>
+                  </div>
+                </>
+              )}
+
+              {/* TAB 2: TENDERS */}
+              {activeNoticeTab === "tenders" && (
+                <div className="bg-white hover:bg-[#F8FAFC] px-4 sm:px-6 py-[18px] transition-colors duration-150 flex flex-col md:flex-row md:items-center justify-between gap-3">
+                  <div className="flex items-start sm:items-center space-x-3 flex-1">
+                    <span className="bg-[#EAF2FF] text-[#123B7A] rounded-[6px] text-[12px] font-bold font-mono px-2.5 py-1 whitespace-nowrap flex-shrink-0">
+                      28-JUL-2026
+                    </span>
+
+                    <div className="flex flex-wrap items-center gap-2">
+                      <span className="bg-amber-100 text-amber-900 border border-amber-200 text-[10px] font-extrabold px-2 py-0.5 rounded uppercase tracking-wider">
+                        TENDER
+                      </span>
+                      <h4 className="text-xs sm:text-sm font-bold text-gov-text leading-snug">
+                        {t(
+                          "Tender Notice Ref: TENDER-MBMC-2026/08 — Deployment of Mobile Bio-Toilet Units & Live CCTV Feeds at Immersion Ghats.",
+                          "निविदा सूचना: विसर्जन घाटांसाठी मोबाईल बायो-टॉयलेट व सीसीटीव्ही यंत्रणा पुरवठा."
+                        )}
+                      </h4>
+                    </div>
+                  </div>
+
+                  <div className="flex items-center space-x-3 self-end md:self-auto flex-shrink-0">
+                    <span className="text-[11px] font-bold text-amber-900 bg-amber-50 px-2 py-1 rounded border border-amber-200">
+                      Submission Deadline: 20-AUG-2026
+                    </span>
+                    <Link
+                      href="/guidelines"
+                      className="border border-[#123B7A] text-[#123B7A] hover:bg-[#123B7A] hover:text-white rounded px-3 py-1.5 text-xs font-bold transition-colors flex items-center space-x-1.5"
+                    >
+                      <Download className="w-3.5 h-3.5" />
+                      <span>Tender Doc</span>
+                    </Link>
+                  </div>
+                </div>
+              )}
+
+              {/* TAB 3: PUBLIC NOTICES */}
+              {activeNoticeTab === "public_notices" && (
+                <div className="bg-white hover:bg-[#F8FAFC] px-4 sm:px-6 py-[18px] transition-colors duration-150 flex flex-col md:flex-row md:items-center justify-between gap-3">
+                  <div className="flex items-start sm:items-center space-x-3 flex-1">
+                    <span className="bg-[#EAF2FF] text-[#123B7A] rounded-[6px] text-[12px] font-bold font-mono px-2.5 py-1 whitespace-nowrap flex-shrink-0">
+                      20-JUL-2026
+                    </span>
+
+                    <div className="flex flex-wrap items-center gap-2">
+                      <span className="bg-emerald-100 text-emerald-900 border border-emerald-200 text-[10px] font-extrabold px-2 py-0.5 rounded uppercase tracking-wider">
+                        PUBLIC NOTICE
+                      </span>
+                      <h4 className="text-xs sm:text-sm font-bold text-gov-text leading-snug">
+                        {t(
+                          "Public Notice: Special Clearance Facilitation Camps set up at Ward Office W01 to W05 for On-Spot NOC Verification.",
+                          "सार्वजनिक सूचना: प्रभाग कार्यालय १ ते ५ मध्ये ऑन-स्पॉट ना-हरकत प्रमाणपत्र पडताळणी शिबीर."
+                        )}
+                      </h4>
+                    </div>
+                  </div>
+
+                  <div className="flex items-center space-x-3 self-end md:self-auto flex-shrink-0">
+                    <Link
+                      href="/guidelines"
+                      className="border border-[#123B7A] text-[#123B7A] hover:bg-[#123B7A] hover:text-white rounded px-3 py-1.5 text-xs font-bold transition-colors flex items-center space-x-1.5"
+                    >
+                      <Download className="w-3.5 h-3.5" />
+                      <span>Download PDF</span>
+                    </Link>
+                  </div>
+                </div>
+              )}
+
+              {/* TAB 4: EMERGENCY ADVISORIES */}
+              {activeNoticeTab === "emergency" && (
+                <div className="bg-red-50/50 hover:bg-red-50 px-4 sm:px-6 py-[18px] transition-colors duration-150 flex flex-col md:flex-row md:items-center justify-between gap-3">
+                  <div className="flex items-start sm:items-center space-x-3 flex-1">
+                    <span className="bg-red-100 text-red-900 rounded-[6px] text-[12px] font-bold font-mono px-2.5 py-1 whitespace-nowrap flex-shrink-0 border border-red-200">
+                      04-AUG-2026
+                    </span>
+
+                    <div className="flex flex-wrap items-center gap-2">
+                      <span className="bg-red-600 text-white text-[10px] font-extrabold px-2 py-0.5 rounded uppercase tracking-wider">
+                        EMERGENCY
+                      </span>
+                      <h4 className="text-xs sm:text-sm font-bold text-red-950 leading-snug">
+                        {t(
+                          "High Tide Advisory: Coastal event organizers near Uttan & Murda Beach must coordinate with MBMC Disaster Cell (1800-22-3424).",
+                          "उधाणाची भरती इशारा: उत्तन व मुर्धा चौपाटी परिसरातील आयोजकांनी आपत्ती कक्षाशी संपर्क ठेवावा."
+                        )}
+                      </h4>
+                    </div>
+                  </div>
+
+                  <div className="flex items-center space-x-3 self-end md:self-auto flex-shrink-0">
+                    <a
+                      href="#emergency-contacts"
+                      className="bg-red-700 hover:bg-red-800 text-white rounded px-3 py-1.5 text-xs font-bold transition-colors flex items-center space-x-1.5"
+                    >
+                      <PhoneCall className="w-3.5 h-3.5" />
+                      <span>Helpline 1800-22-3424</span>
+                    </a>
+                  </div>
+                </div>
+              )}
+
+            </div>
 
           </div>
 
