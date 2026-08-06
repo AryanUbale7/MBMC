@@ -36,7 +36,8 @@ import {
   Radio,
   Bell,
   Eye,
-  FileCode
+  FileCode,
+  Paperclip
 } from "lucide-react";
 
 export default function HomePage() {
@@ -74,7 +75,7 @@ export default function HomePage() {
   const nextSlide = () => setCurrentSlide((prev) => (prev + 1) % heroSlides.length);
   const prevSlide = () => setCurrentSlide((prev) => (prev - 1 + heroSlides.length) % heroSlides.length);
 
-  // Official Government Notice Gallery Category State
+  // Official Government Notice Board Category State
   const [activeNoticeTab, setActiveNoticeTab] = useState<"circulars" | "tenders" | "public_notices" | "emergency">("circulars");
 
   return (
@@ -417,7 +418,7 @@ export default function HomePage() {
 
 
       {/* -------------------------------------------------
-          SECTION 6: OFFICIAL GOVERNMENT VISUAL NOTICE GALLERY (REDESIGNED NOTICE CARDS GRID)
+          SECTION 6: REALISTIC PINNED A4 PAPER GOVERNMENT NOTICE BOARD
       ------------------------------------------------- */}
       <section className="max-w-[1440px] mx-auto px-4 sm:px-8 space-y-5">
         
@@ -425,15 +426,16 @@ export default function HomePage() {
         <div className="flex flex-col sm:flex-row sm:items-center justify-between border-b border-gov-border pb-4 gap-3">
           <div>
             <span className="text-[11px] font-extrabold text-gov-primary uppercase tracking-widest block">
-              {t("E-GOVERNANCE NOTICE BOARD", "ई-प्रशासकीय सूचना फलक")}
+              {t("E-GOVERNANCE DOCUMENT REPOSITORY", "ई-प्रशासकीय सूचना फलक")}
             </span>
-            <h2 className="text-xl sm:text-2xl font-extrabold text-gov-text mt-0.5">
-              {t("Official Government Notices", "अधिकृत मनपा सूचना व निविदा गैलरी")}
+            <h2 className="text-xl sm:text-2xl font-extrabold text-gov-text mt-0.5 flex items-center space-x-2">
+              <span>📌</span>
+              <span>{t("Official Notice Board", "अधिकृत मनपा सूचना फलक")}</span>
             </h2>
             <p className="text-xs text-gov-muted font-medium mt-0.5">
               {t(
-                "Latest Circulars, Public Notices, Government Orders & Tenders issued by MBMC & Law Enforcement Authorities.",
-                "मीरा भाईंदर मनपा व पोलीस प्रशासनाचे अद्ययावत परिपत्रक, सार्वजनिक सूचना व निविदा."
+                "Latest Circulars, Government Orders, Public Notices, Tender Documents and Official Announcements.",
+                "मीरा भाईंदर मनपा व पोलीस प्रशासनाचे अद्ययावत परिपत्रक, सार्वजनिक सूचना व निविदा दाखले."
               )}
             </p>
           </div>
@@ -442,7 +444,7 @@ export default function HomePage() {
             href="/guidelines"
             className="text-xs font-extrabold text-[#123B7A] hover:underline flex items-center space-x-1.5 self-start sm:self-auto whitespace-nowrap bg-white border border-[#DCE6F7] px-3.5 py-2 rounded-gov-sm shadow-xs transition"
           >
-            <span>{t("View All Official Notices", "सर्व सूचना पहा")}</span>
+            <span>{t("View All Notices", "सर्व सूचना पहा")}</span>
             <ArrowRight className="w-4 h-4 text-gov-accent" />
           </Link>
         </div>
@@ -457,7 +459,7 @@ export default function HomePage() {
                 : "text-gov-muted hover:text-gov-text border-b-2 border-transparent font-medium"
             }`}
           >
-            <FileText className="w-4 h-4" />
+            <FileText className="w-4 h-4 text-[#123B7A]" />
             <span>{t("Circulars", "परिपत्रके")}</span>
           </button>
 
@@ -469,7 +471,7 @@ export default function HomePage() {
                 : "text-gov-muted hover:text-gov-text border-b-2 border-transparent font-medium"
             }`}
           >
-            <FileSpreadsheet className="w-4 h-4" />
+            <FileSpreadsheet className="w-4 h-4 text-amber-700" />
             <span>{t("Tenders", "निविदा")}</span>
           </button>
 
@@ -481,7 +483,7 @@ export default function HomePage() {
                 : "text-gov-muted hover:text-gov-text border-b-2 border-transparent font-medium"
             }`}
           >
-            <ShieldAlert className="w-4 h-4" />
+            <ShieldAlert className="w-4 h-4 text-emerald-700" />
             <span>{t("Public Notices", "सार्वजनिक सूचना")}</span>
           </button>
 
@@ -498,191 +500,216 @@ export default function HomePage() {
           </button>
         </div>
 
-        {/* VISUAL NOTICE CARDS GRID (Desktop: 3, Tablet: 2, Mobile: 1) */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+        {/* REALISTIC PINNED NOTICE BOARD CONTAINER (Warm tone + Wooden Border Frame) */}
+        <div className="bg-[#F5F2EC] border-4 sm:border-8 border-[#8B5A2B] rounded-gov-md shadow-md p-6 sm:p-8 relative overflow-hidden">
           
-          {/* NOTICE CARD 1: Fire Safety Circular */}
-          <div className="bg-white rounded-[16px] border border-[#DCE6F7] shadow-gov-sm overflow-hidden flex flex-col justify-between group hover:border-[#123B7A] hover:shadow-gov-md transition-all duration-300">
-            {/* Top Thumbnail Image */}
-            <div className="relative h-44 sm:h-48 w-full overflow-hidden bg-slate-100">
-              <img
-                src="https://images.unsplash.com/photo-1589829545856-d10d557cf95f?w=800&q=80"
-                alt="Fire Safety Circular"
-                className="w-full h-full object-cover group-hover:scale-105 group-hover:brightness-105 transition-all duration-500"
-              />
-              <div className="absolute inset-0 bg-black/10 transition-opacity duration-300 group-hover:opacity-0" />
-              
-              {/* Category Ribbon */}
-              <div className="absolute top-3 left-3 bg-blue-800 text-white text-[10px] font-extrabold px-2.5 py-1 rounded shadow-xs uppercase tracking-wider">
-                CIRCULAR
+          {/* Subtle MBMC Watermark (3% Opacity) */}
+          <div className="absolute inset-0 pointer-events-none flex items-center justify-center opacity-[0.03] z-0 overflow-hidden">
+            <img
+              src="/images/mbmc_updated logo.jpg"
+              alt="MBMC Watermark"
+              className="w-[650px] h-[650px] object-contain"
+            />
+          </div>
+
+          {/* PINNED A4 PAPER NOTICES GRID (Desktop: 3, Tablet: 2, Mobile: 1) */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8 relative z-10 py-2">
+            
+            {/* PAPER SHEET 1: Fire Safety Circular */}
+            <div className="bg-white border border-slate-300 shadow-md p-5 rounded-xs relative transition-all duration-300 hover:-translate-y-1 hover:shadow-lg flex flex-col justify-between space-y-4 -rotate-1 group">
+              {/* Realistic Push Pin */}
+              <div className="absolute -top-3.5 left-1/2 -translate-x-1/2 z-20 text-xl select-none drop-shadow-xs">
+                📌
               </div>
 
-              {/* NEW Badge */}
-              <div className="absolute top-3 right-3 bg-red-600 text-white text-[10px] font-extrabold px-2 py-0.5 rounded uppercase tracking-wider animate-pulse shadow-xs">
-                NEW
-              </div>
-            </div>
-
-            {/* Card Body */}
-            <div className="p-5 flex-1 flex flex-col justify-between space-y-3">
-              <div className="space-y-2">
-                {/* Date Badge */}
-                <span className="bg-[#EAF2FF] text-[#123B7A] rounded-[6px] text-[11px] font-bold font-mono px-2.5 py-1 w-fit block">
-                  05-AUG-2026
+              {/* Blue Header Strip */}
+              <div className="bg-[#123B7A] text-white text-[10px] font-extrabold px-2.5 py-1 rounded-xs uppercase tracking-wider flex items-center justify-between">
+                <span>MBMC MUNICIPAL GAZETTE</span>
+                <span className="bg-red-600 text-white font-extrabold text-[9px] px-1.5 py-0.2 rounded uppercase tracking-wider animate-pulse">
+                  NEW
                 </span>
+              </div>
 
-                <h3 className="text-sm sm:text-base font-bold text-gov-text group-hover:text-[#123B7A] transition-colors leading-snug">
+              {/* Filename & PDF Icon */}
+              <div className="space-y-1.5 border-b border-slate-200 pb-2">
+                <div className="flex items-center space-x-2 text-red-600 font-mono font-bold text-xs">
+                  <FileText className="w-4 h-4 flex-shrink-0" />
+                  <span className="truncate text-slate-900 font-extrabold">Fire_Safety_Circular_2026.pdf</span>
+                </div>
+                <h4 className="text-xs sm:text-sm font-bold text-gov-text group-hover:text-[#123B7A] transition-colors leading-snug">
                   {t(
                     "MBMC Circular No. 42: Mandatory Fire Retardant Coating for Sarvajanik Pandals 2026.",
                     "एमबीएमसी परिपत्रक क्र. ४२: सार्वजनिक गणेशोत्सव मंडपांसाठी अग्निरोधक द्रावण प्रक्रिया सक्तीची."
                   )}
-                </h3>
-
-                <p className="text-xs text-gov-muted line-clamp-2 leading-relaxed font-medium">
-                  {t(
-                    "Official Chief Fire Officer mandate enforcing ammonium phosphate fire retardant canvas treatment across all Ganesh Utsav pandals within MBMC limits.",
-                    "सर्व सार्वजनिक गणेशोत्सव मंडळांनी कापडावर सक्तीने अग्निरोधक द्रावण प्रक्रिया करून अग्निशमन दलाकडून प्रमाणपत्र घेणे अनिवार्य आहे."
-                  )}
-                </p>
+                </h4>
               </div>
 
-              {/* Action Buttons */}
-              <div className="pt-3 border-t border-slate-100 flex items-center justify-between">
+              {/* Metadata Box */}
+              <div className="bg-slate-50 border border-slate-200 p-2.5 rounded-xs text-[11px] font-mono grid grid-cols-2 gap-1.5 text-slate-700">
+                <div><span className="font-bold text-slate-900">Issued:</span> 05 Aug 2026</div>
+                <div><span className="font-bold text-slate-900">Dept:</span> CFO Fire Cell</div>
+                <div><span className="font-bold text-slate-900">Size:</span> 2.4 MB</div>
+                <div><span className="font-bold text-slate-900">Ref:</span> MBMC/CFO/42</div>
+              </div>
+
+              {/* Short Summary */}
+              <p className="text-xs text-slate-700 leading-relaxed font-medium line-clamp-2">
+                {t(
+                  "Official Chief Fire Officer mandate enforcing ammonium phosphate fire retardant canvas treatment across all Ganesh Utsav pandals within MBMC limits.",
+                  "सर्व सार्वजनिक गणेशोत्सव मंडळांनी कापडावर सक्तीने अग्निरोधक द्रावण प्रक्रिया करून अग्निशमन दलाकडून प्रमाणपत्र घेणे अनिवार्य आहे."
+                )}
+              </p>
+
+              {/* Bottom Action Buttons */}
+              <div className="pt-2 border-t border-slate-200 flex items-center justify-between">
                 <Link
                   href="/guidelines"
-                  className="border border-[#123B7A] text-[#123B7A] hover:bg-[#123B7A] hover:text-white rounded px-3 py-1.5 text-xs font-bold transition-colors flex items-center space-x-1.5"
+                  className="border border-[#123B7A]/40 text-[#123B7A] hover:bg-[#123B7A]/10 rounded px-2.5 py-1 text-xs font-bold transition flex items-center space-x-1"
+                >
+                  <Eye className="w-3.5 h-3.5" />
+                  <span>View Document</span>
+                </Link>
+
+                <Link
+                  href="/guidelines"
+                  className="bg-[#123B7A] text-white hover:bg-[#0B254E] rounded px-3 py-1 text-xs font-bold transition shadow-xs flex items-center space-x-1"
                 >
                   <Download className="w-3.5 h-3.5" />
                   <span>Download PDF</span>
                 </Link>
-
-                <Link href="/guidelines" className="text-[#123B7A] hover:underline text-xs font-bold flex items-center space-x-1">
-                  <span>View Details</span>
-                  <ChevronRight className="w-3.5 h-3.5" />
-                </Link>
-              </div>
-            </div>
-          </div>
-
-          {/* NOTICE CARD 2: Sound Decibel Limits */}
-          <div className="bg-white rounded-[16px] border border-[#DCE6F7] shadow-gov-sm overflow-hidden flex flex-col justify-between group hover:border-[#123B7A] hover:shadow-gov-md transition-all duration-300">
-            {/* Top Thumbnail Image */}
-            <div className="relative h-44 sm:h-48 w-full overflow-hidden bg-slate-100">
-              <img
-                src="https://images.unsplash.com/photo-1451187580459-43490279c0fa?w=800&q=80"
-                alt="Noise Pollution Compliance Directive"
-                className="w-full h-full object-cover group-hover:scale-105 group-hover:brightness-105 transition-all duration-500"
-              />
-              <div className="absolute inset-0 bg-black/10 transition-opacity duration-300 group-hover:opacity-0" />
-              
-              {/* Category Ribbon */}
-              <div className="absolute top-3 left-3 bg-blue-800 text-white text-[10px] font-extrabold px-2.5 py-1 rounded shadow-xs uppercase tracking-wider">
-                CIRCULAR
-              </div>
-
-              {/* NEW Badge */}
-              <div className="absolute top-3 right-3 bg-red-600 text-white text-[10px] font-extrabold px-2 py-0.5 rounded uppercase tracking-wider animate-pulse shadow-xs">
-                NEW
               </div>
             </div>
 
-            {/* Card Body */}
-            <div className="p-5 flex-1 flex flex-col justify-between space-y-3">
-              <div className="space-y-2">
-                {/* Date Badge */}
-                <span className="bg-[#EAF2FF] text-[#123B7A] rounded-[6px] text-[11px] font-bold font-mono px-2.5 py-1 w-fit block">
-                  01-AUG-2026
+
+            {/* PAPER SHEET 2: Noise Pollution Directive */}
+            <div className="bg-white border border-slate-300 shadow-md p-5 rounded-xs relative transition-all duration-300 hover:-translate-y-1 hover:shadow-lg flex flex-col justify-between space-y-4 rotate-1 group">
+              {/* Push Pin */}
+              <div className="absolute -top-3.5 left-1/2 -translate-x-1/2 z-20 text-xl select-none drop-shadow-xs">
+                📌
+              </div>
+
+              {/* Blue Header Strip */}
+              <div className="bg-[#123B7A] text-white text-[10px] font-extrabold px-2.5 py-1 rounded-xs uppercase tracking-wider flex items-center justify-between">
+                <span>LAW ENFORCEMENT DIRECTIVE</span>
+                <span className="bg-red-600 text-white font-extrabold text-[9px] px-1.5 py-0.2 rounded uppercase tracking-wider animate-pulse">
+                  NEW
                 </span>
+              </div>
 
-                <h3 className="text-sm sm:text-base font-bold text-gov-text group-hover:text-[#123B7A] transition-colors leading-snug">
+              {/* Filename & PDF Icon */}
+              <div className="space-y-1.5 border-b border-slate-200 pb-2">
+                <div className="flex items-center space-x-2 text-red-600 font-mono font-bold text-xs">
+                  <FileText className="w-4 h-4 flex-shrink-0" />
+                  <span className="truncate text-slate-900 font-extrabold">Noise_Pollution_Compliance_2026.pdf</span>
+                </div>
+                <h4 className="text-xs sm:text-sm font-bold text-gov-text group-hover:text-[#123B7A] transition-colors leading-snug">
                   {t(
-                    "Noise Pollution Compliance Directive: Sound limit 55 dB daytime, 45 dB post 10:00 PM.",
+                    "High Court Noise Regulations: Sound limit 55 dB daytime, 45 dB post 10:00 PM.",
                     "ध्वनी प्रदूषण अनुपालन आदेश: रात्री १०:०० नंतर ४५ डेसिबल मर्यादा लागू."
                   )}
-                </h3>
-
-                <p className="text-xs text-gov-muted line-clamp-2 leading-relaxed font-medium">
-                  {t(
-                    "High Court sound regulations enforcing strict decibel limits. Loudspeakers permitted until 10:00 PM with mandatory decibel limiters.",
-                    "मा. उच्च न्यायालयाच्या आदेशानुसार रात्री १०:०० वाजेपर्यंत ध्वनिक्षेपकास परवानगी असून मर्यादेचे पालन सक्तीचे आहे."
-                  )}
-                </p>
+                </h4>
               </div>
 
-              {/* Action Buttons */}
-              <div className="pt-3 border-t border-slate-100 flex items-center justify-between">
+              {/* Metadata Grid */}
+              <div className="bg-slate-50 border border-slate-200 p-2.5 rounded-xs text-[11px] font-mono grid grid-cols-2 gap-1.5 text-slate-700">
+                <div><span className="font-bold text-slate-900">Issued:</span> 01 Aug 2026</div>
+                <div><span className="font-bold text-slate-900">Dept:</span> MBVV Police</div>
+                <div><span className="font-bold text-slate-900">Size:</span> 1.8 MB</div>
+                <div><span className="font-bold text-slate-900">Ref:</span> MBVV/POL/18</div>
+              </div>
+
+              {/* Short Summary */}
+              <p className="text-xs text-slate-700 leading-relaxed font-medium line-clamp-2">
+                {t(
+                  "High Court sound regulations enforcing strict decibel limits. Loudspeakers permitted until 10:00 PM with mandatory decibel limiters.",
+                  "मा. उच्च न्यायालयाच्या आदेशानुसार रात्री १०:०० वाजेपर्यंत ध्वनिक्षेपकास परवानगी असून मर्यादेचे पालन सक्तीचे आहे."
+                )}
+              </p>
+
+              {/* Bottom Action Buttons */}
+              <div className="pt-2 border-t border-slate-200 flex items-center justify-between">
                 <Link
                   href="/guidelines"
-                  className="border border-[#123B7A] text-[#123B7A] hover:bg-[#123B7A] hover:text-white rounded px-3 py-1.5 text-xs font-bold transition-colors flex items-center space-x-1.5"
+                  className="border border-[#123B7A]/40 text-[#123B7A] hover:bg-[#123B7A]/10 rounded px-2.5 py-1 text-xs font-bold transition flex items-center space-x-1"
+                >
+                  <Eye className="w-3.5 h-3.5" />
+                  <span>View Document</span>
+                </Link>
+
+                <Link
+                  href="/guidelines"
+                  className="bg-[#123B7A] text-white hover:bg-[#0B254E] rounded px-3 py-1 text-xs font-bold transition shadow-xs flex items-center space-x-1"
                 >
                   <Download className="w-3.5 h-3.5" />
                   <span>Download PDF</span>
                 </Link>
-
-                <Link href="/guidelines" className="text-[#123B7A] hover:underline text-xs font-bold flex items-center space-x-1">
-                  <span>View Details</span>
-                  <ChevronRight className="w-3.5 h-3.5" />
-                </Link>
-              </div>
-            </div>
-          </div>
-
-          {/* NOTICE CARD 3: Bio-Toilet & CCTV Tender */}
-          <div className="bg-white rounded-[16px] border border-[#DCE6F7] shadow-gov-sm overflow-hidden flex flex-col justify-between group hover:border-[#123B7A] hover:shadow-gov-md transition-all duration-300">
-            {/* Top Thumbnail Image */}
-            <div className="relative h-44 sm:h-48 w-full overflow-hidden bg-slate-100">
-              <img
-                src="https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?w=800&q=80"
-                alt="Bio-Toilet & CCTV Tender"
-                className="w-full h-full object-cover group-hover:scale-105 group-hover:brightness-105 transition-all duration-500"
-              />
-              <div className="absolute inset-0 bg-black/10 transition-opacity duration-300 group-hover:opacity-0" />
-              
-              {/* Category Ribbon */}
-              <div className="absolute top-3 left-3 bg-amber-700 text-white text-[10px] font-extrabold px-2.5 py-1 rounded shadow-xs uppercase tracking-wider">
-                TENDER
               </div>
             </div>
 
-            {/* Card Body */}
-            <div className="p-5 flex-1 flex flex-col justify-between space-y-3">
-              <div className="space-y-2">
-                {/* Date Badge */}
-                <span className="bg-[#EAF2FF] text-[#123B7A] rounded-[6px] text-[11px] font-bold font-mono px-2.5 py-1 w-fit block">
-                  28-JUL-2026
-                </span>
 
-                <h3 className="text-sm sm:text-base font-bold text-gov-text group-hover:text-[#123B7A] transition-colors leading-snug">
+            {/* PAPER SHEET 3: Bio-Toilet & CCTV Tender */}
+            <div className="bg-white border border-slate-300 shadow-md p-5 rounded-xs relative transition-all duration-300 hover:-translate-y-1 hover:shadow-lg flex flex-col justify-between space-y-4 -rotate-2 group">
+              {/* Push Pin */}
+              <div className="absolute -top-3.5 left-1/2 -translate-x-1/2 z-20 text-xl select-none drop-shadow-xs">
+                📌
+              </div>
+
+              {/* Blue Header Strip */}
+              <div className="bg-amber-800 text-white text-[10px] font-extrabold px-2.5 py-1 rounded-xs uppercase tracking-wider flex items-center justify-between">
+                <span>PROCUREMENT TENDER NOTICE</span>
+                <span className="text-[9px] bg-amber-950 px-1.5 py-0.2 rounded font-mono">TENDER-08</span>
+              </div>
+
+              {/* Filename & PDF Icon */}
+              <div className="space-y-1.5 border-b border-slate-200 pb-2">
+                <div className="flex items-center space-x-2 text-red-600 font-mono font-bold text-xs">
+                  <FileText className="w-4 h-4 flex-shrink-0" />
+                  <span className="truncate text-slate-900 font-extrabold">Tender_BioToilet_CCTV_Ghats_2026.pdf</span>
+                </div>
+                <h4 className="text-xs sm:text-sm font-bold text-gov-text group-hover:text-[#123B7A] transition-colors leading-snug">
                   {t(
                     "Tender Ref: TENDER-MBMC-2026/08 — Mobile Bio-Toilets & CCTV Monitoring at Immersion Ghats.",
                     "निविदा सूचना: विसर्जन घाटांसाठी मोबाईल बायो-टॉयलेट व सीसीटीव्ही यंत्रणा पुरवठा."
                   )}
-                </h3>
-
-                <p className="text-xs text-gov-muted line-clamp-2 leading-relaxed font-medium">
-                  {t(
-                    "Procurement tender for mobile sanitation units, high-definition CCTV security rigs, and LED floodlights across all 14 immersion points.",
-                    "मीरा भाईंदर क्षेत्रातील १४ विसर्जन घाटांवर तात्पुरती स्वच्छता गृहे व सुरक्षा कॅमेरे उभारणीसाठी स्पर्धात्मक निविदा मागवण्यात येत आहेत."
-                  )}
-                </p>
+                </h4>
               </div>
 
-              {/* Action Buttons */}
-              <div className="pt-3 border-t border-slate-100 flex items-center justify-between">
+              {/* Metadata Grid */}
+              <div className="bg-slate-50 border border-slate-200 p-2.5 rounded-xs text-[11px] font-mono grid grid-cols-2 gap-1.5 text-slate-700">
+                <div><span className="font-bold text-slate-900">Issued:</span> 28 Jul 2026</div>
+                <div><span className="font-bold text-slate-900">Dept:</span> MBMC PWD</div>
+                <div><span className="font-bold text-slate-900">Size:</span> 3.1 MB</div>
+                <div><span className="font-bold text-slate-900">Ref:</span> TND-MBMC-08</div>
+              </div>
+
+              {/* Short Summary */}
+              <p className="text-xs text-slate-700 leading-relaxed font-medium line-clamp-2">
+                {t(
+                  "Procurement tender for mobile sanitation units, high-definition CCTV security rigs, and LED floodlights across all 14 immersion points.",
+                  "मीरा भाईंदर क्षेत्रातील १४ विसर्जन घाटांवर तात्पुरती स्वच्छता गृहे व सुरक्षा कॅमेरे उभारणीसाठी स्पर्धात्मक निविदा मागवण्यात येत आहेत."
+                )}
+              </p>
+
+              {/* Bottom Action Buttons */}
+              <div className="pt-2 border-t border-slate-200 flex items-center justify-between">
                 <Link
                   href="/guidelines"
-                  className="border border-[#123B7A] text-[#123B7A] hover:bg-[#123B7A] hover:text-white rounded px-3 py-1.5 text-xs font-bold transition-colors flex items-center space-x-1.5"
+                  className="border border-[#123B7A]/40 text-[#123B7A] hover:bg-[#123B7A]/10 rounded px-2.5 py-1 text-xs font-bold transition flex items-center space-x-1"
+                >
+                  <Eye className="w-3.5 h-3.5" />
+                  <span>View Document</span>
+                </Link>
+
+                <Link
+                  href="/guidelines"
+                  className="bg-[#123B7A] text-white hover:bg-[#0B254E] rounded px-3 py-1 text-xs font-bold transition shadow-xs flex items-center space-x-1"
                 >
                   <Download className="w-3.5 h-3.5" />
                   <span>Tender Doc</span>
                 </Link>
-
-                <Link href="/guidelines" className="text-[#123B7A] hover:underline text-xs font-bold flex items-center space-x-1">
-                  <span>View Details</span>
-                  <ChevronRight className="w-3.5 h-3.5" />
-                </Link>
               </div>
             </div>
+
           </div>
 
         </div>
