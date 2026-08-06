@@ -57,6 +57,8 @@ export default function GovHeader() {
                 src="/images/sher.png"
                 alt="Emblem of India"
                 className="w-full h-full object-contain filter drop-shadow-xs"
+                width="16"
+                height="24"
               />
             </div>
             <div className="flex items-center space-x-2 font-extrabold tracking-wide text-gov-footer">
@@ -165,6 +167,8 @@ export default function GovHeader() {
                 src="/images/mbmc_updated logo.jpg"
                 alt="MBMC Official Logo"
                 className="w-full h-full object-contain"
+                width="128"
+                height="128"
               />
             </div>
             <div>
@@ -232,18 +236,24 @@ export default function GovHeader() {
                 alt="Emblem of India"
                 className="h-20 sm:h-26 w-auto object-contain"
                 title="State Emblem of India"
+                width="70"
+                height="104"
               />
               <img
                 src="/images/SLRTCElogo.png"
                 alt="SLRTCE Logo"
                 className="h-20 sm:h-26 w-20 sm:w-26 object-contain"
                 title="Shree L. R. Tiwari College of Engineering"
+                width="104"
+                height="104"
               />
               <img
                 src="/images/IT.png"
                 alt="IT Department Seal"
                 className="h-20 sm:h-26 w-20 sm:w-26 object-contain"
                 title="Department of Information Technology"
+                width="104"
+                height="104"
               />
             </div>
           </div>

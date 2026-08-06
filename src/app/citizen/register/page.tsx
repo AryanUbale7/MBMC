@@ -57,8 +57,8 @@ export default function CitizenRegisterPage() {
         {/* HEADER */}
         <div className="text-center space-y-2">
           <div className="flex items-center justify-center space-x-3">
-            <img src="/images/sher.png" alt="Emblem of India" className="w-5 h-8 object-contain" />
-            <img src="/images/mbmc_updated logo.jpg" alt="MBMC Seal" className="w-12 h-12 object-contain" />
+            <img src="/images/sher.png" alt="Emblem of India" className="w-5 h-8 object-contain" width="20" height="32" />
+            <img src="/images/mbmc_updated logo.jpg" alt="MBMC Seal" className="w-12 h-12 object-contain" width="48" height="48" />
           </div>
           <h1 className="text-lg font-black text-[#123B7A] uppercase tracking-wider">
             MIRA BHAYANDAR MUNICIPAL CORPORATION

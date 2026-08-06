@@ -495,8 +495,8 @@ export default function OfficerDashboardPage() {
             {/* Government Header */}
             <div className="text-center space-y-2 border-b-2 border-[#123B7A] pb-6">
               <div className="flex items-center justify-center space-x-4">
-                <img src="/images/sher.png" alt="Emblem of India" className="w-6 h-9 object-contain" />
-                <img src="/images/mbmc_updated logo.jpg" alt="MBMC Seal" className="w-14 h-14 object-contain" />
+                <img src="/images/sher.png" alt="Emblem of India" className="w-6 h-9 object-contain" width="24" height="36" />
+                <img src="/images/mbmc_updated logo.jpg" alt="MBMC Seal" className="w-14 h-14 object-contain" width="56" height="56" />
               </div>
               <h2 className="text-xl sm:text-2xl font-black text-[#123B7A] uppercase tracking-wider">
                 MIRA BHAYANDAR MUNICIPAL CORPORATION
@@ -591,7 +591,7 @@ export default function OfficerDashboardPage() {
 
               {/* If it's an image, show preview */}
               {docModal.dataUrl && docModal.dataUrl.startsWith("data:image") ? (
-                <img src={docModal.dataUrl} alt={docModal.label} className="w-full max-h-64 object-contain border border-slate-200 rounded" />
+                <img src={docModal.dataUrl} alt={docModal.label} className="w-full max-h-64 object-contain border border-slate-200 rounded" width="400" height="256" />
               ) : docModal.dataUrl && docModal.dataUrl.startsWith("data:application/pdf") ? (
                 <div className="h-48 flex items-center justify-center bg-slate-100 border border-slate-300 rounded-xs text-slate-500 text-xs font-mono text-center p-4">
                   <div>

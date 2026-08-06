@@ -60,6 +60,8 @@ export default function GovPreloader() {
           src="/images/sher.png"
           alt="Emblem of India"
           style={{ width: "52px", height: "80px", objectFit: "contain", opacity: 0.88 }}
+          width="52"
+          height="80"
         />
 
         {/* Vertical Divider */}
@@ -70,6 +72,8 @@ export default function GovPreloader() {
           src="/images/mbmc_updated logo.jpg"
           alt="MBMC Logo"
           style={{ width: "110px", height: "110px", objectFit: "contain" }}
+          width="110"
+          height="110"
         />
 
         {/* Vertical Divider */}

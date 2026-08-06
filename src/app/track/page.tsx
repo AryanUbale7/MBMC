@@ -281,8 +281,8 @@ function TrackContent() {
             {/* Government Emblem & Header */}
             <div className="text-center space-y-2 border-b-2 border-[#123B7A] pb-6">
               <div className="flex items-center justify-center space-x-4">
-                <img src="/images/sher.png" alt="Emblem of India" className="w-6 h-9 object-contain" />
-                <img src="/images/mbmc_updated logo.jpg" alt="MBMC Seal" className="w-14 h-14 object-contain" />
+                <img src="/images/sher.png" alt="Emblem of India" className="w-6 h-9 object-contain" width="24" height="36" />
+                <img src="/images/mbmc_updated logo.jpg" alt="MBMC Seal" className="w-14 h-14 object-contain" width="56" height="56" />
               </div>
               <h2 className="text-xl sm:text-2xl font-black text-[#123B7A] uppercase tracking-wider">
                 MIRA BHAYANDAR MUNICIPAL CORPORATION

@@ -76,17 +76,17 @@ export default function HomePage() {
     {
       id: 1,
       alt: "Mira Bhayandar Municipal Corporation Headquarters",
-      image: "https://images.unsplash.com/photo-1540575467063-178a50c2df87?w=1920&q=80"
+      image: "https://images.unsplash.com/photo-1540575467063-178a50c2df87?w=1200&q=75&auto=format&fit=crop&fm=webp"
     },
     {
       id: 2,
       alt: "Sarvajanik Festival & Cultural Grounds",
-      image: "https://images.unsplash.com/photo-1511578314322-379afb476865?w=1920&q=80"
+      image: "https://images.unsplash.com/photo-1511578314322-379afb476865?w=1200&q=75&auto=format&fit=crop&fm=webp"
     },
     {
       id: 3,
       alt: "Mira Bhayandar Public Infrastructure & City Plaza",
-      image: "https://images.unsplash.com/photo-1514525253161-7a46d19cd819?w=1920&q=80"
+      image: "https://images.unsplash.com/photo-1514525253161-7a46d19cd819?w=1200&q=75&auto=format&fit=crop&fm=webp"
     }
   ];
 
@@ -121,6 +121,9 @@ export default function HomePage() {
               src={heroSlides[currentSlide].image}
               alt={heroSlides[currentSlide].alt}
               className="w-full h-full object-cover transition-opacity duration-1000"
+              fetchPriority="high"
+              width="1200"
+              height="520"
             />
           </div>
 
@@ -131,11 +134,15 @@ export default function HomePage() {
                 src="/images/sher.png"
                 alt="Emblem of India"
                 className="w-4 h-6 object-contain"
+                width="16"
+                height="24"
               />
               <img
                 src="/images/mbmc_updated logo.jpg"
                 alt="MBMC Seal"
                 className="w-8 h-8 object-contain"
+                width="32"
+                height="32"
               />
               <span className="text-xs font-bold text-gov-primary uppercase tracking-wider">
                 {t("Mira Bhayandar Municipal Corporation", "मीरा भाईंदर महानगरपालिका")}
@@ -230,9 +237,12 @@ export default function HomePage() {
           >
             <div className="relative h-44 sm:h-48 w-full overflow-hidden bg-slate-100">
               <img
-                src="/images/services/apply.png"
+                src="https://images.unsplash.com/photo-1450133064473-71024230f91b?w=600&auto=format&fit=crop&q=70&fm=webp"
                 alt="Apply Event Permission"
                 className="w-full h-full object-cover group-hover:scale-105 group-hover:brightness-105 transition-all duration-500"
+                loading="lazy"
+                width="600"
+                height="400"
               />
               <div className="absolute inset-0 bg-black/10 transition-opacity duration-300 group-hover:opacity-0" />
               <div className="absolute top-3 left-3 bg-gov-primary text-white text-[10px] font-extrabold px-2.5 py-1 rounded shadow-xs uppercase tracking-wider">
@@ -266,9 +276,12 @@ export default function HomePage() {
           >
             <div className="relative h-44 sm:h-48 w-full overflow-hidden bg-slate-100">
               <img
-                src="/images/services/track.png"
+                src="https://images.unsplash.com/photo-1460925895917-afdab827c52f?w=600&auto=format&fit=crop&q=70&fm=webp"
                 alt="Track NOC Approval Status"
                 className="w-full h-full object-cover group-hover:scale-105 group-hover:brightness-105 transition-all duration-500"
+                loading="lazy"
+                width="600"
+                height="400"
               />
               <div className="absolute inset-0 bg-black/10 transition-opacity duration-300 group-hover:opacity-0" />
               <div className="absolute top-3 left-3 bg-emerald-700 text-white text-[10px] font-extrabold px-2.5 py-1 rounded shadow-xs uppercase tracking-wider">
@@ -302,9 +315,12 @@ export default function HomePage() {
           >
             <div className="relative h-44 sm:h-48 w-full overflow-hidden bg-slate-100">
               <img
-                src="/images/services/required.png"
+                src="https://images.unsplash.com/photo-1586281380349-632531db7ed4?w=600&auto=format&fit=crop&q=70&fm=webp"
                 alt="Required Documents Checklist"
                 className="w-full h-full object-cover group-hover:scale-105 group-hover:brightness-105 transition-all duration-500"
+                loading="lazy"
+                width="600"
+                height="400"
               />
               <div className="absolute inset-0 bg-black/10 transition-opacity duration-300 group-hover:opacity-0" />
               <div className="absolute top-3 left-3 bg-purple-700 text-white text-[10px] font-extrabold px-2.5 py-1 rounded shadow-xs uppercase tracking-wider">
@@ -338,9 +354,12 @@ export default function HomePage() {
           >
             <div className="relative h-44 sm:h-48 w-full overflow-hidden bg-slate-100">
               <img
-                src="/images/services/public_ground.png"
+                src="https://images.unsplash.com/photo-1589487391730-58f20eb2c308?w=600&auto=format&fit=crop&q=70&fm=webp"
                 alt="Public Ground Availability"
                 className="w-full h-full object-cover group-hover:scale-105 group-hover:brightness-105 transition-all duration-500"
+                loading="lazy"
+                width="600"
+                height="400"
               />
               <div className="absolute inset-0 bg-black/10 transition-opacity duration-300 group-hover:opacity-0" />
               <div className="absolute top-3 left-3 bg-amber-700 text-white text-[10px] font-extrabold px-2.5 py-1 rounded shadow-xs uppercase tracking-wider">
@@ -374,9 +393,12 @@ export default function HomePage() {
           >
             <div className="relative h-44 sm:h-48 w-full overflow-hidden bg-slate-100">
               <img
-                src="/images/services/noc.png"
+                src="https://images.unsplash.com/photo-1589829545856-d10d557cf95f?w=600&auto=format&fit=crop&q=70&fm=webp"
                 alt="NOC Rules & Sound Guidelines"
                 className="w-full h-full object-cover group-hover:scale-105 group-hover:brightness-105 transition-all duration-500"
+                loading="lazy"
+                width="600"
+                height="400"
               />
               <div className="absolute inset-0 bg-black/10 transition-opacity duration-300 group-hover:opacity-0" />
               <div className="absolute top-3 left-3 bg-sky-700 text-white text-[10px] font-extrabold px-2.5 py-1 rounded shadow-xs uppercase tracking-wider">
@@ -410,9 +432,12 @@ export default function HomePage() {
           >
             <div className="relative h-44 sm:h-48 w-full overflow-hidden bg-slate-100">
               <img
-                src="/images/services/help.png"
+                src="https://images.unsplash.com/photo-1486312338219-ce68d2c6f44d?w=600&auto=format&fit=crop&q=70&fm=webp"
                 alt="Help Centre & Emergency Contacts"
                 className="w-full h-full object-cover group-hover:scale-105 group-hover:brightness-105 transition-all duration-500"
+                loading="lazy"
+                width="600"
+                height="400"
               />
               <div className="absolute inset-0 bg-black/10 transition-opacity duration-300 group-hover:opacity-0" />
               <div className="absolute top-3 left-3 bg-red-700 text-white text-[10px] font-extrabold px-2.5 py-1 rounded shadow-xs uppercase tracking-wider">
@@ -535,6 +560,9 @@ export default function HomePage() {
               src="/images/mbmc_updated logo.jpg"
               alt="MBMC Watermark"
               className="w-[650px] h-[650px] object-contain"
+              loading="lazy"
+              width="650"
+              height="650"
             />
           </div>
 

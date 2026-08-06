@@ -44,6 +44,9 @@ export default function GovFooter() {
                   src="/images/sher.png"
                   alt="State Emblem of India"
                   className="w-full h-full object-contain"
+                  loading="lazy"
+                  width="112"
+                  height="112"
                 />
               </div>
               <span className="text-xs text-gov-primary font-extrabold uppercase tracking-wider">{t("Emblem of India", "भारत राजमुद्रा")}</span>
@@ -58,6 +61,9 @@ export default function GovFooter() {
                   src="/images/mbmc_updated logo.jpg"
                   alt="MBMC Official Seal"
                   className="w-full h-full object-contain"
+                  loading="lazy"
+                  width="112"
+                  height="112"
                 />
               </div>
               <span className="text-xs text-gov-primary font-black uppercase tracking-wider">{t("MBMC Municipal Seal", "मीरा भाईंदर मनपा मुद्रा")}</span>
@@ -72,6 +78,9 @@ export default function GovFooter() {
                   src="/images/SLRTCElogo.png"
                   alt="SLRTCE College Logo"
                   className="w-full h-full object-contain"
+                  loading="lazy"
+                  width="112"
+                  height="112"
                 />
               </div>
               <span className="text-xs text-gov-primary font-extrabold uppercase tracking-wider">SLRTCE Mumbai</span>
@@ -86,6 +95,9 @@ export default function GovFooter() {
                   src="/images/IT.png"
                   alt="IT Department Seal"
                   className="w-full h-full object-contain"
+                  loading="lazy"
+                  width="112"
+                  height="112"
                 />
               </div>
               <span className="text-xs text-gov-primary font-extrabold uppercase tracking-wider">IT Department</span>

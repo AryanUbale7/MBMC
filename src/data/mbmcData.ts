@@ -126,7 +126,7 @@ export const MBMC_VENUES: PublicVenue[] = [
     areaSqFt: 65000,
     dailyRateINR: 12500,
     facilities: ["High-mast Lighting", "Multiple Gate Access", "VIP Parking Zone", "Water Connection"],
-    image: "https://images.unsplash.com/photo-1540575467063-178a50c2df87?w=800&q=80",
+    image: "https://images.unsplash.com/photo-1540575467063-178a50c2df87?w=600&auto=format&fit=crop&q=70&fm=webp",
     status: "Available"
   },
   {
@@ -140,7 +140,7 @@ export const MBMC_VENUES: PublicVenue[] = [
     areaSqFt: 35000,
     dailyRateINR: 8000,
     facilities: ["Enclosed Boundary Wall", "Stage Pedestal", "Public Toilet Block", "CCTV Infrastructure"],
-    image: "https://images.unsplash.com/photo-1511578314322-379afb476865?w=800&q=80",
+    image: "https://images.unsplash.com/photo-1511578314322-379afb476865?w=600&auto=format&fit=crop&q=70&fm=webp",
     status: "Available"
   },
   {
@@ -154,7 +154,7 @@ export const MBMC_VENUES: PublicVenue[] = [
     areaSqFt: 24000,
     dailyRateINR: 6000,
     facilities: ["Synthetic Track Surround", "Emergency Exit Bays", "Green Room Block"],
-    image: "https://images.unsplash.com/photo-1492684223066-81342ee5ff30?w=800&q=80",
+    image: "https://images.unsplash.com/photo-1492684223066-81342ee5ff30?w=600&auto=format&fit=crop&q=70&fm=webp",
     status: "Reserved"
   },
   {
@@ -168,7 +168,7 @@ export const MBMC_VENUES: PublicVenue[] = [
     areaSqFt: 48000,
     dailyRateINR: 10000,
     facilities: ["Central Location", "3-Phase Electrical Points", "Dedicated Ambulance Dock"],
-    image: "https://images.unsplash.com/photo-1514525253161-7a46d19cd819?w=800&q=80",
+    image: "https://images.unsplash.com/photo-1514525253161-7a46d19cd819?w=600&auto=format&fit=crop&q=70&fm=webp",
     status: "Available"
   }
 ];

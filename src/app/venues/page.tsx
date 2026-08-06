@@ -55,6 +55,9 @@ export default function VenuesPage() {
                   src={venue.image}
                   alt={venue.name}
                   className="w-full h-full object-cover opacity-85"
+                  loading="lazy"
+                  width="600"
+                  height="176"
                 />
                 <div className="absolute top-3 right-3">
                   <span
