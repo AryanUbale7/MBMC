@@ -2,8 +2,11 @@
 
 import React, { useState, useEffect, Suspense } from "react";
 import Link from "next/link";
-import { useSearchParams } from "next/navigation";
+import { useSearchParams, useRouter } from "next/navigation";
 import { useAccessibility } from "@/context/AccessibilityContext";
+import { useAuth } from "@/context/AuthContext";
+import { getApplications, ApplicationRecord } from "@/lib/govStore";
+import { QRCodeSVG } from "qrcode.react";
 import {
   Search,
   CheckCircle2,
@@ -29,85 +32,36 @@ import {
 
 function TrackContent() {
   const { t } = useAccessibility();
+  const { citizen } = useAuth();
+  const router = useRouter();
   const searchParams = useSearchParams();
-  const initialRef = searchParams.get("ref") || "MBMC/UECP/2026/89412";
+  const initialRef = searchParams.get("ref") || "";
+
+  useEffect(() => {
+    if (!citizen) {
+      router.push("/citizen/login?redirect=/track");
+    }
+  }, [citizen, router]);
 
   const [refInput, setRefInput] = useState(initialRef);
   const [searchedRef, setSearchedRef] = useState(initialRef);
+  const [activeApp, setActiveApp] = useState<ApplicationRecord | null>(null);
 
-  // Mock Lookup Store
-  const mockDb: Record<string, any> = {
-    "MBMC/UECP/2026/89412": {
-      id: "MBMC/UECP/2026/89412",
-      eventName: "Shanti Nagar Sarvajanik Ganeshotsav Pandal",
-      applicantName: "Pravin Kumar Raut",
-      organization: "Shanti Nagar Welfare Mandal Trust",
-      ward: "Ward 4 (Kashimira - Ghodbunder)",
-      venue: "Shanti Nagar Cultural & Community Field",
-      dates: "2026-09-10 to 2026-09-20",
-      mobile: "9820199482",
-      email: "pravin.raut@mandal.org",
-      stageSize: "40ft x 30ft",
-      crowd: "10,000 daily",
-      cctvCount: 8,
-      fireExtinguishers: 6,
-      submittedAt: "2026-08-06 09:15 AM",
-      status: "PENDING_SCRUTINY",
-      cfoFireStatus: "PENDING",
-      policeStatus: "PENDING",
-      trafficStatus: "PENDING",
-      wardStatus: "PENDING",
-      commissionerSanction: false,
-      remarks: "Application logged into system. Desk Scrutiny & CAD verification in progress."
-    },
-    "MBMC/UECP/2026/98412": {
-      id: "MBMC/UECP/2026/98412",
-      eventName: "Mira Bhayandar Annual Cultural & Handloom Festival 2026",
-      applicantName: "Sanjay R. Mehta",
-      organization: "Konkan Heritage Cultural Trust",
-      ward: "Ward 1 (Bhayandar West)",
-      venue: "Netaji Subhash Chandra Bose Ground",
-      dates: "2026-09-15 to 2026-09-20",
-      mobile: "9820144890",
-      email: "sanjay@konkanheritage.org",
-      stageSize: "60ft x 45ft",
-      crowd: "12,000 daily",
-      cctvCount: 12,
-      fireExtinguishers: 12,
-      submittedAt: "2026-08-01 10:30 AM",
-      status: "APPROVED",
-      cfoFireStatus: "APPROVED",
-      policeStatus: "APPROVED",
-      trafficStatus: "APPROVED",
-      wardStatus: "APPROVED",
-      commissionerSanction: true,
-      remarks: "All multi-departmental clearances granted. QR Permission Pass issued."
+  useEffect(() => {
+    const allApps = getApplications();
+    if (searchedRef.trim()) {
+      const found = allApps.find(
+        (a) => a.id.toLowerCase() === searchedRef.trim().toLowerCase() || a.mobile === searchedRef.trim()
+      );
+      setActiveApp(found || null);
+    } else if (allApps.length > 0) {
+      setActiveApp(allApps[0]);
+      setSearchedRef(allApps[0].id);
+      setRefInput(allApps[0].id);
+    } else {
+      setActiveApp(null);
     }
-  };
-
-  const activeApp = mockDb[searchedRef.toUpperCase()] || {
-    id: refInput.toUpperCase(),
-    eventName: "Registered Event Permit Application",
-    applicantName: "Registered Citizen Applicant",
-    organization: "Citizen Event Committee",
-    ward: "Ward 4 (Kashimira - Ghodbunder)",
-    venue: "Designated Public Field, Mira Road",
-    dates: "2026-09-01 to 2026-09-10",
-    mobile: "9820000000",
-    email: "applicant@mbmc-portal.org",
-    stageSize: "30ft x 20ft",
-    crowd: "5,000 daily",
-    cctvCount: 6,
-    fireExtinguishers: 4,
-    submittedAt: "2026-08-05 11:00 AM",
-    status: "PENDING_SCRUTINY",
-    cfoFireStatus: "PENDING",
-    policeStatus: "PENDING",
-    trafficStatus: "PENDING",
-    wardStatus: "PENDING",
-    commissionerSanction: false,
-    remarks: "Application under initial Desk Scrutiny by MBMC Single-Window Cell."
-  };
+  }, [searchedRef]);
 
   const handleSearchSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -167,15 +121,29 @@ function TrackContent() {
         {/* -------------------------------------------------
             LIVE WORKFLOW TRACKER DISPLAY
         ------------------------------------------------- */}
-        <div className="bg-white rounded-xs border border-[#D9E4F4] p-6 sm:p-8 shadow-xs space-y-6 print:hidden">
-          
-          {/* Header Status Bar */}
-          <div className="border-b border-[#D9E4F4] pb-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
-            <div>
-              <span className="text-[10px] font-mono font-bold text-slate-500 block">APPLICATION FILE TRACKING RECORD</span>
-              <h2 className="text-lg sm:text-xl font-extrabold text-[#123B7A]">{activeApp.eventName}</h2>
-              <span className="text-xs font-mono text-[#1E4F91] font-bold">Ref No: {activeApp.id}</span>
+        {!activeApp ? (
+          <div className="bg-white rounded-xs border border-[#D9E4F4] p-8 text-center space-y-3 print:hidden">
+            <Clock className="w-10 h-10 text-slate-400 mx-auto" />
+            <h3 className="text-base font-extrabold text-[#123B7A]">No Application File Found</h3>
+            <p className="text-xs text-slate-600 max-w-md mx-auto font-medium">
+              No registered application was found matching Reference ID <strong>"{searchedRef || refInput}"</strong>. Please check your Reference ID or log in to file a new application.
+            </p>
+            <div className="pt-2">
+              <Link href="/apply" className="bg-[#123B7A] text-white text-xs font-bold px-4 py-2 rounded-xs">
+                Apply for Event Permission
+              </Link>
             </div>
+          </div>
+        ) : (
+          <div className="bg-white rounded-xs border border-[#D9E4F4] p-6 sm:p-8 shadow-xs space-y-6 print:hidden">
+            
+            {/* Header Status Bar */}
+            <div className="border-b border-[#D9E4F4] pb-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+              <div>
+                <span className="text-[10px] font-mono font-bold text-slate-500 block">APPLICATION FILE TRACKING RECORD</span>
+                <h2 className="text-lg sm:text-xl font-extrabold text-[#123B7A]">{activeApp.eventName}</h2>
+                <span className="text-xs font-mono text-[#1E4F91] font-bold">Ref No: {activeApp.id}</span>
+              </div>
 
             <div className="text-left sm:text-right">
               <span className="text-[10px] text-slate-500 font-bold block">CURRENT E-GOVERNANCE STATUS</span>
@@ -296,12 +264,13 @@ function TrackContent() {
           </div>
 
         </div>
+        )}
 
 
         {/* -------------------------------------------------
             PRINTABLE OFFICIAL A4 PERMISSION PASS (RENDERED IF APPROVED)
         ------------------------------------------------- */}
-        {activeApp.status === "APPROVED" ? (
+        {activeApp && activeApp.status === "APPROVED" ? (
           <div className="printable-pass bg-white rounded-xs border-2 border-[#123B7A] p-6 sm:p-8 shadow-xs space-y-6">
             
             {/* Government Emblem & Header */}
@@ -324,11 +293,11 @@ function TrackContent() {
               <div><span className="font-bold text-slate-900">Application Reference ID:</span> <span className="text-[#123B7A] font-extrabold">{activeApp.id}</span></div>
               <div><span className="font-bold text-slate-900">Digital Issue Date:</span> {new Date().toLocaleDateString('en-IN')}</div>
               <div><span className="font-bold text-slate-900">Applicant Full Name:</span> {activeApp.applicantName}</div>
-              <div><span className="font-bold text-slate-900">Organization / Trust:</span> {activeApp.organization}</div>
+              <div><span className="font-bold text-slate-900">Organization / Trust:</span> {activeApp.organizationName}</div>
               <div><span className="font-bold text-slate-900">Event Title:</span> {activeApp.eventName}</div>
-              <div><span className="font-bold text-slate-900">Ward Jurisdiction:</span> {activeApp.ward}</div>
-              <div><span className="font-bold text-slate-900">Sanctioned Venue:</span> {activeApp.venue}</div>
-              <div><span className="font-bold text-slate-900">Validity Schedule:</span> {activeApp.dates}</div>
+              <div><span className="font-bold text-slate-900">Ward Jurisdiction:</span> {activeApp.wardName}</div>
+              <div><span className="font-bold text-slate-900">Sanctioned Venue:</span> {activeApp.venueName}</div>
+              <div><span className="font-bold text-slate-900">Validity Schedule:</span> {activeApp.startDate} – {activeApp.endDate}</div>
               <div><span className="font-bold text-slate-900">CFO Fire Safety NOC:</span> SANCTIONED (CFO/2026/88)</div>
               <div><span className="font-bold text-slate-900">MBVV Police Law & Order:</span> SANCTIONED (MBVV/POL/41)</div>
               <div><span className="font-bold text-slate-900">Traffic Route Permit:</span> APPROVED (TFR/2026/19)</div>
@@ -352,9 +321,13 @@ function TrackContent() {
               </div>
 
               <div className="flex items-center space-x-6">
-                <div className="w-24 h-24 bg-slate-900 text-white flex flex-col items-center justify-center font-mono text-[9px] text-center p-2 rounded">
-                  <span>[QR CODE STAMP]</span>
-                  <span className="mt-1 font-bold text-[#F4B400]">MBMC VERIFIED</span>
+                <div className="p-1 border-2 border-[#123B7A] rounded">
+                  <QRCodeSVG
+                    value={`https://mbmc.gov.in/verify/${activeApp.id}`}
+                    size={88}
+                    level="H"
+                    includeMargin={false}
+                  />
                 </div>
 
                 <div className="text-center space-y-1 text-xs font-mono">

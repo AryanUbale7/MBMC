@@ -4,6 +4,7 @@ import React, { useState } from "react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { useAccessibility } from "@/context/AccessibilityContext";
+import { useAuth } from "@/context/AuthContext";
 import {
   PhoneCall,
   Globe,
@@ -27,6 +28,7 @@ export default function GovHeader() {
   const pathname = usePathname();
   const router = useRouter();
   const { fontSize, setFontSize, highContrast, setHighContrast, language, setLanguage, t } = useAccessibility();
+  const { citizen, officer } = useAuth();
 
   const [topSearch, setTopSearch] = useState("");
   const [showCitizenModal, setShowCitizenModal] = useState(false);
@@ -185,23 +187,43 @@ export default function GovHeader() {
 
           {/* Right Action Logins & Academic Seals */}
           <div className="flex items-center space-x-3">
-            {/* Citizen Login Button */}
-            <button
-              onClick={() => setShowCitizenModal(true)}
-              className="bg-gov-surface hover:bg-gov-border text-gov-primary border border-gov-border font-bold text-xs px-4 py-2.5 rounded-gov-sm flex items-center space-x-2 transition shadow-gov-sm cursor-pointer"
-            >
-              <User className="w-4 h-4 text-gov-secondary" />
-              <span>{t("Citizen Login", "नागरिक लॉगिन")}</span>
-            </button>
+            {/* Citizen Login / Dashboard Button */}
+            {citizen ? (
+              <Link
+                href="/citizen/dashboard"
+                className="bg-emerald-700 hover:bg-emerald-800 text-white font-bold text-xs px-3.5 py-2.5 rounded-gov-sm flex items-center space-x-2 transition shadow-gov-sm cursor-pointer"
+              >
+                <User className="w-4 h-4" />
+                <span className="truncate max-w-[120px]">{citizen.fullName}</span>
+              </Link>
+            ) : (
+              <Link
+                href="/citizen/login"
+                className="bg-gov-surface hover:bg-gov-border text-gov-primary border border-gov-border font-bold text-xs px-4 py-2.5 rounded-gov-sm flex items-center space-x-2 transition shadow-gov-sm cursor-pointer"
+              >
+                <User className="w-4 h-4 text-gov-secondary" />
+                <span>{t("Citizen Login", "नागरिक लॉगिन")}</span>
+              </Link>
+            )}
 
-            {/* Officer Login Link */}
-            <Link
-              href="/department"
-              className="bg-gov-primary hover:bg-gov-secondary text-white font-bold text-xs px-4 py-2.5 rounded-gov-sm flex items-center space-x-2 transition shadow-gov-sm cursor-pointer"
-            >
-              <ShieldCheck className="w-4 h-4 text-gov-accent" />
-              <span>{t("Officer Login", "अधिकारी लॉगिन")}</span>
-            </Link>
+            {/* Officer Login / Dashboard Link */}
+            {officer ? (
+              <Link
+                href="/officer/dashboard"
+                className="bg-[#123B7A] hover:bg-[#1E4F91] text-white font-bold text-xs px-3.5 py-2.5 rounded-gov-sm flex items-center space-x-2 transition shadow-gov-sm cursor-pointer"
+              >
+                <ShieldCheck className="w-4 h-4 text-yellow-400" />
+                <span className="truncate max-w-[120px]">Officer Portal</span>
+              </Link>
+            ) : (
+              <Link
+                href="/officer/login"
+                className="bg-gov-primary hover:bg-gov-secondary text-white font-bold text-xs px-4 py-2.5 rounded-gov-sm flex items-center space-x-2 transition shadow-gov-sm cursor-pointer"
+              >
+                <ShieldCheck className="w-4 h-4 text-gov-accent" />
+                <span>{t("Officer Login", "अधिकारी लॉगिन")}</span>
+              </Link>
+            )}
 
             {/* Divider & Prominent Header Logos (State Emblem, SLRTCE & IT Dept) */}
             <div className="hidden lg:flex items-center space-x-4 border-l-2 border-gov-border pl-5 ml-2">
@@ -266,13 +288,13 @@ export default function GovHeader() {
             </Link>
 
             <Link
-              href="/department"
+              href="/officer/login"
               className={`flex items-center space-x-2 px-3.5 py-2.5 text-xs sm:text-sm font-semibold rounded-md transition-colors whitespace-nowrap ${
-                pathname === "/department" ? "bg-[#252BB0] text-gov-accent border-b-2 border-gov-accent font-bold shadow-xs" : "hover:bg-[#343AB8] text-white"
+                pathname.startsWith("/officer") ? "bg-[#252BB0] text-gov-accent border-b-2 border-gov-accent font-bold shadow-xs" : "hover:bg-[#343AB8] text-white"
               }`}
             >
               <ShieldCheck className="w-4 h-4 text-gov-accent" />
-              <span>{t("Departments", "मनपा व पोलीस विभाग")}</span>
+              <span>{t("Officer Portal", "अधिकारी दालन")}</span>
             </Link>
 
             <Link

@@ -4,6 +4,8 @@ import React, { useState, useEffect, Suspense } from "react";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useAccessibility } from "@/context/AccessibilityContext";
+import { useAuth } from "@/context/AuthContext";
+import { saveApplication, addNotification } from "@/lib/govStore";
 import { MBMC_WARDS, MBMC_VENUES, DEPARTMENTS } from "@/data/mbmcData";
 import confetti from "canvas-confetti";
 import {
@@ -38,9 +40,16 @@ import {
 
 function ApplyFormContent() {
   const { t } = useAccessibility();
+  const { citizen } = useAuth();
   const router = useRouter();
   const searchParams = useSearchParams();
   const defaultCategory = searchParams.get("cat") || "religious";
+
+  useEffect(() => {
+    if (!citizen) {
+      router.push("/citizen/login?redirect=/apply");
+    }
+  }, [citizen, router]);
 
   // Wizard Step State (1 to 6)
   const [step, setStep] = useState<number>(1);
@@ -59,35 +68,35 @@ function ApplyFormContent() {
     groundName: "Shanti Nagar Cultural & Community Field",
     eventCategory: "Religious / Cultural Festival",
     eventType: "Sarvajanik Ganesh Utsav 2026",
-    eventName: "Shanti Nagar Sarvajanik Ganeshotsav Pandal",
-    eventDescription: "Annual Sarvajanik Ganesh Utsav celebrations featuring cultural performances, daily aarti, and public darshan setup.",
-    expectedCrowd: "10000",
-    startDate: "2026-09-10",
-    endDate: "2026-09-20",
+    eventName: "",
+    eventDescription: "",
+    expectedCrowd: "",
+    startDate: "",
+    endDate: "",
     startTime: "06:00",
     endTime: "23:00",
 
     // STEP 2: APPLICANT DETAILS
-    applicantName: "Pravin Kumar Raut",
-    organization: "Shanti Nagar Welfare Mandal Trust",
-    email: "pravin.raut@mandal.org",
-    mobile: "9820199482",
-    alternateMobile: "9820199483",
-    address: "Flat 402, Building A, Shanti Nagar, Mira Road East",
+    applicantName: citizen?.fullName || "",
+    organization: "",
+    email: citizen?.email || "",
+    mobile: citizen?.mobile || "",
+    alternateMobile: "",
+    address: citizen?.address || "",
     city: "Mira Bhayandar",
     state: "Maharashtra",
     pinCode: "401107",
     identityProofType: "Aadhaar Card",
-    identityProofNo: "4589 1204 8812",
+    identityProofNo: citizen?.aadhaarPan || "",
 
     // STEP 3: VENUE DETAILS
-    venueName: "Shanti Nagar Ground, Sector 3, Mira Road East",
+    venueName: "",
     latitude: "19.2812 N",
     longitude: "72.8542 E",
-    googleMapLink: "https://maps.google.com/?q=19.2812,72.8542",
-    nearbyLandmark: "Opposite MBMC Fire Station, Near Shanti Nagar Market",
-    parkingAvailability: "Yes — 120 Four-Wheelers & 300 Two-Wheelers Capacity",
-    emergencyExit: "Yes — 3 Dedicated 12-foot Wide Exit Gates",
+    googleMapLink: "",
+    nearbyLandmark: "",
+    parkingAvailability: "",
+    emergencyExit: "",
 
     // STEP 4: DEPARTMENT REQUIREMENTS
     needFireNoc: true,
@@ -204,6 +213,53 @@ function ApplyFormContent() {
     if (validateStep(6)) {
       const randomRef = `MBMC/UECP/2026/${Math.floor(10000 + Math.random() * 90000)}`;
       setSubmittedRef(randomRef);
+
+      // Save to Persistent Store
+      saveApplication({
+        id: randomRef,
+        citizenId: citizen?.id || "CIT-GUEST",
+        eventName: formData.eventName,
+        eventCategory: formData.eventCategory,
+        eventType: formData.eventType,
+        wardId: formData.wardId,
+        wardName: formData.wardOffice,
+        policeStation: formData.policeStation,
+        venueName: formData.venueName,
+        applicantName: formData.applicantName,
+        organizationName: formData.organization,
+        mobile: formData.mobile,
+        email: formData.email,
+        aadhaarPan: formData.identityProofNo,
+        address: formData.address,
+        startDate: formData.startDate,
+        endDate: formData.endDate,
+        startTime: formData.startTime,
+        endTime: formData.endTime,
+        expectedCrowd: formData.expectedCrowd,
+        stageDimensions: `${formData.stageLengthFt}ft x ${formData.stageWidthFt}ft`,
+        cctvCount: formData.cctvCount,
+        fireExtinguishers: formData.fireExtinguishers,
+        totalFeeCalculated: totalFeeCalculated,
+        paymentStatus: "PAID",
+        status: "PENDING_SCRUTINY",
+        submittedAt: new Date().toLocaleDateString('en-IN') + ' ' + new Date().toLocaleTimeString('en-IN'),
+        cfoFireStatus: "PENDING",
+        policeStatus: "PENDING",
+        trafficStatus: "PENDING",
+        wardStatus: "PENDING",
+        commissionerSanction: false,
+        officerRemarks: "Logged into single-window clearance cell. Desk audit in progress."
+      });
+
+      // Dispatch Notification
+      addNotification({
+        citizenId: citizen?.id || "CIT-GUEST",
+        applicationId: randomRef,
+        title: "📝 Application Submitted & Logged",
+        message: `Your application ${randomRef} for ${formData.eventName} has been logged under Pending Scrutiny.`,
+        type: "SUBMITTED"
+      });
+
       setStep(7); // Pending Scrutiny View
       window.scrollTo({ top: 0, behavior: 'smooth' });
     }

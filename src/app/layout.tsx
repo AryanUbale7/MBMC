@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import "./globals.css";
 import { AccessibilityProvider } from "@/context/AccessibilityContext";
+import { AuthProvider } from "@/context/AuthContext";
 import GovHeader from "@/components/layout/GovHeader";
 import GovFooter from "@/components/layout/GovFooter";
 
@@ -22,9 +23,11 @@ export default function RootLayout({
       </head>
       <body className="min-h-screen flex flex-col bg-gov-bg text-gov-text font-sans antialiased">
         <AccessibilityProvider>
-          <GovHeader />
-          <main className="flex-1 w-full">{children}</main>
-          <GovFooter />
+          <AuthProvider>
+            <GovHeader />
+            <main className="flex-1 w-full">{children}</main>
+            <GovFooter />
+          </AuthProvider>
         </AccessibilityProvider>
       </body>
     </html>
