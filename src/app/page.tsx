@@ -544,7 +544,7 @@ export default function HomePage() {
                 </h4>
               </div>
 
-              {/* Metadata Box */}
+              {/* Metadata Grid */}
               <div className="bg-slate-50 border border-slate-200 p-2.5 rounded-xs text-[11px] font-mono grid grid-cols-2 gap-1.5 text-slate-700">
                 <div><span className="font-bold text-slate-900">Issued:</span> 05 Aug 2026</div>
                 <div><span className="font-bold text-slate-900">Dept:</span> CFO Fire Cell</div>
@@ -819,39 +819,247 @@ export default function HomePage() {
 
 
       {/* -------------------------------------------------
-          SECTION 9: INTEGRATED MUNICIPAL DEPARTMENTS
+          SECTION 9: OTHER GOVERNMENT SERVICES (REDESIGNED MODERN IMAGE CARDS)
       ------------------------------------------------- */}
       <section className="max-w-[1440px] mx-auto px-4 sm:px-8 space-y-4">
-        <div className="border-b border-gov-border pb-3 flex items-center justify-between">
+        <div className="border-b border-gov-border pb-3 flex flex-col sm:flex-row sm:items-center justify-between gap-2">
           <div>
             <span className="text-[11px] font-bold text-gov-primary uppercase tracking-wider block">
               {t("Inter-Departmental Authorities", "शासकीय विभाग")}
             </span>
             <h2 className="text-xl sm:text-2xl font-extrabold text-gov-text mt-0.5">
-              {t("Integrated Municipal & Law Enforcement Offices", "एकत्रित महानगरपालिका व कायदा सुव्यवस्था विभाग")}
+              {t("Integrated Municipal & Other Government Services", "एकत्रित महानगरपालिका व इतर शासकीय सेवा")}
             </h2>
+            <p className="text-xs text-gov-muted font-medium mt-0.5">
+              {t(
+                "Direct single-window routing to specialized municipal departments, emergency cells, and civic infrastructure bodies.",
+                "मनपाचे विविध विभाग, आपत्कालीन कक्ष व नागरी सुविधा केंद्र जोडणी सेवा."
+              )}
+            </p>
           </div>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-          {DEPARTMENTS.map((dept) => (
-            <div key={dept.id} className="bg-white p-5 rounded-gov-card border border-gov-border shadow-gov-sm space-y-2 flex flex-col justify-between">
-              <div className="space-y-2">
-                <div className="flex items-center justify-between">
-                  <span className="text-[10px] font-mono font-bold bg-blue-50 text-gov-primary px-2 py-0.5 rounded border border-blue-200">
-                    {dept.code}
-                  </span>
-                  <span className="text-[10px] text-gov-muted">SLA: {dept.avgProcessingTimeHours}h</span>
-                </div>
-                <h4 className="text-sm font-bold text-gov-text">{t(dept.name, dept.nameMr)}</h4>
-                <p className="text-xs text-gov-muted leading-snug">{dept.description}</p>
-              </div>
-
-              <div className="pt-2 border-t border-gov-border text-[11px] text-gov-text font-medium">
-                <span className="font-bold text-gov-primary">Nodal Head: </span>{dept.authority}
+        {/* 6 Equal Modern Government Service Cards (Desktop: 3, Tablet: 2, Mobile: 1) */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+          
+          {/* Card 1: Chief Fire Officer NOC Services */}
+          <div className="bg-white rounded-[16px] border border-[#DCE6F7] shadow-gov-sm overflow-hidden flex flex-col justify-between group hover:border-[#123B7A] hover:shadow-gov-md transition-all duration-300">
+            {/* Top 60% Image Thumbnail */}
+            <div className="relative h-52 sm:h-56 w-full overflow-hidden bg-slate-100">
+              <img
+                src="https://images.unsplash.com/photo-1589829545856-d10d557cf95f?w=800&q=80"
+                alt="Chief Fire Officer NOC Services"
+                className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+              />
+              <div className="absolute top-3 left-3 bg-gov-accent/20 text-gov-footer text-[10px] font-extrabold px-2.5 py-0.5 rounded border border-gov-accent/40 uppercase tracking-wider backdrop-blur-xs">
+                FIRE NOC
               </div>
             </div>
-          ))}
+
+            {/* Bottom Content Body */}
+            <div className="p-5 flex-1 flex flex-col justify-between space-y-3">
+              <div className="space-y-1.5">
+                <h3 className="text-base sm:text-lg font-bold text-gov-text group-hover:text-[#123B7A] transition-colors leading-snug">
+                  {t("Chief Fire Officer NOC Services", "अग्निशमन ना-हरकत प्रमाणपत्र सेवा")}
+                </h3>
+                <p className="text-xs text-gov-muted leading-relaxed font-medium">
+                  {t(
+                    "Fire safety audit, mandap canvas treatment clearance & emergency NOC issuance.",
+                    "अग्निशमन सुरक्षा तपासणी व तात्पुरती अग्निरोधक ना-हरकत दाखला प्रक्रिया."
+                  )}
+                </p>
+              </div>
+
+              <Link
+                href="/department"
+                className="text-xs font-extrabold text-[#123B7A] hover:underline flex items-center space-x-1 pt-2.5 border-t border-slate-100"
+              >
+                <span>Explore</span>
+                <ChevronRight className="w-4 h-4 text-gov-accent group-hover:translate-x-1 transition-transform" />
+              </Link>
+            </div>
+          </div>
+
+          {/* Card 2: MBVV Police Clearance Cell */}
+          <div className="bg-white rounded-[16px] border border-[#DCE6F7] shadow-gov-sm overflow-hidden flex flex-col justify-between group hover:border-[#123B7A] hover:shadow-gov-md transition-all duration-300">
+            <div className="relative h-52 sm:h-56 w-full overflow-hidden bg-slate-100">
+              <img
+                src="https://images.unsplash.com/photo-1451187580459-43490279c0fa?w=800&q=80"
+                alt="MBVV Police Clearance Cell"
+                className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+              />
+              <div className="absolute top-3 left-3 bg-gov-accent/20 text-gov-footer text-[10px] font-extrabold px-2.5 py-0.5 rounded border border-gov-accent/40 uppercase tracking-wider backdrop-blur-xs">
+                POLICE PERMIT
+              </div>
+            </div>
+
+            <div className="p-5 flex-1 flex flex-col justify-between space-y-3">
+              <div className="space-y-1.5">
+                <h3 className="text-base sm:text-lg font-bold text-gov-text group-hover:text-[#123B7A] transition-colors leading-snug">
+                  {t("MBVV Police Clearance Cell", "पोलीस ना-हरकत व सुरक्षा कक्ष")}
+                </h3>
+                <p className="text-xs text-gov-muted leading-relaxed font-medium">
+                  {t(
+                    "Loudspeaker permission, traffic route diversion NOC & crowd control safety clearance.",
+                    "ध्वनिक्षेपक परवानगी, वाहतूक नियंत्रण व कायदा सुव्यवस्था ना-हरकत दाखला."
+                  )}
+                </p>
+              </div>
+
+              <Link
+                href="/department"
+                className="text-xs font-extrabold text-[#123B7A] hover:underline flex items-center space-x-1 pt-2.5 border-t border-slate-100"
+              >
+                <span>Explore</span>
+                <ChevronRight className="w-4 h-4 text-gov-accent group-hover:translate-x-1 transition-transform" />
+              </Link>
+            </div>
+          </div>
+
+          {/* Card 3: MBMC Town Planning & PWD */}
+          <div className="bg-white rounded-[16px] border border-[#DCE6F7] shadow-gov-sm overflow-hidden flex flex-col justify-between group hover:border-[#123B7A] hover:shadow-gov-md transition-all duration-300">
+            <div className="relative h-52 sm:h-56 w-full overflow-hidden bg-slate-100">
+              <img
+                src="https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?w=800&q=80"
+                alt="MBMC Town Planning & PWD"
+                className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+              />
+              <div className="absolute top-3 left-3 bg-gov-accent/20 text-gov-footer text-[10px] font-extrabold px-2.5 py-0.5 rounded border border-gov-accent/40 uppercase tracking-wider backdrop-blur-xs">
+                PWD STRUCTURAL
+              </div>
+            </div>
+
+            <div className="p-5 flex-1 flex flex-col justify-between space-y-3">
+              <div className="space-y-1.5">
+                <h3 className="text-base sm:text-lg font-bold text-gov-text group-hover:text-[#123B7A] transition-colors leading-snug">
+                  {t("MBMC Town Planning & PWD", "नगररचना व सार्वजनिक बांधकाम विभाग")}
+                </h3>
+                <p className="text-xs text-gov-muted leading-relaxed font-medium">
+                  {t(
+                    "Stage structural stability verification, public road encroachment & digging permits.",
+                    "मंडप रचना मजबुतीकरण तपासणी व रस्ता वापर तात्पुरती ना-हरकत परवानगी."
+                  )}
+                </p>
+              </div>
+
+              <Link
+                href="/department"
+                className="text-xs font-extrabold text-[#123B7A] hover:underline flex items-center space-x-1 pt-2.5 border-t border-slate-100"
+              >
+                <span>Explore</span>
+                <ChevronRight className="w-4 h-4 text-gov-accent group-hover:translate-x-1 transition-transform" />
+              </Link>
+            </div>
+          </div>
+
+          {/* Card 4: Disaster Management Headquarters */}
+          <div className="bg-white rounded-[16px] border border-[#DCE6F7] shadow-gov-sm overflow-hidden flex flex-col justify-between group hover:border-[#123B7A] hover:shadow-gov-md transition-all duration-300">
+            <div className="relative h-52 sm:h-56 w-full overflow-hidden bg-slate-100">
+              <img
+                src="https://images.unsplash.com/photo-1509099836639-18ba1795216d?w=800&q=80"
+                alt="Disaster Management Headquarters"
+                className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+              />
+              <div className="absolute top-3 left-3 bg-gov-accent/20 text-gov-footer text-[10px] font-extrabold px-2.5 py-0.5 rounded border border-gov-accent/40 uppercase tracking-wider backdrop-blur-xs">
+                DISASTER CELL
+              </div>
+            </div>
+
+            <div className="p-5 flex-1 flex flex-col justify-between space-y-3">
+              <div className="space-y-1.5">
+                <h3 className="text-base sm:text-lg font-bold text-gov-text group-hover:text-[#123B7A] transition-colors leading-snug">
+                  {t("Disaster Management Control", "आपत्ती व्यवस्थापन कक्ष व नियंत्रण")}
+                </h3>
+                <p className="text-xs text-gov-muted leading-relaxed font-medium">
+                  {t(
+                    "24x7 emergency control room monitoring, coastal high-tide alert & flood relief setup.",
+                    "२४ तास आपत्कालीन नियंत्रण कक्ष, उधाणाची भरती इशारा व आपत्कालीन मदत केंद्र."
+                  )}
+                </p>
+              </div>
+
+              <a
+                href="#emergency-contacts"
+                className="text-xs font-extrabold text-[#123B7A] hover:underline flex items-center space-x-1 pt-2.5 border-t border-slate-100"
+              >
+                <span>Explore</span>
+                <ChevronRight className="w-4 h-4 text-gov-accent group-hover:translate-x-1 transition-transform" />
+              </a>
+            </div>
+          </div>
+
+          {/* Card 5: Health & Sanitation NOC Cell */}
+          <div className="bg-white rounded-[16px] border border-[#DCE6F7] shadow-gov-sm overflow-hidden flex flex-col justify-between group hover:border-[#123B7A] hover:shadow-gov-md transition-all duration-300">
+            <div className="relative h-52 sm:h-56 w-full overflow-hidden bg-slate-100">
+              <img
+                src="https://images.unsplash.com/photo-1584515979956-d9f6e5d09982?w=800&q=80"
+                alt="Health & Sanitation NOC Cell"
+                className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+              />
+              <div className="absolute top-3 left-3 bg-gov-accent/20 text-gov-footer text-[10px] font-extrabold px-2.5 py-0.5 rounded border border-gov-accent/40 uppercase tracking-wider backdrop-blur-xs">
+                SANITATION NOC
+              </div>
+            </div>
+
+            <div className="p-5 flex-1 flex flex-col justify-between space-y-3">
+              <div className="space-y-1.5">
+                <h3 className="text-base sm:text-lg font-bold text-gov-text group-hover:text-[#123B7A] transition-colors leading-snug">
+                  {t("Health & Sanitation NOC Cell", "सार्वजनिक आरोग्य व स्वच्छता विभाग")}
+                </h3>
+                <p className="text-xs text-gov-muted leading-relaxed font-medium">
+                  {t(
+                    "Solid waste disposal compliance, mobile bio-toilet deployment & vector control audit.",
+                    "कचरा व्यवस्थापन नियम, तात्पुरती स्वच्छता गृहे व कीटक नियंत्रण तपासणी प्रमाणपत्र."
+                  )}
+                </p>
+              </div>
+
+              <Link
+                href="/department"
+                className="text-xs font-extrabold text-[#123B7A] hover:underline flex items-center space-x-1 pt-2.5 border-t border-slate-100"
+              >
+                <span>Explore</span>
+                <ChevronRight className="w-4 h-4 text-gov-accent group-hover:translate-x-1 transition-transform" />
+              </Link>
+            </div>
+          </div>
+
+          {/* Card 6: MBMC Estate & Property Clearance */}
+          <div className="bg-white rounded-[16px] border border-[#DCE6F7] shadow-gov-sm overflow-hidden flex flex-col justify-between group hover:border-[#123B7A] hover:shadow-gov-md transition-all duration-300">
+            <div className="relative h-52 sm:h-56 w-full overflow-hidden bg-slate-100">
+              <img
+                src="https://images.unsplash.com/photo-1541888946425-d0fbb186a5b7?w=800&q=80"
+                alt="MBMC Estate & Property Clearance"
+                className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+              />
+              <div className="absolute top-3 left-3 bg-gov-accent/20 text-gov-footer text-[10px] font-extrabold px-2.5 py-0.5 rounded border border-gov-accent/40 uppercase tracking-wider backdrop-blur-xs">
+                ESTATE DEPT
+              </div>
+            </div>
+
+            <div className="p-5 flex-1 flex flex-col justify-between space-y-3">
+              <div className="space-y-1.5">
+                <h3 className="text-base sm:text-lg font-bold text-gov-text group-hover:text-[#123B7A] transition-colors leading-snug">
+                  {t("MBMC Estate & Property Clearance", "मालमत्ता व मालमत्ता व्यवस्थापन विभाग")}
+                </h3>
+                <p className="text-xs text-gov-muted leading-relaxed font-medium">
+                  {t(
+                    "Public ground lease verification, municipal plaza booking & society NOC validation.",
+                    "सार्वजनिक भूखंड भाडेपट्टी पडताळणी, मनपा जागा आरक्षण व मालकी हक्क तपासणी."
+                  )}
+                </p>
+              </div>
+
+              <Link
+                href="/venues"
+                className="text-xs font-extrabold text-[#123B7A] hover:underline flex items-center space-x-1 pt-2.5 border-t border-slate-100"
+              >
+                <span>Explore</span>
+                <ChevronRight className="w-4 h-4 text-gov-accent group-hover:translate-x-1 transition-transform" />
+              </Link>
+            </div>
+          </div>
+
         </div>
       </section>
 
