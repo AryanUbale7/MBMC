@@ -49,21 +49,21 @@ export default function GovHeader() {
       {/* -------------------------------------------------
           SECTION 1: UTILITY HEADER
       ------------------------------------------------- */}
-      <div className="bg-[#E89B00] text-gov-footer text-xs py-1.5 px-3 sm:px-6 border-b border-amber-600 font-bold shadow-xs w-full overflow-hidden">
-        <div className="max-w-[1440px] mx-auto flex flex-col md:flex-row items-center justify-between gap-2">
+      <div className="bg-[#E89B00] text-gov-footer text-xs py-2 px-4 sm:px-8 lg:px-12 border-b border-amber-600 font-bold shadow-xs w-full overflow-hidden">
+        <div className="w-full flex flex-col md:flex-row items-center justify-between gap-2.5">
           
           {/* Left: Government Emblem & Authority */}
-          <div className="flex items-center space-x-2 text-[11px] sm:text-xs text-center md:text-left flex-wrap justify-center md:justify-start">
-            <div className="relative w-3.5 h-5 flex-shrink-0">
+          <div className="flex items-center space-x-2.5 text-[11px] sm:text-xs text-center md:text-left flex-wrap justify-center md:justify-start">
+            <div className="relative w-5 h-7 sm:w-6 sm:h-8 flex-shrink-0">
               <img
                 src="/images/sher.png"
                 alt="Emblem of India"
                 className="w-full h-full object-contain filter drop-shadow-xs"
-                width="14"
-                height="20"
+                width="24"
+                height="32"
               />
             </div>
-            <div className="flex items-center space-x-1.5 font-extrabold tracking-wide text-gov-footer">
+            <div className="flex items-center space-x-2 font-extrabold tracking-wide text-gov-footer text-xs sm:text-sm">
               <span>{t("Govt of Maharashtra", "महाराष्ट्र शासन")}</span>
               <span className="text-amber-900">|</span>
               <span className="text-amber-950 font-black">{t("Mira Bhayandar Municipal Corporation", "मीरा भाईंदर महानगरपालिका")}</span>
@@ -71,11 +71,11 @@ export default function GovHeader() {
           </div>
 
           {/* Right: Helpline, Search, Accessibility & Language */}
-          <div className="flex items-center flex-wrap justify-center md:justify-end gap-2 text-[11px]">
+          <div className="flex items-center flex-wrap justify-center md:justify-end gap-2.5 text-xs">
             
             {/* Helpline */}
-            <div className="hidden sm:flex items-center space-x-1 bg-amber-900/20 px-2 py-0.5 rounded border border-amber-700/40 text-gov-footer font-extrabold">
-              <PhoneCall className="w-3 h-3 text-gov-footer" />
+            <div className="hidden sm:flex items-center space-x-1.5 bg-amber-900/20 px-2.5 py-1 rounded border border-amber-700/40 text-gov-footer font-extrabold">
+              <PhoneCall className="w-3.5 h-3.5 text-gov-footer" />
               <span>{t("Helpline: 1800-22-3424", "हेल्पलाइन: १८००-२२-३४२४")}</span>
             </div>
 
@@ -86,52 +86,52 @@ export default function GovHeader() {
                 value={topSearch}
                 onChange={(e) => setTopSearch(e.target.value)}
                 placeholder={t("Search Ref...", "अर्जाचा क्र...")}
-                className="bg-white/90 text-gov-footer placeholder-amber-900/70 text-[11px] rounded pl-2 pr-6 py-0.5 outline-none border border-amber-700/40 w-28 lg:w-36 font-bold"
+                className="bg-white/90 text-gov-footer placeholder-amber-900/70 text-xs rounded pl-2.5 pr-7 py-1 outline-none border border-amber-700/40 w-32 lg:w-44 font-bold"
               />
-              <button type="submit" className="absolute right-1 text-gov-footer hover:text-black">
-                <Search className="w-3 h-3" />
+              <button type="submit" className="absolute right-2 text-gov-footer hover:text-black">
+                <Search className="w-3.5 h-3.5" />
               </button>
             </form>
 
             {/* High Contrast Toggle */}
             <button
               onClick={() => setHighContrast(!highContrast)}
-              className={`flex items-center space-x-1 px-1.5 py-0.5 rounded text-[11px] font-extrabold transition border ${
+              className={`flex items-center space-x-1 px-2 py-1 rounded text-xs font-extrabold transition border ${
                 highContrast
                   ? "bg-black text-white border-black"
                   : "bg-amber-900/20 hover:bg-amber-900/30 text-gov-footer border-amber-700/40"
               }`}
             >
-              <Eye className="w-3 h-3" />
+              <Eye className="w-3.5 h-3.5" />
               <span>{highContrast ? t("Normal", "सामान्य") : t("Contrast", "कॉन्ट्रास्ट")}</span>
             </button>
 
             {/* Font Size Adjusters */}
-            <div className="flex items-center space-x-0.5 bg-amber-900/20 px-1 py-0.5 rounded border border-amber-700/40">
-              <span className="text-[10px] text-gov-footer mr-0.5 font-bold">{t("Font:", "फॉन्ट:")}</span>
+            <div className="flex items-center space-x-1 bg-amber-900/20 px-1.5 py-1 rounded border border-amber-700/40">
+              <span className="text-xs text-gov-footer mr-0.5 font-bold">{t("Font:", "फॉन्ट:")}</span>
               <button
                 onClick={() => setFontSize("sm")}
-                className={`px-1 rounded text-[11px] font-extrabold ${fontSize === "sm" ? "bg-gov-footer text-white" : "text-gov-footer hover:text-black"}`}
+                className={`px-1.5 rounded text-xs font-extrabold ${fontSize === "sm" ? "bg-gov-footer text-white" : "text-gov-footer hover:text-black"}`}
               >
                 A-
               </button>
               <button
                 onClick={() => setFontSize("md")}
-                className={`px-1 rounded text-[11px] font-extrabold ${fontSize === "md" ? "bg-gov-footer text-white" : "text-gov-footer hover:text-black"}`}
+                className={`px-1.5 rounded text-xs font-extrabold ${fontSize === "md" ? "bg-gov-footer text-white" : "text-gov-footer hover:text-black"}`}
               >
                 A
               </button>
               <button
                 onClick={() => setFontSize("lg")}
-                className={`px-1 rounded text-[11px] font-extrabold ${fontSize === "lg" ? "bg-gov-footer text-white" : "text-gov-footer hover:text-black"}`}
+                className={`px-1.5 rounded text-xs font-extrabold ${fontSize === "lg" ? "bg-gov-footer text-white" : "text-gov-footer hover:text-black"}`}
               >
                 A+
               </button>
             </div>
 
             {/* Language Switcher */}
-            <div className="flex items-center space-x-1 bg-amber-900/20 px-1.5 py-0.5 rounded border border-amber-700/40 text-xs font-bold">
-              <Globe className="w-3 h-3 text-gov-footer" />
+            <div className="flex items-center space-x-1 bg-amber-900/20 px-2 py-1 rounded border border-amber-700/40 text-xs font-bold">
+              <Globe className="w-3.5 h-3.5 text-gov-footer" />
               <button
                 onClick={() => setLanguage("EN")}
                 className={`px-1 text-xs font-extrabold ${language === "EN" ? "text-gov-footer underline" : "text-amber-950 hover:text-black"}`}
@@ -148,7 +148,7 @@ export default function GovHeader() {
             </div>
 
             {/* Academic Prototype Badge */}
-            <span className="hidden xl:inline-block px-1.5 py-0.5 bg-gov-footer text-white rounded text-[10px] font-black uppercase tracking-wider">
+            <span className="hidden xl:inline-block px-2 py-1 bg-gov-footer text-white rounded text-xs font-black uppercase tracking-wider">
               {t("Academic Prototype", "शैक्षणिक नमुना")}
             </span>
           </div>
@@ -159,53 +159,53 @@ export default function GovHeader() {
       {/* -------------------------------------------------
           SECTION 2: MAIN HEADER
       ------------------------------------------------- */}
-      <div className="bg-white py-3 sm:py-4 px-4 sm:px-8 border-b border-gov-border w-full overflow-hidden">
-        <div className="max-w-[1440px] mx-auto flex flex-col xl:flex-row items-center justify-between gap-4">
+      <div className="bg-white py-4 sm:py-5 px-4 sm:px-8 lg:px-12 border-b border-gov-border w-full overflow-hidden">
+        <div className="w-full flex flex-col xl:flex-row items-center justify-between gap-6">
           
           {/* MBMC Logo & Portal Title */}
-          <div className="flex items-center space-x-3 sm:space-x-4 w-full xl:w-auto text-left">
+          <div className="flex items-center space-x-4 sm:space-x-6 w-full xl:w-auto text-left">
             <img
               src="/images/mbmc_updated logo.jpg"
               alt="MBMC Official Logo"
-              className="w-16 h-16 sm:w-20 sm:h-20 lg:w-24 lg:h-24 object-contain flex-shrink-0"
-              width="96"
-              height="96"
+              className="w-24 h-24 sm:w-32 sm:h-32 lg:w-36 lg:h-36 object-contain flex-shrink-0"
+              width="144"
+              height="144"
             />
             <div className="min-w-0 flex-1">
               <div className="flex items-center space-x-2 flex-wrap gap-y-1">
-                <span className="px-2 py-0.5 text-[10px] font-extrabold uppercase tracking-wider bg-gov-primary text-white rounded">
+                <span className="px-2.5 py-0.5 text-xs font-extrabold uppercase tracking-wider bg-gov-primary text-white rounded">
                   {t("MBMC e-Governance", "एमबीएमसी ई-गव्हर्नन्स")}
                 </span>
-                <span className="text-[11px] sm:text-xs text-gov-muted font-medium">
+                <span className="text-xs sm:text-sm text-gov-muted font-medium">
                   {t("Unified Single-Window Clearance Portal", "एककृत एकल खिडकी परवानगी पोर्टल")}
                 </span>
               </div>
-              <h1 className="text-base sm:text-xl lg:text-2xl font-black text-black tracking-tight leading-tight mt-0.5 break-words">
+              <h1 className="text-lg sm:text-2xl lg:text-3xl font-black text-black tracking-tight leading-tight mt-1 break-words">
                 {t("Urban Event Permission & Coordination Platform (UECP)", "नागरी कार्यक्रम परवानगी व समन्वय प्रणाली (यूईसीपी)")}
               </h1>
-              <p className="text-[11px] sm:text-xs text-gov-muted font-medium mt-0.5 hidden sm:block">
+              <p className="text-xs sm:text-sm text-gov-muted font-medium mt-1 hidden sm:block">
                 {t("Department of Urban Governance & Citizen Services • Mira Bhayandar Municipal Corporation", "नगर प्रशासन व नागरी सुविधा विभाग • मीरा भाईंदर महानगरपालिका")}
               </p>
             </div>
           </div>
 
           {/* Right Action Logins & Academic Seals */}
-          <div className="flex flex-wrap items-center justify-center sm:justify-end gap-3 w-full xl:w-auto">
+          <div className="flex flex-wrap items-center justify-center sm:justify-end gap-4 w-full xl:w-auto">
             {/* Citizen Login / Dashboard Button */}
             {citizen ? (
               <Link
                 href="/citizen/dashboard"
-                className="bg-emerald-700 hover:bg-emerald-800 text-white font-bold text-xs px-3.5 py-2.5 rounded-gov-sm flex items-center space-x-2 transition shadow-gov-sm cursor-pointer"
+                className="bg-emerald-700 hover:bg-emerald-800 text-white font-bold text-xs sm:text-sm px-4 py-3 rounded-gov-sm flex items-center space-x-2 transition shadow-gov-sm cursor-pointer"
               >
-                <User className="w-4 h-4" />
-                <span className="truncate max-w-[120px]">{citizen.fullName}</span>
+                <User className="w-4 h-4 sm:w-5 sm:h-5" />
+                <span className="truncate max-w-[140px]">{citizen.fullName}</span>
               </Link>
             ) : (
               <Link
                 href="/citizen/login"
-                className="bg-gov-surface hover:bg-gov-border text-gov-primary border border-gov-border font-bold text-xs px-4 py-2.5 rounded-gov-sm flex items-center space-x-2 transition shadow-gov-sm cursor-pointer"
+                className="bg-gov-surface hover:bg-gov-border text-gov-primary border border-gov-border font-bold text-xs sm:text-sm px-4 sm:px-5 py-3 rounded-gov-sm flex items-center space-x-2 transition shadow-gov-sm cursor-pointer"
               >
-                <User className="w-4 h-4 text-gov-secondary" />
+                <User className="w-4 h-4 sm:w-5 sm:h-5 text-gov-secondary" />
                 <span>{t("Citizen Login", "नागरिक लॉगिन")}</span>
               </Link>
             )}
@@ -214,46 +214,46 @@ export default function GovHeader() {
             {officer ? (
               <Link
                 href="/officer/dashboard"
-                className="bg-[#123B7A] hover:bg-[#1E4F91] text-white font-bold text-xs px-3.5 py-2.5 rounded-gov-sm flex items-center space-x-2 transition shadow-gov-sm cursor-pointer"
+                className="bg-[#123B7A] hover:bg-[#1E4F91] text-white font-bold text-xs sm:text-sm px-4 py-3 rounded-gov-sm flex items-center space-x-2 transition shadow-gov-sm cursor-pointer"
               >
-                <ShieldCheck className="w-4 h-4 text-yellow-400" />
-                <span className="truncate max-w-[120px]">Officer Portal</span>
+                <ShieldCheck className="w-4 h-4 sm:w-5 sm:h-5 text-yellow-400" />
+                <span className="truncate max-w-[140px]">Officer Portal</span>
               </Link>
             ) : (
               <Link
                 href="/officer/login"
-                className="bg-gov-primary hover:bg-gov-secondary text-white font-bold text-xs px-4 py-2.5 rounded-gov-sm flex items-center space-x-2 transition shadow-gov-sm cursor-pointer"
+                className="bg-gov-primary hover:bg-gov-secondary text-white font-bold text-xs sm:text-sm px-4 sm:px-5 py-3 rounded-gov-sm flex items-center space-x-2 transition shadow-gov-sm cursor-pointer"
               >
-                <ShieldCheck className="w-4 h-4 text-gov-accent" />
+                <ShieldCheck className="w-4 h-4 sm:w-5 sm:h-5 text-gov-accent" />
                 <span>{t("Officer Login", "अधिकारी लॉगिन")}</span>
               </Link>
             )}
 
-            {/* Seals */}
-            <div className="hidden 2xl:flex items-center space-x-3 border-l-2 border-gov-border pl-4 ml-2">
+            {/* Prominent Header Logos (State Emblem, SLRTCE & IT Dept) */}
+            <div className="hidden lg:flex items-center space-x-4 border-l-2 border-gov-border pl-5 ml-2">
               <img
                 src="/images/sher.png"
                 alt="Emblem of India"
-                className="h-16 w-auto object-contain"
+                className="h-20 sm:h-24 lg:h-28 w-auto object-contain"
                 title="State Emblem of India"
-                width="50"
-                height="64"
+                width="80"
+                height="112"
               />
               <img
                 src="/images/SLRTCElogo.png"
                 alt="SLRTCE Logo"
-                className="h-16 w-16 object-contain"
+                className="h-20 sm:h-24 lg:h-28 w-auto object-contain"
                 title="Shree L. R. Tiwari College of Engineering"
-                width="64"
-                height="64"
+                width="112"
+                height="112"
               />
               <img
                 src="/images/IT.png"
                 alt="IT Department Seal"
-                className="h-16 w-16 object-contain"
+                className="h-20 sm:h-24 lg:h-28 w-auto object-contain"
                 title="Department of Information Technology"
-                width="64"
-                height="64"
+                width="112"
+                height="112"
               />
             </div>
           </div>
@@ -265,7 +265,7 @@ export default function GovHeader() {
           SECTION 3: NAVIGATION BAR WITH MOBILE TOGGLE
       ------------------------------------------------- */}
       <nav className="bg-gov-navbar text-white shadow-gov-md w-full">
-        <div className="max-w-[1440px] mx-auto px-4 sm:px-6">
+        <div className="w-full px-4 sm:px-8 lg:px-12">
           <div className="flex items-center justify-between py-1.5 lg:py-1">
             
             {/* Desktop Navigation Items */}
