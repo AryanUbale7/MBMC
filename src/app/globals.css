@@ -67,8 +67,20 @@ body {
   body {
     background-color: white !important;
     color: black !important;
+    padding: 0 !important;
+    margin: 0 !important;
   }
-  .no-print {
+  header, footer, nav, .no-print, .print\:hidden {
     display: none !important;
+  }
+  .printable-pass {
+    display: block !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    margin: 0 auto !important;
+    padding: 24px !important;
+    border: 2px solid #123B7A !important;
+    box-shadow: none !important;
+    page-break-inside: avoid;
   }
 }

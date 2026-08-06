@@ -22,7 +22,7 @@ export default function GovFooter() {
   const { t } = useAccessibility();
 
   return (
-    <footer className="w-full bg-[#D9D9D9] text-slate-900 border-t-4 border-gov-accent font-sans shadow-gov-md">
+    <footer className="w-full bg-[#D9D9D9] text-slate-900 border-t-4 border-gov-accent font-sans shadow-gov-md print:hidden">
       
       {/* -------------------------------------------------
           TOP CENTER: PROMINENT CENTERED LOGOS BAR

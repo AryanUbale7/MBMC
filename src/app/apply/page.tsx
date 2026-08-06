@@ -204,18 +204,8 @@ function ApplyFormContent() {
     if (validateStep(6)) {
       const randomRef = `MBMC/UECP/2026/${Math.floor(10000 + Math.random() * 90000)}`;
       setSubmittedRef(randomRef);
-      setStep(7); // Final Certificate View
+      setStep(7); // Pending Scrutiny View
       window.scrollTo({ top: 0, behavior: 'smooth' });
-
-      try {
-        confetti({
-          particleCount: 120,
-          spread: 80,
-          origin: { y: 0.6 }
-        });
-      } catch (err) {
-        // Fallback if confetti fails
-      }
     }
   };
 
@@ -226,7 +216,7 @@ function ApplyFormContent() {
         {/* -------------------------------------------------
             PAGE HEADER & BREADCRUMB HIERARCHY
         ------------------------------------------------- */}
-        <div className="bg-white rounded-xs border border-[#D9E4F4] p-4 sm:p-6 shadow-xs space-y-4">
+        <div className="bg-white rounded-xs border border-[#D9E4F4] p-4 sm:p-6 shadow-xs space-y-4 print:hidden">
           
           {/* Official Hierarchy Breadcrumb */}
           <div className="text-[11px] font-bold text-[#1E4F91] uppercase tracking-wider flex items-center space-x-1.5 flex-wrap gap-y-1">
@@ -247,7 +237,7 @@ function ApplyFormContent() {
                   FORM E-PERMIT 2026
                 </span>
                 <span className="text-xs text-slate-600 font-mono font-bold">
-                  {t("Draft Reference: MBMC/UECP/2026/89412", "मसुदा संदर्भ: एमबीएमसी/यूईसीपी/२०२६/८९४१२")}
+                  {submittedRef ? `Ref No: ${submittedRef}` : t("Draft Reference: MBMC/UECP/2026/89412", "मसुदा संदर्भ: एमबीएमसी/यूईसीपी/२०२६/८९४१२")}
                 </span>
               </div>
 
@@ -289,7 +279,7 @@ function ApplyFormContent() {
             SAVE DRAFT ALERT NOTIFICATION
         ------------------------------------------------- */}
         {isSavedDraft && (
-          <div className="bg-emerald-50 border border-emerald-300 text-emerald-900 text-xs font-bold p-3 rounded-xs flex items-center space-x-2">
+          <div className="bg-emerald-50 border border-emerald-300 text-emerald-900 text-xs font-bold p-3 rounded-xs flex items-center space-x-2 print:hidden">
             <CheckCircle2 className="w-4 h-4 text-emerald-700 flex-shrink-0" />
             <span>Application draft saved successfully. Reference Number: MBMC/UECP/2026/89412. You can resume anytime.</span>
           </div>
@@ -298,7 +288,7 @@ function ApplyFormContent() {
         {/* -------------------------------------------------
             GOVERNMENT WARNING NOTICE PANEL
         ------------------------------------------------- */}
-        <div className="bg-amber-50 border-l-4 border-l-[#F4B400] border border-[#D9E4F4] p-4 rounded-xs text-xs space-y-1">
+        <div className="bg-amber-50 border-l-4 border-l-[#F4B400] border border-[#D9E4F4] p-4 rounded-xs text-xs space-y-1 print:hidden">
           <div className="flex items-center space-x-2 text-amber-900 font-extrabold uppercase tracking-wider">
             <AlertCircle className="w-4 h-4 text-amber-700 flex-shrink-0" />
             <span>IMPORTANT GOVERNMENT NOTICE / महत्त्वाचे प्रशासकीय परिपत्रक</span>
@@ -322,70 +312,103 @@ function ApplyFormContent() {
           ----------------------------------------------- */}
           <div className="lg:col-span-9 space-y-6">
 
-            {/* IF COMPLETED: DISPLAY QR DIGITAL PASS CERTIFICATE */}
+            {/* IF SUBMITTED: DISPLAY PENDING SCRUTINY ACKNOWLEDGEMENT */}
             {step === 7 ? (
-              <div className="bg-white rounded-xs border-2 border-[#123B7A] p-6 sm:p-8 shadow-xs space-y-6">
+              <div className="bg-white rounded-xs border border-[#D9E4F4] p-6 sm:p-8 shadow-xs space-y-6">
                 
-                {/* Pass Header */}
-                <div className="text-center space-y-2 border-b-2 border-[#123B7A] pb-6">
-                  <div className="flex items-center justify-center space-x-3">
-                    <img src="/images/sher.png" alt="Emblem of India" className="w-5 h-8 object-contain" />
-                    <img src="/images/mbmc_updated logo.jpg" alt="MBMC Seal" className="w-12 h-12 object-contain" />
+                {/* Header */}
+                <div className="border-b border-[#D9E4F4] pb-4 space-y-2">
+                  <div className="flex items-center justify-between">
+                    <span className="bg-amber-100 text-amber-900 border border-amber-300 text-xs font-mono font-extrabold px-3 py-1 rounded">
+                      STATUS: PENDING SCRUTINY (DESK-1 AUDIT)
+                    </span>
+                    <span className="text-xs font-mono text-slate-500">Submitted: {new Date().toLocaleTimeString('en-IN')}</span>
                   </div>
-                  <h2 className="text-xl font-black text-[#123B7A] uppercase tracking-wider">
-                    MIRA BHAYANDAR MUNICIPAL CORPORATION
+
+                  <h2 className="text-xl sm:text-2xl font-extrabold text-[#123B7A]">
+                    {t("Application Submitted Successfully — Awaiting Department Scrutiny", "अर्ज यशस्वीरीत्या दाखल करण्यात आला — विभागीय पडताळणी प्रलंबित")}
                   </h2>
-                  <h3 className="text-sm font-extrabold text-slate-800 uppercase tracking-wide">
-                    OFFICIAL DIGITAL EVENT PERMISSION CERTIFICATE 2026
-                  </h3>
-                  <div className="inline-block bg-emerald-100 text-emerald-800 text-xs font-mono font-extrabold px-3 py-1 rounded border border-emerald-300">
-                    STATUS: APPROVED & VERIFIED (AUTHENTICATED)
+                  <p className="text-xs text-slate-600 font-medium">
+                    Your application has been logged into the MBMC Single-Window e-Governance System under Application Ref: <strong className="text-slate-900 font-mono">{submittedRef}</strong>. As per municipal rules, permissions are <strong>NOT instantly generated</strong> and require multi-department scrutiny.
+                  </p>
+                </div>
+
+                {/* Live Approval Pipeline Timeline */}
+                <div className="space-y-3 bg-slate-50 border border-[#D9E4F4] p-4 rounded-xs">
+                  <span className="text-xs font-extrabold text-[#123B7A] uppercase tracking-wider block">
+                    LIVE MBMC DEPARTMENTAL APPROVAL PIPELINE
+                  </span>
+
+                  <div className="space-y-2 text-xs font-mono">
+                    <div className="flex items-center justify-between p-2 bg-emerald-50 border border-emerald-200 text-emerald-900 font-bold rounded-xs">
+                      <span className="flex items-center space-x-2">
+                        <span>1. Citizen Application Form Submission</span>
+                      </span>
+                      <span className="bg-emerald-700 text-white text-[10px] px-2 py-0.5 rounded">COMPLETED</span>
+                    </div>
+
+                    <div className="flex items-center justify-between p-2 bg-amber-50 border border-amber-200 text-amber-900 font-bold rounded-xs">
+                      <span className="flex items-center space-x-2">
+                        <span className="w-2 h-2 rounded-full bg-amber-600 animate-ping" />
+                        <span>2. Desk Scrutiny & CAD Layout Verification</span>
+                      </span>
+                      <span className="bg-amber-600 text-white text-[10px] px-2 py-0.5 rounded">IN PROGRESS</span>
+                    </div>
+
+                    <div className="flex items-center justify-between p-2 bg-white border border-slate-200 text-slate-600 rounded-xs">
+                      <span>3. Chief Fire Officer (CFO) Fire Safety Inspection</span>
+                      <span className="bg-slate-200 text-slate-700 text-[10px] px-2 py-0.5 rounded">PENDING</span>
+                    </div>
+
+                    <div className="flex items-center justify-between p-2 bg-white border border-slate-200 text-slate-600 rounded-xs">
+                      <span>4. MBVV Police Law & Order Clearance</span>
+                      <span className="bg-slate-200 text-slate-700 text-[10px] px-2 py-0.5 rounded">PENDING</span>
+                    </div>
+
+                    <div className="flex items-center justify-between p-2 bg-white border border-slate-200 text-slate-600 rounded-xs">
+                      <span>5. MBVV Traffic Route Diversion Audit</span>
+                      <span className="bg-slate-200 text-slate-700 text-[10px] px-2 py-0.5 rounded">PENDING</span>
+                    </div>
+
+                    <div className="flex items-center justify-between p-2 bg-white border border-slate-200 text-slate-600 rounded-xs">
+                      <span>6. MBMC Ward Officer Field Recommendation</span>
+                      <span className="bg-slate-200 text-slate-700 text-[10px] px-2 py-0.5 rounded">PENDING</span>
+                    </div>
+
+                    <div className="flex items-center justify-between p-2 bg-white border border-slate-200 text-slate-600 rounded-xs">
+                      <span>7. Municipal Commissioner Final Sanction & QR Pass Generation</span>
+                      <span className="bg-slate-200 text-slate-700 text-[10px] px-2 py-0.5 rounded">PENDING</span>
+                    </div>
                   </div>
                 </div>
 
-                {/* Pass Details Grid */}
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-xs font-mono bg-slate-50 p-4 border border-[#D9E4F4] rounded-xs">
-                  <div><span className="font-bold text-slate-900">Application Ref:</span> {submittedRef}</div>
-                  <div><span className="font-bold text-slate-900">Issue Date:</span> {new Date().toLocaleDateString('en-IN')}</div>
-                  <div><span className="font-bold text-slate-900">Applicant:</span> {formData.applicantName}</div>
-                  <div><span className="font-bold text-slate-900">Organization:</span> {formData.organization}</div>
+                {/* Application Details Summary */}
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs bg-white border border-[#D9E4F4] p-4 rounded-xs">
+                  <div><span className="font-bold text-slate-900">Application Ref ID:</span> <span className="font-mono text-[#123B7A] font-extrabold">{submittedRef}</span></div>
                   <div><span className="font-bold text-slate-900">Event Name:</span> {formData.eventName}</div>
-                  <div><span className="font-bold text-slate-900">Ward:</span> {formData.wardId} ({formData.wardOffice})</div>
+                  <div><span className="font-bold text-slate-900">Applicant:</span> {formData.applicantName} ({formData.organization})</div>
                   <div><span className="font-bold text-slate-900">Venue:</span> {formData.venueName}</div>
-                  <div><span className="font-bold text-slate-900">Validity Period:</span> {formData.startDate} to {formData.endDate}</div>
-                  <div><span className="font-bold text-slate-900">Fire NOC:</span> APPROVED (CFO/2026/88)</div>
-                  <div><span className="font-bold text-slate-900">Police NOC:</span> SANCTIONED (MBVV/POL/41)</div>
-                  <div><span className="font-bold text-slate-900">Total Fee Paid:</span> ₹{totalFeeCalculated.toLocaleString()}</div>
-                  <div><span className="font-bold text-slate-900">Security Deposit:</span> ₹{sanitationDeposit.toLocaleString()} (Refundable)</div>
+                  <div><span className="font-bold text-slate-900">Dates:</span> {formData.startDate} to {formData.endDate}</div>
+                  <div><span className="font-bold text-slate-900">Estimated SLA:</span> 72 Hours Processing Window</div>
                 </div>
 
-                {/* QR Code Security Stamp */}
-                <div className="flex flex-col sm:flex-row items-center justify-between border-t border-[#D9E4F4] pt-4 gap-4">
-                  <div className="space-y-1">
-                    <span className="text-xs font-bold text-[#123B7A] block">Encrypted Verification Stamp</span>
-                    <p className="text-[11px] text-slate-600">Police patrol and MBMC ward officers can scan this QR code live on mbmc.gov.in</p>
-                  </div>
-                  <div className="w-24 h-24 bg-slate-900 text-white flex items-center justify-center font-mono text-[10px] text-center p-2 rounded">
-                    [QR CODE STAMP VERIFIED]
-                  </div>
-                </div>
-
-                {/* Actions */}
-                <div className="flex items-center space-x-3 pt-2">
-                  <button
-                    onClick={() => window.print()}
-                    className="bg-[#123B7A] text-white hover:bg-[#1E4F91] font-bold text-xs px-4 py-2 rounded-xs flex items-center space-x-1.5 transition"
+                {/* Action Buttons */}
+                <div className="flex flex-col sm:flex-row items-center justify-between gap-3 border-t border-[#D9E4F4] pt-4">
+                  <Link
+                    href={`/track?ref=${encodeURIComponent(submittedRef)}`}
+                    className="w-full sm:w-auto bg-[#123B7A] hover:bg-[#1E4F91] text-white font-extrabold text-xs px-5 py-2.5 rounded-xs flex items-center justify-center space-x-1.5 transition shadow-xs"
                   >
-                    <Printer className="w-4 h-4" />
-                    <span>Print QR Permission Pass</span>
-                  </button>
+                    <span>Track Live Status on Citizen Portal</span>
+                    <ArrowRight className="w-4 h-4" />
+                  </Link>
 
-                  <button
-                    onClick={() => setStep(1)}
-                    className="border border-[#123B7A] text-[#123B7A] hover:bg-[#123B7A]/10 font-bold text-xs px-4 py-2 rounded-xs transition"
+                  <Link
+                    href={`/department?ref=${encodeURIComponent(submittedRef)}`}
+                    className="w-full sm:w-auto bg-amber-700 hover:bg-amber-800 text-white font-extrabold text-xs px-5 py-2.5 rounded-xs flex items-center justify-center space-x-1.5 transition shadow-xs"
                   >
-                    Apply New Permission
-                  </button>
+                    <span>Go to Officer Admin Portal (Simulate Approval)</span>
+                    <ExternalLink className="w-4 h-4" />
+                  </Link>
                 </div>
 
               </div>

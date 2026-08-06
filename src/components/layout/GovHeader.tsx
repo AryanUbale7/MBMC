@@ -40,7 +40,7 @@ export default function GovHeader() {
   };
 
   return (
-    <header className="w-full bg-white font-sans text-gov-text border-b border-gov-border shadow-gov-sm">
+    <header className="w-full bg-white font-sans text-gov-text border-b border-gov-border shadow-gov-sm print:hidden">
       
       {/* -------------------------------------------------
           SECTION 1: UTILITY HEADER

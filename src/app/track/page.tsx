@@ -4,8 +4,6 @@ import React, { useState, useEffect, Suspense } from "react";
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
 import { useAccessibility } from "@/context/AccessibilityContext";
-import { DEMO_APPLICATIONS, EventApplication } from "@/data/mbmcData";
-import { QRCodeSVG } from "qrcode.react";
 import {
   Search,
   CheckCircle2,
@@ -23,353 +21,386 @@ import {
   Flame,
   Volume2,
   ExternalLink,
-  Award
+  Award,
+  ChevronRight,
+  ShieldAlert,
+  Info
 } from "lucide-react";
 
 function TrackContent() {
   const { t } = useAccessibility();
   const searchParams = useSearchParams();
-  const initialRef = searchParams.get("ref") || "MBMC/UECP/2026/98412";
+  const initialRef = searchParams.get("ref") || "MBMC/UECP/2026/89412";
 
   const [refInput, setRefInput] = useState(initialRef);
-  const [activeApp, setActiveApp] = useState<EventApplication | null>(null);
-  const [showQrModal, setShowQrModal] = useState(false);
+  const [searchedRef, setSearchedRef] = useState(initialRef);
 
-  useEffect(() => {
-    const found = DEMO_APPLICATIONS.find(
-      (app) => app.referenceNo.toLowerCase() === refInput.toLowerCase() || app.id.toLowerCase() === refInput.toLowerCase()
-    );
-    if (found) {
-      setActiveApp(found);
-    } else {
-      setActiveApp(DEMO_APPLICATIONS[0]);
+  // Mock Lookup Store
+  const mockDb: Record<string, any> = {
+    "MBMC/UECP/2026/89412": {
+      id: "MBMC/UECP/2026/89412",
+      eventName: "Shanti Nagar Sarvajanik Ganeshotsav Pandal",
+      applicantName: "Pravin Kumar Raut",
+      organization: "Shanti Nagar Welfare Mandal Trust",
+      ward: "Ward 4 (Kashimira - Ghodbunder)",
+      venue: "Shanti Nagar Cultural & Community Field",
+      dates: "2026-09-10 to 2026-09-20",
+      mobile: "9820199482",
+      email: "pravin.raut@mandal.org",
+      stageSize: "40ft x 30ft",
+      crowd: "10,000 daily",
+      cctvCount: 8,
+      fireExtinguishers: 6,
+      submittedAt: "2026-08-06 09:15 AM",
+      status: "PENDING_SCRUTINY",
+      cfoFireStatus: "PENDING",
+      policeStatus: "PENDING",
+      trafficStatus: "PENDING",
+      wardStatus: "PENDING",
+      commissionerSanction: false,
+      remarks: "Application logged into system. Desk Scrutiny & CAD verification in progress."
+    },
+    "MBMC/UECP/2026/98412": {
+      id: "MBMC/UECP/2026/98412",
+      eventName: "Mira Bhayandar Annual Cultural & Handloom Festival 2026",
+      applicantName: "Sanjay R. Mehta",
+      organization: "Konkan Heritage Cultural Trust",
+      ward: "Ward 1 (Bhayandar West)",
+      venue: "Netaji Subhash Chandra Bose Ground",
+      dates: "2026-09-15 to 2026-09-20",
+      mobile: "9820144890",
+      email: "sanjay@konkanheritage.org",
+      stageSize: "60ft x 45ft",
+      crowd: "12,000 daily",
+      cctvCount: 12,
+      fireExtinguishers: 12,
+      submittedAt: "2026-08-01 10:30 AM",
+      status: "APPROVED",
+      cfoFireStatus: "APPROVED",
+      policeStatus: "APPROVED",
+      trafficStatus: "APPROVED",
+      wardStatus: "APPROVED",
+      commissionerSanction: true,
+      remarks: "All multi-departmental clearances granted. QR Permission Pass issued."
     }
-  }, [refInput]);
+  };
 
-  const handleSearch = (e: React.FormEvent) => {
+  const activeApp = mockDb[searchedRef.toUpperCase()] || {
+    id: refInput.toUpperCase(),
+    eventName: "Registered Event Permit Application",
+    applicantName: "Registered Citizen Applicant",
+    organization: "Citizen Event Committee",
+    ward: "Ward 4 (Kashimira - Ghodbunder)",
+    venue: "Designated Public Field, Mira Road",
+    dates: "2026-09-01 to 2026-09-10",
+    mobile: "9820000000",
+    email: "applicant@mbmc-portal.org",
+    stageSize: "30ft x 20ft",
+    crowd: "5,000 daily",
+    cctvCount: 6,
+    fireExtinguishers: 4,
+    submittedAt: "2026-08-05 11:00 AM",
+    status: "PENDING_SCRUTINY",
+    cfoFireStatus: "PENDING",
+    policeStatus: "PENDING",
+    trafficStatus: "PENDING",
+    wardStatus: "PENDING",
+    commissionerSanction: false,
+    remarks: "Application under initial Desk Scrutiny by MBMC Single-Window Cell."
+  };
+
+  const handleSearchSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    const found = DEMO_APPLICATIONS.find(
-      (app) => app.referenceNo.toLowerCase() === refInput.toLowerCase() || app.id.toLowerCase() === refInput.toLowerCase()
-    );
-    if (found) {
-      setActiveApp(found);
-    } else {
-      setActiveApp({
-        id: "APP-CUSTOM",
-        referenceNo: refInput.toUpperCase(),
-        eventName: "Searched Event Clearance",
-        eventType: "Religious / Cultural Festival",
-        wardId: "W04",
-        venueName: "Mira Road Community Ground",
-        applicantName: "Registered Citizen Applicant",
-        applicantType: "Trust",
-        organizationName: "Local Event Committee",
-        mobile: "+91 98200 00000",
-        email: "applicant@mbmc-portal.org",
-        aadhaarPan: "XXXX XXXX 9912",
-        startDate: "2026-09-01",
-        endDate: "2026-09-10",
-        expectedAttendance: 5000,
-        stageAreaSqFt: 2500,
-        soundPermitNeeded: true,
-        totalFeeCalculated: 15500,
-        paymentStatus: "PAID",
-        overallStatus: "IN_REVIEW",
-        submittedAt: "2026-08-05 11:00 AM",
-        departmentStatus: [
-          {
-            departmentCode: "MBMC_PWD",
-            departmentName: "MBMC Public Works Dept",
-            status: "APPROVED",
-            remarks: "Ground lease sanctioned.",
-            updatedAt: "2026-08-05 03:00 PM"
-          },
-          {
-            departmentCode: "MBMC_FIRE",
-            departmentName: "MBMC Fire Services",
-            status: "PENDING",
-            remarks: "Scheduled for field safety audit.",
-            updatedAt: "2026-08-06 09:00 AM"
-          },
-          {
-            departmentCode: "MBVV_POLICE",
-            departmentName: "MBVV Police Dept",
-            status: "APPROVED",
-            remarks: "Noise permit cleared.",
-            updatedAt: "2026-08-05 05:00 PM"
-          }
-        ]
-      });
+    if (refInput.trim()) {
+      setSearchedRef(refInput.trim());
     }
   };
 
   return (
-    <div className="max-w-5xl mx-auto px-4 sm:px-8 py-8 font-sans space-y-8">
-      {/* PAGE HEADER */}
-      <div className="border-b border-gov-border pb-4 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-        <div>
-          <div className="flex items-center space-x-2 text-xs text-gov-textMuted font-medium">
-            <Link href="/" className="hover:underline">{t("Home", "मुख्य पृष्ठ")}</Link>
-            <span>/</span>
-            <span className="text-gov-primary font-bold">{t("Track Application", "अर्जाचा पाठपुरावा")}</span>
+    <div className="min-h-screen bg-[#F6F8FC] font-sans text-[#1B2B4D] py-6 px-4 sm:px-8">
+      <div className="max-w-[1400px] mx-auto space-y-6">
+
+        {/* -------------------------------------------------
+            PAGE HEADER & SEARCH BAR
+        ------------------------------------------------- */}
+        <div className="bg-white rounded-xs border border-[#D9E4F4] p-4 sm:p-6 shadow-xs space-y-4 print:hidden">
+          
+          <div className="text-[11px] font-bold text-[#1E4F91] uppercase tracking-wider flex items-center space-x-1.5 flex-wrap gap-y-1">
+            <span>{t("Government of Maharashtra", "महाराष्ट्र शासन")}</span>
+            <ChevronRight className="w-3.5 h-3.5 text-slate-400" />
+            <span>{t("Mira Bhayandar Municipal Corporation", "मीरा भाईंदर महानगरपालिका")}</span>
+            <ChevronRight className="w-3.5 h-3.5 text-slate-400" />
+            <span className="text-slate-900 font-extrabold">{t("Citizen Application Live Status Tracker", "अर्ज स्थिती थेट मागोवा")}</span>
           </div>
-          <h1 className="text-2xl sm:text-3xl font-extrabold text-gov-dark mt-1">
-            {t("Single Window Live Clearance Status", "एकल खिडकी अर्जाची थेट स्थिती")}
-          </h1>
+
+          <div className="flex flex-col md:flex-row md:items-center justify-between border-t border-[#D9E4F4] pt-4 gap-4">
+            <div>
+              <h1 className="text-xl sm:text-2xl font-extrabold text-[#123B7A]">
+                {t("Real-Time Application Status & Approval Tracker", "अर्ज स्थिती आणि विभागीय पडताळणी थेट मागोवा")}
+              </h1>
+              <p className="text-xs text-slate-600 font-medium">
+                Enter your 10-digit Application Reference ID (e.g., <strong>MBMC/UECP/2026/89412</strong> or <strong>MBMC/UECP/2026/98412</strong>)
+              </p>
+            </div>
+
+            <form onSubmit={handleSearchSubmit} className="flex items-center space-x-2 w-full md:w-auto">
+              <input
+                type="text"
+                placeholder="Enter Application Ref ID..."
+                value={refInput}
+                onChange={(e) => setRefInput(e.target.value)}
+                className="border border-[#D9E4F4] p-2.5 rounded-xs bg-slate-50 text-slate-900 text-xs font-mono font-bold w-full md:w-64 focus:outline-none focus:border-[#123B7A]"
+              />
+              <button
+                type="submit"
+                className="bg-[#123B7A] hover:bg-[#1E4F91] text-white font-extrabold text-xs px-4 py-2.5 rounded-xs flex items-center space-x-1 transition cursor-pointer whitespace-nowrap"
+              >
+                <Search className="w-3.5 h-3.5" />
+                <span>Search</span>
+              </button>
+            </form>
+          </div>
+
         </div>
 
-        {/* Search Bar */}
-        <form onSubmit={handleSearch} className="flex items-center space-x-2">
-          <div className="relative">
-            <input
-              type="text"
-              value={refInput}
-              onChange={(e) => setRefInput(e.target.value)}
-              placeholder="Ref No (e.g. MBMC/UECP/2026/98412)"
-              className="bg-white border border-gov-border rounded-lg pl-3 pr-8 py-2 text-xs font-mono font-bold focus:ring-2 focus:ring-gov-primary outline-none"
-            />
-            <Search className="w-3.5 h-3.5 text-gov-textMuted absolute right-2.5 top-2.5" />
-          </div>
-          <button
-            type="submit"
-            className="bg-gov-primary hover:bg-gov-dark text-white text-xs font-bold px-3 py-2 rounded-lg transition cursor-pointer"
-          >
-            {t("Track", "शोधा")}
-          </button>
-        </form>
-      </div>
 
-      {activeApp && (
-        <div className="space-y-8">
-          {/* APPLICATION OVERVIEW CARD */}
-          <div className="bg-white rounded-xl border border-gov-border shadow-gov-md p-6 sm:p-8 space-y-6">
-            <div className="flex flex-col md:flex-row md:items-center justify-between border-b border-gov-border pb-4 gap-4">
-              <div>
-                <span className="text-xs font-mono font-bold text-gov-primary bg-blue-50 border border-blue-200 px-3 py-1 rounded">
-                  {activeApp.referenceNo}
+        {/* -------------------------------------------------
+            LIVE WORKFLOW TRACKER DISPLAY
+        ------------------------------------------------- */}
+        <div className="bg-white rounded-xs border border-[#D9E4F4] p-6 sm:p-8 shadow-xs space-y-6 print:hidden">
+          
+          {/* Header Status Bar */}
+          <div className="border-b border-[#D9E4F4] pb-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+            <div>
+              <span className="text-[10px] font-mono font-bold text-slate-500 block">APPLICATION FILE TRACKING RECORD</span>
+              <h2 className="text-lg sm:text-xl font-extrabold text-[#123B7A]">{activeApp.eventName}</h2>
+              <span className="text-xs font-mono text-[#1E4F91] font-bold">Ref No: {activeApp.id}</span>
+            </div>
+
+            <div className="text-left sm:text-right">
+              <span className="text-[10px] text-slate-500 font-bold block">CURRENT E-GOVERNANCE STATUS</span>
+              <span className={`text-xs font-mono font-extrabold px-3 py-1 rounded border inline-block ${
+                activeApp.status === "APPROVED"
+                  ? "bg-emerald-100 text-emerald-800 border-emerald-300"
+                  : "bg-amber-100 text-amber-900 border-amber-300"
+              }`}>
+                STATUS: {activeApp.status === "APPROVED" ? "SANCTIONED & ISSUED" : "PENDING SCRUTINY"}
+              </span>
+            </div>
+          </div>
+
+          {/* 7-STAGE APPROVAL TIMELINE PIPELINE */}
+          <div className="space-y-3 bg-slate-50 border border-[#D9E4F4] p-4 rounded-xs">
+            <span className="text-xs font-extrabold text-[#123B7A] uppercase tracking-wider block">
+              7-STAGE MULTI-DEPARTMENTAL APPROVAL TIMELINE PIPELINE
+            </span>
+
+            <div className="space-y-2 text-xs font-mono">
+              
+              {/* Stage 1 */}
+              <div className="flex items-center justify-between p-2 bg-emerald-50 border border-emerald-200 text-emerald-900 font-bold rounded-xs">
+                <span>1. Citizen Application Form Submission</span>
+                <span className="bg-emerald-700 text-white text-[10px] px-2 py-0.5 rounded">COMPLETED ({activeApp.submittedAt})</span>
+              </div>
+
+              {/* Stage 2 */}
+              <div className={`flex items-center justify-between p-2 rounded-xs border font-bold ${
+                activeApp.status === "APPROVED" ? "bg-emerald-50 border-emerald-200 text-emerald-900" : "bg-amber-50 border-amber-200 text-amber-900"
+              }`}>
+                <span className="flex items-center space-x-2">
+                  {activeApp.status !== "APPROVED" && <span className="w-2 h-2 rounded-full bg-amber-600 animate-ping" />}
+                  <span>2. Desk Scrutiny & CAD Layout Plan Audit</span>
                 </span>
-                <h2 className="text-xl font-bold text-gov-dark mt-2">
-                  {activeApp.eventName}
-                </h2>
-                <p className="text-xs text-gov-textMuted mt-0.5">
-                  {activeApp.eventType} • {t("Submitted:", "सादर केल्याची तारीख:")} {activeApp.submittedAt}
-                </p>
+                <span className={`text-[10px] px-2 py-0.5 rounded ${
+                  activeApp.status === "APPROVED" ? "bg-emerald-700 text-white" : "bg-amber-600 text-white"
+                }`}>
+                  {activeApp.status === "APPROVED" ? "VERIFIED" : "IN PROGRESS"}
+                </span>
               </div>
 
-              <div className="flex flex-col items-start md:items-end">
-                {activeApp.overallStatus === "APPROVED" ? (
-                  <div className="inline-flex items-center space-x-2 bg-emerald-100 text-emerald-900 border border-emerald-300 px-4 py-1.5 rounded-full text-xs font-bold">
-                    <CheckCircle2 className="w-4 h-4 text-emerald-600" />
-                    <span>{t("ALL NOCs CLEARED & APPROVED", "सर्व एनओसी मंजूर व परवाना तयार")}</span>
-                  </div>
-                ) : (
-                  <div className="inline-flex items-center space-x-2 bg-amber-100 text-amber-900 border border-amber-300 px-4 py-1.5 rounded-full text-xs font-bold">
-                    <Clock className="w-4 h-4 text-amber-600" />
-                    <span>{t("IN REVIEW BY DEPARTMENTS", "विभागीय अधिकारी तपासणी सुरु")}</span>
-                  </div>
-                )}
-
-                {activeApp.overallStatus === "APPROVED" && (
-                  <button
-                    onClick={() => setShowQrModal(true)}
-                    className="mt-2 text-xs font-bold text-gov-primary hover:text-gov-dark underline flex items-center space-x-1 cursor-pointer"
-                  >
-                    <Award className="w-3.5 h-3.5 text-yellow-500" />
-                    <span>{t("View & Download Digital Permit Certificate", "डिजिटल परवाना पहा व डाऊनलोड करा")}</span>
-                  </button>
-                )}
-              </div>
-            </div>
-
-            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4 text-xs">
-              <div className="bg-gov-bg p-3 rounded-lg border border-gov-border">
-                <span className="text-gov-textMuted block">{t("Applicant / Trust Name", "अर्जदार / मंडळ")}</span>
-                <span className="font-bold text-gov-dark block mt-0.5">{activeApp.organizationName}</span>
-                <span className="text-[11px] text-gov-textMuted">{activeApp.applicantName}</span>
+              {/* Stage 3 */}
+              <div className={`flex items-center justify-between p-2 rounded-xs border font-bold ${
+                activeApp.cfoFireStatus === "APPROVED" ? "bg-emerald-50 border-emerald-200 text-emerald-900" : "bg-white border-slate-200 text-slate-600"
+              }`}>
+                <span>3. Chief Fire Officer (CFO) Fire Safety NOC</span>
+                <span className={`text-[10px] px-2 py-0.5 rounded ${
+                  activeApp.cfoFireStatus === "APPROVED" ? "bg-emerald-700 text-white" : "bg-slate-200 text-slate-700"
+                }`}>
+                  {activeApp.cfoFireStatus === "APPROVED" ? "SANCTIONED (CFO/2026/88)" : "PENDING AUDIT"}
+                </span>
               </div>
 
-              <div className="bg-gov-bg p-3 rounded-lg border border-gov-border">
-                <span className="text-gov-textMuted block">{t("Venue Address", "मैदान व पत्ता")}</span>
-                <span className="font-bold text-gov-dark block mt-0.5">{activeApp.venueName}</span>
-                <span className="text-[11px] text-gov-textMuted">Ward {activeApp.wardId}</span>
+              {/* Stage 4 */}
+              <div className={`flex items-center justify-between p-2 rounded-xs border font-bold ${
+                activeApp.policeStatus === "APPROVED" ? "bg-emerald-50 border-emerald-200 text-emerald-900" : "bg-white border-slate-200 text-slate-600"
+              }`}>
+                <span>4. MBVV Police Law & Order Clearance</span>
+                <span className={`text-[10px] px-2 py-0.5 rounded ${
+                  activeApp.policeStatus === "APPROVED" ? "bg-emerald-700 text-white" : "bg-slate-200 text-slate-700"
+                }`}>
+                  {activeApp.policeStatus === "APPROVED" ? "SANCTIONED (MBVV/POL/41)" : "PENDING AUDIT"}
+                </span>
               </div>
 
-              <div className="bg-gov-bg p-3 rounded-lg border border-gov-border">
-                <span className="text-gov-textMuted block">{t("Sanctioned Event Dates", "परवानगी कालावधी")}</span>
-                <span className="font-bold text-gov-dark block mt-0.5">{activeApp.startDate} to {activeApp.endDate}</span>
+              {/* Stage 5 */}
+              <div className={`flex items-center justify-between p-2 rounded-xs border font-bold ${
+                activeApp.trafficStatus === "APPROVED" ? "bg-emerald-50 border-emerald-200 text-emerald-900" : "bg-white border-slate-200 text-slate-600"
+              }`}>
+                <span>5. MBVV Traffic Route Diversion Audit</span>
+                <span className={`text-[10px] px-2 py-0.5 rounded ${
+                  activeApp.trafficStatus === "APPROVED" ? "bg-emerald-700 text-white" : "bg-slate-200 text-slate-700"
+                }`}>
+                  {activeApp.trafficStatus === "APPROVED" ? "SANCTIONED (TFR/2026/19)" : "PENDING AUDIT"}
+                </span>
               </div>
 
-              <div className="bg-gov-bg p-3 rounded-lg border border-gov-border">
-                <span className="text-gov-textMuted block">{t("Municipal Fee Paid", "मनपा शुल्क भरणा")}</span>
-                <span className="font-mono font-extrabold text-emerald-700 block mt-0.5">₹ {activeApp.totalFeeCalculated.toLocaleString()} ({activeApp.paymentStatus})</span>
+              {/* Stage 6 */}
+              <div className={`flex items-center justify-between p-2 rounded-xs border font-bold ${
+                activeApp.wardStatus === "APPROVED" ? "bg-emerald-50 border-emerald-200 text-emerald-900" : "bg-white border-slate-200 text-slate-600"
+              }`}>
+                <span>6. MBMC Ward Officer Field Recommendation</span>
+                <span className={`text-[10px] px-2 py-0.5 rounded ${
+                  activeApp.wardStatus === "APPROVED" ? "bg-emerald-700 text-white" : "bg-slate-200 text-slate-700"
+                }`}>
+                  {activeApp.wardStatus === "APPROVED" ? "RECOMMENDED (WARD/2026/04)" : "PENDING RECOMMENDATION"}
+                </span>
               </div>
-            </div>
-          </div>
 
-          {/* MULTI-DEPARTMENT APPROVAL TIMELINE */}
-          <div className="bg-white rounded-xl border border-gov-border shadow-gov-md p-6 sm:p-8 space-y-6">
-            <div className="border-b border-gov-border pb-3 flex items-center justify-between">
-              <div>
-                <h3 className="text-lg font-bold text-gov-dark flex items-center space-x-2">
-                  <ShieldCheck className="w-5 h-5 text-gov-primary" />
-                  <span>{t("Inter-Department NOC Live Timeline", "विभागवार ना-हरकत (NOC) थेट स्थिती")}</span>
-                </h3>
-                <p className="text-xs text-gov-textMuted mt-0.5">
-                  {t("Track real-time digital approvals across MBMC Fire, MBVV Police, PWD, and Health departments.", "अग्निशमन, पोलीस, बांधकाम व स्वच्छता विभागाचे थेट डिजिटल शेरे.")}
-                </p>
+              {/* Stage 7 */}
+              <div className={`flex items-center justify-between p-2 rounded-xs border font-bold ${
+                activeApp.commissionerSanction ? "bg-emerald-50 border-emerald-400 text-emerald-950 font-extrabold" : "bg-white border-slate-200 text-slate-600"
+              }`}>
+                <span>7. Municipal Commissioner Final Sanction & QR Pass Generation</span>
+                <span className={`text-[10px] px-2 py-0.5 rounded ${
+                  activeApp.commissionerSanction ? "bg-emerald-700 text-white" : "bg-slate-200 text-slate-700"
+                }`}>
+                  {activeApp.commissionerSanction ? "SANCTIONED & GENERATED" : "PENDING SANCTION"}
+                </span>
               </div>
-            </div>
 
-            <div className="space-y-4">
-              {activeApp.departmentStatus.map((dept, idx) => (
-                <div
-                  key={dept.departmentCode}
-                  className={`p-4 rounded-xl border transition flex flex-col sm:flex-row sm:items-center justify-between gap-4 ${
-                    dept.status === "APPROVED"
-                      ? "bg-emerald-50/60 border-emerald-200"
-                      : "bg-amber-50/60 border-amber-200"
-                  }`}
-                >
-                  <div className="flex items-start space-x-3">
-                    <div
-                      className={`w-8 h-8 rounded-full flex items-center justify-center font-bold text-white text-xs flex-shrink-0 mt-0.5 ${
-                        dept.status === "APPROVED" ? "bg-emerald-600" : "bg-amber-600"
-                      }`}
-                    >
-                      {dept.status === "APPROVED" ? <Check className="w-4 h-4" /> : <Clock className="w-4 h-4" />}
-                    </div>
-                    <div>
-                      <div className="flex items-center space-x-2">
-                        <h4 className="text-sm font-bold text-gov-dark">{dept.departmentName}</h4>
-                        <span className="text-[10px] font-mono font-bold bg-white px-2 py-0.5 rounded border border-gov-border">
-                          {dept.departmentCode}
-                        </span>
-                      </div>
-                      <p className="text-xs text-gov-textMuted mt-1 font-medium">
-                        "{dept.remarks}"
-                      </p>
-                    </div>
-                  </div>
-
-                  <div className="text-right sm:border-l sm:border-gov-border sm:pl-4">
-                    <span
-                      className={`inline-block px-3 py-1 rounded text-xs font-bold ${
-                        dept.status === "APPROVED"
-                          ? "bg-emerald-100 text-emerald-800 border border-emerald-300"
-                          : "bg-amber-100 text-amber-800 border border-amber-300"
-                      }`}
-                    >
-                      {dept.status}
-                    </span>
-                    <span className="block text-[11px] text-gov-textMuted mt-1">
-                      Updated: {dept.updatedAt}
-                    </span>
-                  </div>
-                </div>
-              ))}
             </div>
           </div>
 
-          {/* DIGITAL PERMISSION CERTIFICATE MODAL */}
-          {showQrModal && (
-            <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-xs flex items-center justify-center p-4">
-              <div className="bg-white rounded-xl border-4 border-gov-primary max-w-2xl w-full p-6 sm:p-8 space-y-6 shadow-2xl relative max-h-[90vh] overflow-y-auto">
-                <div className="text-center space-y-2 border-b-2 border-gov-primary pb-4">
-                  <div className="flex items-center justify-center space-x-4">
-                    <img src="/images/sher.png" alt="Emblem" className="w-6 h-9 object-contain" />
-                    <img src="/images/MBMC logo.jpg" alt="MBMC Seal" className="w-12 h-12 object-contain rounded-full" />
-                  </div>
-                  <h2 className="text-xl font-extrabold text-gov-primary uppercase tracking-tight">
-                    Mira Bhayandar Municipal Corporation
-                  </h2>
-                  <p className="text-xs font-bold text-gov-dark uppercase tracking-widest">
-                    OFFICIAL DIGITAL EVENT PERMISSION CERTIFICATE (2026)
-                  </p>
-                  <span className="text-[11px] text-gov-textMuted">
-                    Issued under Maharashtra Municipal Corporations Act • Section 376
-                  </span>
-                </div>
+          {/* Quick Simulation Link for Testing */}
+          <div className="bg-blue-50 border border-blue-200 p-3 rounded-xs text-xs flex items-center justify-between">
+            <span className="text-[#123B7A] font-medium">
+              Want to simulate Officer Approval for this file? Use the Officer Admin Portal.
+            </span>
+            <Link
+              href={`/department?ref=${encodeURIComponent(activeApp.id)}`}
+              className="bg-[#123B7A] hover:bg-[#1E4F91] text-white font-bold px-3 py-1.5 rounded-xs transition flex items-center space-x-1"
+            >
+              <span>Go to Officer Portal</span>
+              <ExternalLink className="w-3.5 h-3.5" />
+            </Link>
+          </div>
 
-                <div className="grid grid-cols-1 sm:grid-cols-3 gap-6 items-center">
-                  <div className="sm:col-span-2 space-y-2 text-xs">
-                    <div className="bg-gov-bg p-2.5 rounded border border-gov-border">
-                      <span className="text-gov-textMuted block">Permit Reference ID:</span>
-                      <span className="font-mono font-bold text-gov-primary text-sm">{activeApp.referenceNo}</span>
-                    </div>
-                    <div className="bg-gov-bg p-2.5 rounded border border-gov-border">
-                      <span className="text-gov-textMuted block">Permittee / Mandap Trust:</span>
-                      <span className="font-bold text-gov-dark">{activeApp.organizationName} ({activeApp.applicantName})</span>
-                    </div>
-                    <div className="bg-gov-bg p-2.5 rounded border border-gov-border">
-                      <span className="text-gov-textMuted block">Approved Venue & Ward:</span>
-                      <span className="font-bold text-gov-dark">{activeApp.venueName} (Ward {activeApp.wardId})</span>
-                    </div>
-                    <div className="bg-gov-bg p-2.5 rounded border border-gov-border">
-                      <span className="text-gov-textMuted block">Sanctioned Validity:</span>
-                      <span className="font-bold text-gov-dark">{activeApp.startDate} to {activeApp.endDate}</span>
-                    </div>
-                  </div>
-
-                  <div className="flex flex-col items-center justify-center p-3 bg-gov-bg border-2 border-gov-border rounded-xl space-y-2">
-                    <QRCodeSVG
-                      value={`https://mbmc.gov.in/verify?ref=${encodeURIComponent(activeApp.referenceNo)}`}
-                      size={120}
-                      level="H"
-                    />
-                    <span className="text-[10px] font-mono font-bold text-gov-primary text-center">
-                      SCAN TO VERIFY OFFICIAL MBMC SEAL
-                    </span>
-                  </div>
-                </div>
-
-                <div className="grid grid-cols-3 gap-2 pt-4 border-t border-gov-border text-center text-[10px] font-bold text-gov-dark">
-                  <div>
-                    <div className="border-b border-dashed border-gov-border pb-1 mb-1 font-mono text-gov-primary">
-                      [DIGITALLY SIGNED]
-                    </div>
-                    <span>CFO, MBMC Fire Services</span>
-                  </div>
-                  <div>
-                    <div className="border-b border-dashed border-gov-border pb-1 mb-1 font-mono text-gov-primary">
-                      [DIGITALLY SIGNED]
-                    </div>
-                    <span>DCP, MBVV Police Zone 1</span>
-                  </div>
-                  <div>
-                    <div className="border-b border-dashed border-gov-border pb-1 mb-1 font-mono text-gov-primary">
-                      [DIGITALLY SIGNED]
-                    </div>
-                    <span>Exec. Engineer, MBMC PWD</span>
-                  </div>
-                </div>
-
-                <div className="flex items-center justify-end space-x-3 pt-2 no-print">
-                  <button
-                    onClick={() => window.print()}
-                    className="bg-gov-primary text-white font-bold text-xs px-4 py-2 rounded-lg flex items-center space-x-1.5 transition hover:bg-gov-dark cursor-pointer"
-                  >
-                    <Printer className="w-4 h-4" />
-                    <span>Print Certificate</span>
-                  </button>
-                  <button
-                    onClick={() => setShowQrModal(false)}
-                    className="bg-gov-surface hover:bg-gov-border text-gov-dark font-bold text-xs px-4 py-2 rounded-lg transition cursor-pointer"
-                  >
-                    Close Window
-                  </button>
-                </div>
-              </div>
-            </div>
-          )}
         </div>
-      )}
+
+
+        {/* -------------------------------------------------
+            PRINTABLE OFFICIAL A4 PERMISSION PASS (RENDERED IF APPROVED)
+        ------------------------------------------------- */}
+        {activeApp.status === "APPROVED" ? (
+          <div className="printable-pass bg-white rounded-xs border-2 border-[#123B7A] p-6 sm:p-8 shadow-xs space-y-6">
+            
+            {/* Government Emblem & Header */}
+            <div className="text-center space-y-2 border-b-2 border-[#123B7A] pb-6">
+              <div className="flex items-center justify-center space-x-4">
+                <img src="/images/sher.png" alt="Emblem of India" className="w-6 h-9 object-contain" />
+                <img src="/images/mbmc_updated logo.jpg" alt="MBMC Seal" className="w-14 h-14 object-contain" />
+              </div>
+              <h2 className="text-xl sm:text-2xl font-black text-[#123B7A] uppercase tracking-wider">
+                MIRA BHAYANDAR MUNICIPAL CORPORATION
+              </h2>
+              <h3 className="text-sm font-extrabold text-slate-900 uppercase tracking-wide">
+                OFFICIAL SANCTIONED DIGITAL EVENT PERMISSION CERTIFICATE 2026
+              </h3>
+              <span className="text-xs text-slate-600 font-mono block">Issuing Authority: Municipal Commissionerate & Chief Fire Officer, MBMC</span>
+            </div>
+
+            {/* Pass Metadata Grid */}
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-xs font-mono bg-slate-50 p-4 border border-[#D9E4F4] rounded-xs text-slate-800">
+              <div><span className="font-bold text-slate-900">Application Reference ID:</span> <span className="text-[#123B7A] font-extrabold">{activeApp.id}</span></div>
+              <div><span className="font-bold text-slate-900">Digital Issue Date:</span> {new Date().toLocaleDateString('en-IN')}</div>
+              <div><span className="font-bold text-slate-900">Applicant Full Name:</span> {activeApp.applicantName}</div>
+              <div><span className="font-bold text-slate-900">Organization / Trust:</span> {activeApp.organization}</div>
+              <div><span className="font-bold text-slate-900">Event Title:</span> {activeApp.eventName}</div>
+              <div><span className="font-bold text-slate-900">Ward Jurisdiction:</span> {activeApp.ward}</div>
+              <div><span className="font-bold text-slate-900">Sanctioned Venue:</span> {activeApp.venue}</div>
+              <div><span className="font-bold text-slate-900">Validity Schedule:</span> {activeApp.dates}</div>
+              <div><span className="font-bold text-slate-900">CFO Fire Safety NOC:</span> SANCTIONED (CFO/2026/88)</div>
+              <div><span className="font-bold text-slate-900">MBVV Police Law & Order:</span> SANCTIONED (MBVV/POL/41)</div>
+              <div><span className="font-bold text-slate-900">Traffic Route Permit:</span> APPROVED (TFR/2026/19)</div>
+              <div><span className="font-bold text-slate-900">Ward Officer Field Cert:</span> APPROVED (WARD/2026/04)</div>
+            </div>
+
+            {/* Mandatory Operational Compliance Terms */}
+            <div className="text-xs text-slate-700 leading-relaxed space-y-1 bg-amber-50/60 p-3 border border-amber-200 rounded-xs">
+              <span className="font-bold text-amber-900 block">STATUTORY PERMIT CONDITIONS:</span>
+              <p>1. Loudspeakers strictly limited to &lt;55 dB during daytime and MUST be turned off by 10:00 PM as per High Court noise norms.</p>
+              <p>2. Ammonium phosphate fire-retardant coating on pandal canvas must be maintained intact for daily CFO spot inspection.</p>
+              <p>3. This pass must be displayed prominently at the entrance of the event venue.</p>
+            </div>
+
+            {/* QR Stamp & Digital Seal */}
+            <div className="flex flex-col sm:flex-row items-center justify-between border-t border-[#D9E4F4] pt-4 gap-4">
+              <div className="space-y-1 text-xs">
+                <span className="font-bold text-[#123B7A] block">Encrypted Government QR Code Verification</span>
+                <span className="text-[11px] text-slate-600 block">Scan to verify live authenticity on <strong>https://mbmc.gov.in/verify/{activeApp.id}</strong></span>
+                <span className="text-[10px] font-mono text-slate-500 block">Digital Hash: STQC_SHA256_88A9F1023B44E99A0</span>
+              </div>
+
+              <div className="flex items-center space-x-6">
+                <div className="w-24 h-24 bg-slate-900 text-white flex flex-col items-center justify-center font-mono text-[9px] text-center p-2 rounded">
+                  <span>[QR CODE STAMP]</span>
+                  <span className="mt-1 font-bold text-[#F4B400]">MBMC VERIFIED</span>
+                </div>
+
+                <div className="text-center space-y-1 text-xs font-mono">
+                  <div className="w-20 h-10 border-b border-slate-900 mx-auto flex items-center justify-center text-[10px] text-slate-500 italic">
+                    [Digitally Signed]
+                  </div>
+                  <span className="font-bold text-slate-900 block">Municipal Commissioner</span>
+                  <span className="text-[10px] text-slate-500 block">MBMC Authority</span>
+                </div>
+              </div>
+            </div>
+
+            {/* Print Action Button */}
+            <div className="pt-2 border-t border-[#D9E4F4] flex justify-end print:hidden">
+              <button
+                onClick={() => window.print()}
+                className="bg-[#123B7A] text-white hover:bg-[#1E4F91] font-extrabold text-xs px-5 py-2.5 rounded-xs flex items-center space-x-1.5 transition cursor-pointer shadow-xs"
+              >
+                <Printer className="w-4 h-4" />
+                <span>Print Official A4 Permission Pass</span>
+              </button>
+            </div>
+
+          </div>
+        ) : (
+          <div className="bg-white rounded-xs border border-[#D9E4F4] p-6 text-center space-y-3 print:hidden">
+            <Clock className="w-10 h-10 text-amber-600 mx-auto" />
+            <h3 className="text-base font-extrabold text-[#123B7A]">Official QR Permission Pass Pending Approval</h3>
+            <p className="text-xs text-slate-600 max-w-md mx-auto">
+              As per municipal governance rules, the Official QR Permission Pass is generated <strong>ONLY AFTER</strong> all multi-departmental clearances (CFO, Police, Ward Officer, Municipal Commissioner) are signed off.
+            </p>
+          </div>
+        )}
+
+      </div>
     </div>
   );
 }
 
 export default function TrackPage() {
   return (
-    <Suspense fallback={<div className="p-8 text-center text-gov-primary font-bold">Loading Live Tracker...</div>}>
+    <Suspense fallback={
+      <div className="p-8 text-center font-mono text-xs text-gov-primary font-bold">
+        Loading Application Status Tracker...
+      </div>
+    }>
       <TrackContent />
     </Suspense>
   );
