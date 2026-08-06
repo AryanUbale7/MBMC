@@ -4,6 +4,7 @@ import { AccessibilityProvider } from "@/context/AccessibilityContext";
 import { AuthProvider } from "@/context/AuthContext";
 import GovHeader from "@/components/layout/GovHeader";
 import GovFooter from "@/components/layout/GovFooter";
+import GovPreloader from "@/components/layout/GovPreloader";
 
 export const metadata: Metadata = {
   title: "Urban Event Permission & Coordination Platform (UECP) | MBMC",
@@ -20,8 +21,13 @@ export default function RootLayout({
     <html lang="en" className="h-full">
       <head>
         <link rel="icon" href="/images/MBMC logo.jpg" />
+        <link
+          href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Noto+Sans:wght@400;500;600;700&display=swap"
+          rel="stylesheet"
+        />
       </head>
       <body className="min-h-screen flex flex-col bg-gov-bg text-gov-text font-sans antialiased">
+        <GovPreloader />
         <AccessibilityProvider>
           <AuthProvider>
             <GovHeader />
