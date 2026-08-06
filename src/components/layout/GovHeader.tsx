@@ -158,11 +158,11 @@ export default function GovHeader() {
           
           {/* MBMC Logo & Portal Title */}
           <div className="flex items-center space-x-4">
-            <div className="relative w-24 h-24 sm:w-32 sm:h-32 flex-shrink-0 bg-white rounded-full p-1 border-2 border-gov-border shadow-gov-md">
+            <div className="relative w-24 h-24 sm:w-32 sm:h-32 flex-shrink-0">
               <img
                 src="/images/mbmc_updated logo.jpg"
                 alt="MBMC Official Logo"
-                className="w-full h-full object-contain rounded-full"
+                className="w-full h-full object-contain"
               />
             </div>
             <div>
@@ -214,13 +214,13 @@ export default function GovHeader() {
               <img
                 src="/images/SLRTCElogo.png"
                 alt="SLRTCE Logo"
-                className="h-20 sm:h-26 w-20 sm:w-26 object-contain rounded-full border-2 border-gov-border shadow-gov-sm"
+                className="h-20 sm:h-26 w-20 sm:w-26 object-contain"
                 title="Shree L. R. Tiwari College of Engineering"
               />
               <img
                 src="/images/IT.png"
                 alt="IT Department Seal"
-                className="h-20 sm:h-26 w-20 sm:w-26 object-contain rounded-full border-2 border-gov-border shadow-gov-sm"
+                className="h-20 sm:h-26 w-20 sm:w-26 object-contain"
                 title="Department of Information Technology"
               />
             </div>

@@ -39,7 +39,7 @@ export default function GovFooter() {
             
             {/* Emblem of India */}
             <div className="flex flex-col items-center space-y-1.5">
-              <div className="bg-white p-2 rounded-full border border-slate-300 shadow-md">
+              <div className="bg-white p-1">
                 <img
                   src="/images/sher.png"
                   alt="State Emblem of India"
@@ -53,11 +53,11 @@ export default function GovFooter() {
 
             {/* MBMC Official Seal */}
             <div className="flex flex-col items-center space-y-1.5">
-              <div className="bg-white p-1 rounded-full border-2 border-gov-accent shadow-lg">
+              <div className="bg-white p-1">
                 <img
                   src="/images/mbmc_updated logo.jpg"
                   alt="MBMC Official Seal"
-                  className="w-18 h-18 sm:w-22 sm:h-22 object-contain rounded-full"
+                  className="w-18 h-18 sm:w-22 sm:h-22 object-contain"
                 />
               </div>
               <span className="text-[10px] text-gov-primary font-black uppercase tracking-wider">{t("MBMC Municipal Seal", "मीरा भाईंदर मनपा मुद्रा")}</span>
@@ -67,11 +67,11 @@ export default function GovFooter() {
 
             {/* SLRTCE College Logo */}
             <div className="flex flex-col items-center space-y-1.5">
-              <div className="bg-white p-1 rounded-full border border-slate-300 shadow-md">
+              <div className="bg-white p-1">
                 <img
                   src="/images/SLRTCElogo.png"
                   alt="SLRTCE College Logo"
-                  className="w-16 h-16 sm:w-20 sm:h-20 object-contain rounded-full"
+                  className="w-16 h-16 sm:w-20 sm:h-20 object-contain"
                 />
               </div>
               <span className="text-[10px] text-gov-primary font-extrabold uppercase tracking-wider">SLRTCE Mumbai</span>
@@ -81,11 +81,11 @@ export default function GovFooter() {
 
             {/* IT Department Seal */}
             <div className="flex flex-col items-center space-y-1.5">
-              <div className="bg-white p-1 rounded-full border border-slate-300 shadow-md">
+              <div className="bg-white p-1">
                 <img
                   src="/images/IT.png"
                   alt="IT Department Seal"
-                  className="w-16 h-16 sm:w-20 sm:h-20 object-contain rounded-full"
+                  className="w-16 h-16 sm:w-20 sm:h-20 object-contain"
                 />
               </div>
               <span className="text-[10px] text-gov-primary font-extrabold uppercase tracking-wider">IT Department</span>

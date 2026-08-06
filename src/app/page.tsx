@@ -40,6 +40,32 @@ import {
   Paperclip
 } from "lucide-react";
 
+// Animated Counter Component for Section 8 Governance Statistics
+function AnimatedCounter({ end, duration = 2200, suffix = "" }: { end: number; duration?: number; suffix?: string }) {
+  const [count, setCount] = useState(0);
+
+  useEffect(() => {
+    let startTimestamp: number | null = null;
+    let animationFrameId: number;
+
+    const step = (timestamp: number) => {
+      if (!startTimestamp) startTimestamp = timestamp;
+      const progress = Math.min((timestamp - startTimestamp) / duration, 1);
+      // Smooth ease-out quad curve
+      const easedProgress = 1 - (1 - progress) * (1 - progress);
+      setCount(Math.floor(easedProgress * end));
+      if (progress < 1) {
+        animationFrameId = window.requestAnimationFrame(step);
+      }
+    };
+
+    animationFrameId = window.requestAnimationFrame(step);
+    return () => window.cancelAnimationFrame(animationFrameId);
+  }, [end, duration]);
+
+  return <span>{count.toLocaleString()}{suffix}</span>;
+}
+
 export default function HomePage() {
   const { t } = useAccessibility();
   const router = useRouter();
@@ -109,7 +135,7 @@ export default function HomePage() {
               <img
                 src="/images/mbmc_updated logo.jpg"
                 alt="MBMC Seal"
-                className="w-8 h-8 object-contain rounded-full border border-gov-border"
+                className="w-8 h-8 object-contain"
               />
               <span className="text-xs font-bold text-gov-primary uppercase tracking-wider">
                 {t("Mira Bhayandar Municipal Corporation", "मीरा भाईंदर महानगरपालिका")}
@@ -777,48 +803,57 @@ export default function HomePage() {
 
 
       {/* -------------------------------------------------
-          SECTION 8: GOVERNANCE STATISTICS COUNTER
+          SECTION 8: GOVERNANCE STATISTICS COUNTER (ANIMATED COUNT-UP EFFECT)
       ------------------------------------------------- */}
       <section className="max-w-[1440px] mx-auto px-4 sm:px-8">
         <div className="bg-gov-footer text-white rounded-gov-lg p-6 sm:p-8 shadow-gov-md border border-blue-900">
           <div className="grid grid-cols-2 md:grid-cols-6 gap-6 text-center">
             
             <div className="space-y-1">
-              <div className="text-2xl sm:text-3xl font-extrabold text-gov-accent font-mono">1,840+</div>
+              <div className="text-2xl sm:text-3xl font-extrabold text-gov-accent font-mono">
+                <AnimatedCounter end={1840} suffix="+" />
+              </div>
               <div className="text-xs text-blue-200">{t("Applications Received", "प्राप्त झालेले अर्ज")}</div>
             </div>
 
             <div className="space-y-1">
-              <div className="text-2xl sm:text-3xl font-extrabold text-emerald-400 font-mono">1,792</div>
+              <div className="text-2xl sm:text-3xl font-extrabold text-emerald-400 font-mono">
+                <AnimatedCounter end={1792} />
+              </div>
               <div className="text-xs text-blue-200">{t("NOCs Approved", "मंजूर झालेले NOCs")}</div>
             </div>
 
             <div className="space-y-1">
-              <div className="text-2xl sm:text-3xl font-extrabold text-amber-400 font-mono">48</div>
+              <div className="text-2xl sm:text-3xl font-extrabold text-amber-400 font-mono">
+                <AnimatedCounter end={48} />
+              </div>
               <div className="text-xs text-blue-200">{t("Pending Audit", "प्रलंबित अर्ज")}</div>
             </div>
 
             <div className="space-y-1">
-              <div className="text-2xl sm:text-3xl font-extrabold text-white font-mono">6 Depts</div>
+              <div className="text-2xl sm:text-3xl font-extrabold text-white font-mono">
+                <AnimatedCounter end={6} suffix=" Depts" />
+              </div>
               <div className="text-xs text-blue-200">{t("Integrated Bodies", "एकत्रित मनपा विभाग")}</div>
             </div>
 
             <div className="space-y-1">
-              <div className="text-2xl sm:text-3xl font-extrabold text-gov-accent font-mono">72 Hours</div>
+              <div className="text-2xl sm:text-3xl font-extrabold text-gov-accent font-mono">
+                <AnimatedCounter end={72} suffix=" Hours" />
+              </div>
               <div className="text-xs text-blue-200">{t("Average Processing SLA", "सरासरी कालावधी")}</div>
             </div>
 
             <div className="space-y-1">
-              <div className="text-2xl sm:text-3xl font-extrabold text-emerald-400 font-mono">1,792</div>
+              <div className="text-2xl sm:text-3xl font-extrabold text-emerald-400 font-mono">
+                <AnimatedCounter end={1792} />
+              </div>
               <div className="text-xs text-blue-200">{t("QR Passes Issued", "क्यूआर दाखले जारी")}</div>
             </div>
 
           </div>
         </div>
       </section>
-
-
-
 
 
       {/* -------------------------------------------------
@@ -926,43 +961,188 @@ export default function HomePage() {
 
 
       {/* -------------------------------------------------
-          SECTION 12: EMERGENCY CONTACTS MATRIX
+          SECTION 12: OFFICIAL EMERGENCY COMMAND DIRECTORY (REDESIGNED PURE WHITE CARDS & 4PX TOP BORDER)
       ------------------------------------------------- */}
       <section id="emergency-contacts" className="max-w-[1440px] mx-auto px-4 sm:px-8">
-        <div className="bg-white rounded-gov-card border border-gov-border p-6 sm:p-8 shadow-gov-sm space-y-4">
-          <div className="border-b border-gov-border pb-3">
-            <span className="text-[11px] font-bold text-red-600 uppercase tracking-wider block">
-              {t("24x7 Emergency Services", "२४x७ आपत्कालीन संपर्क")}
-            </span>
-            <h3 className="text-xl font-bold text-gov-text mt-0.5">
-              {t("MBMC Emergency Helpline Numbers", "महानगरपालिका आपत्कालीन संपर्क क्रमांक")}
-            </h3>
+        <div className="bg-white rounded-gov-card border border-[#DCE6F7] p-6 sm:p-8 shadow-gov-sm space-y-6 relative overflow-hidden">
+          
+          {/* Subtle Emergency Shield Watermark (3% Opacity) */}
+          <div className="absolute inset-0 pointer-events-none flex items-center justify-center opacity-[0.03] z-0 overflow-hidden">
+            <ShieldAlert className="w-[450px] h-[450px] text-red-600" />
           </div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 text-xs">
-            <div className="bg-red-50 border border-red-200 p-4 rounded-gov-sm space-y-1">
-              <span className="font-extrabold text-red-900 text-sm block">MBVV Police Emergency</span>
-              <span className="font-mono text-lg font-bold text-red-700 block">Tel: 112 / 022-29452100</span>
-              <span className="text-[11px] text-red-800">Mira-Bhayandar Police Control Room</span>
+          {/* Section Header */}
+          <div className="border-b border-gov-border pb-3 relative z-10">
+            <span className="text-[11px] font-extrabold text-red-600 uppercase tracking-widest block">
+              {t("EMERGENCY RESPONSE CENTRE", "आपत्कालीन प्रतिसाद केंद्र")}
+            </span>
+            <h3 className="text-xl sm:text-2xl font-extrabold text-gov-text mt-0.5 flex items-center space-x-2">
+              <span>🚨</span>
+              <span>{t("Emergency Helpline Directory", "आपत्कालीन हेल्पलाइन डिरेक्टरी")}</span>
+            </h3>
+            <p className="text-xs text-gov-muted font-medium mt-0.5">
+              {t(
+                "Available 24×7 for Citizen Safety & Emergency Response across Mira Bhayandar jurisdiction.",
+                "मीरा भाईंदर क्षेत्रातील नागरिकांच्या सुरखेसाठी २४ तास कार्यरत मदत केंद्र."
+              )}
+            </p>
+          </div>
+
+          {/* 4 Equal Emergency Command Cards (Pure White, 14px Radius, 4px Top Border) */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 relative z-10">
+            
+            {/* CARD 1: POLICE CONTROL ROOM (Deep Blue Top Border) */}
+            <div className="bg-white rounded-[14px] border border-slate-200 border-t-4 border-t-blue-900 shadow-gov-sm p-5 flex flex-col justify-between space-y-4 group hover:-translate-y-1 hover:shadow-gov-md transition-all duration-300">
+              <div className="space-y-3">
+                {/* Icon & 24x7 Badge */}
+                <div className="flex items-center justify-between">
+                  <div className="bg-blue-50 p-2.5 rounded-gov-sm border border-blue-200">
+                    <ShieldAlert className="w-6 h-6 text-blue-900" />
+                  </div>
+                  <span className="bg-blue-100 text-blue-900 text-[10px] font-extrabold px-2 py-0.5 rounded border border-blue-200 uppercase tracking-wider flex items-center space-x-1">
+                    <span className="w-1.5 h-1.5 rounded-full bg-blue-700 animate-ping" />
+                    <span>24×7 ACTIVE</span>
+                  </span>
+                </div>
+
+                <div>
+                  <h4 className="text-sm font-extrabold text-slate-900 group-hover:text-blue-900 transition-colors">
+                    MBVV Police Control Room
+                  </h4>
+                  <p className="text-[11px] text-slate-500 font-medium">Mira-Bhayandar Police HQ</p>
+                </div>
+
+                <div className="bg-slate-50 p-2.5 rounded border border-slate-200">
+                  <span className="text-[10px] text-slate-500 block font-bold">EMERGENCY LINE</span>
+                  <span className="text-base sm:text-lg font-extrabold font-mono text-slate-900 block">
+                    112 / 022-29452100
+                  </span>
+                </div>
+              </div>
+
+              <a
+                href="tel:112"
+                className="w-full border border-slate-300 text-slate-800 font-bold text-xs py-2 rounded-gov-sm flex items-center justify-center space-x-1.5 transition-colors group-hover:bg-blue-900 group-hover:text-white group-hover:border-blue-900 shadow-xs"
+              >
+                <PhoneCall className="w-3.5 h-3.5" />
+                <span>Call Now</span>
+              </a>
             </div>
 
-            <div className="bg-amber-50 border border-amber-200 p-4 rounded-gov-sm space-y-1">
-              <span className="font-extrabold text-amber-900 text-sm block">MBMC Fire Control</span>
-              <span className="font-mono text-lg font-bold text-amber-800 block">Tel: 101 / 022-28192323</span>
-              <span className="text-[11px] text-amber-900">Chief Fire Officer Emergency Cell</span>
+            {/* CARD 2: FIRE BRIGADE (Red Top Border) */}
+            <div className="bg-white rounded-[14px] border border-slate-200 border-t-4 border-t-red-700 shadow-gov-sm p-5 flex flex-col justify-between space-y-4 group hover:-translate-y-1 hover:shadow-gov-md transition-all duration-300">
+              <div className="space-y-3">
+                {/* Icon & 24x7 Badge */}
+                <div className="flex items-center justify-between">
+                  <div className="bg-red-50 p-2.5 rounded-gov-sm border border-red-200">
+                    <Flame className="w-6 h-6 text-red-700" />
+                  </div>
+                  <span className="bg-red-100 text-red-700 text-[10px] font-extrabold px-2 py-0.5 rounded border border-red-200 uppercase tracking-wider flex items-center space-x-1">
+                    <span className="w-1.5 h-1.5 rounded-full bg-red-600 animate-ping" />
+                    <span>24×7 ACTIVE</span>
+                  </span>
+                </div>
+
+                <div>
+                  <h4 className="text-sm font-extrabold text-slate-900 group-hover:text-red-700 transition-colors">
+                    MBMC Fire & Emergency Cell
+                  </h4>
+                  <p className="text-[11px] text-slate-500 font-medium">Chief Fire Officer Command</p>
+                </div>
+
+                <div className="bg-slate-50 p-2.5 rounded border border-slate-200">
+                  <span className="text-[10px] text-slate-500 block font-bold">EMERGENCY LINE</span>
+                  <span className="text-base sm:text-lg font-extrabold font-mono text-slate-900 block">
+                    101 / 022-28192323
+                  </span>
+                </div>
+              </div>
+
+              <a
+                href="tel:101"
+                className="w-full border border-slate-300 text-slate-800 font-bold text-xs py-2 rounded-gov-sm flex items-center justify-center space-x-1.5 transition-colors group-hover:bg-red-700 group-hover:text-white group-hover:border-red-700 shadow-xs"
+              >
+                <PhoneCall className="w-3.5 h-3.5" />
+                <span>Call Now</span>
+              </a>
             </div>
 
-            <div className="bg-blue-50 border border-blue-200 p-4 rounded-gov-sm space-y-1">
-              <span className="font-extrabold text-gov-primary text-sm block">Medical & Ambulance</span>
-              <span className="font-mono text-lg font-bold text-gov-primary block">Tel: 108 / 022-28192828</span>
-              <span className="text-[11px] text-blue-900">MBMC Municipal Hospital Cell</span>
+            {/* CARD 3: AMBULANCE & MEDICAL (Green Top Border) */}
+            <div className="bg-white rounded-[14px] border border-slate-200 border-t-4 border-t-emerald-700 shadow-gov-sm p-5 flex flex-col justify-between space-y-4 group hover:-translate-y-1 hover:shadow-gov-md transition-all duration-300">
+              <div className="space-y-3">
+                {/* Icon & 24x7 Badge */}
+                <div className="flex items-center justify-between">
+                  <div className="bg-emerald-50 p-2.5 rounded-gov-sm border border-emerald-200">
+                    <PhoneCall className="w-6 h-6 text-emerald-700" />
+                  </div>
+                  <span className="bg-emerald-100 text-emerald-800 text-[10px] font-extrabold px-2 py-0.5 rounded border border-emerald-200 uppercase tracking-wider flex items-center space-x-1">
+                    <span className="w-1.5 h-1.5 rounded-full bg-emerald-600 animate-ping" />
+                    <span>24×7 ACTIVE</span>
+                  </span>
+                </div>
+
+                <div>
+                  <h4 className="text-sm font-extrabold text-slate-900 group-hover:text-emerald-700 transition-colors">
+                    Municipal Ambulance & Medical
+                  </h4>
+                  <p className="text-[11px] text-slate-500 font-medium">MBMC Hospital Cell</p>
+                </div>
+
+                <div className="bg-slate-50 p-2.5 rounded border border-slate-200">
+                  <span className="text-[10px] text-slate-500 block font-bold">EMERGENCY LINE</span>
+                  <span className="text-base sm:text-lg font-extrabold font-mono text-slate-900 block">
+                    108 / 022-28192828
+                  </span>
+                </div>
+              </div>
+
+              <a
+                href="tel:108"
+                className="w-full border border-slate-300 text-slate-800 font-bold text-xs py-2 rounded-gov-sm flex items-center justify-center space-x-1.5 transition-colors group-hover:bg-emerald-700 group-hover:text-white group-hover:border-emerald-700 shadow-xs"
+              >
+                <PhoneCall className="w-3.5 h-3.5" />
+                <span>Call Now</span>
+              </a>
             </div>
 
-            <div className="bg-emerald-50 border border-emerald-200 p-4 rounded-gov-sm space-y-1">
-              <span className="font-extrabold text-emerald-900 text-sm block">Disaster Management</span>
-              <span className="font-mono text-lg font-bold text-emerald-800 block">Tel: 1800-22-3424</span>
-              <span className="text-[11px] text-emerald-950">Toll-Free Control Headquarters</span>
+            {/* CARD 4: DISASTER MANAGEMENT (Orange Top Border) */}
+            <div className="bg-white rounded-[14px] border border-slate-200 border-t-4 border-t-amber-600 shadow-gov-sm p-5 flex flex-col justify-between space-y-4 group hover:-translate-y-1 hover:shadow-gov-md transition-all duration-300">
+              <div className="space-y-3">
+                {/* Icon & 24x7 Badge */}
+                <div className="flex items-center justify-between">
+                  <div className="bg-amber-50 p-2.5 rounded-gov-sm border border-amber-200">
+                    <AlertTriangle className="w-6 h-6 text-amber-600" />
+                  </div>
+                  <span className="bg-amber-100 text-amber-900 text-[10px] font-extrabold px-2 py-0.5 rounded border border-amber-200 uppercase tracking-wider flex items-center space-x-1">
+                    <span className="w-1.5 h-1.5 rounded-full bg-amber-600 animate-ping" />
+                    <span>24×7 ACTIVE</span>
+                  </span>
+                </div>
+
+                <div>
+                  <h4 className="text-sm font-extrabold text-slate-900 group-hover:text-amber-600 transition-colors">
+                    Disaster Management Cell
+                  </h4>
+                  <p className="text-[11px] text-slate-500 font-medium">Toll-Free Control HQ</p>
+                </div>
+
+                <div className="bg-slate-50 p-2.5 rounded border border-slate-200">
+                  <span className="text-[10px] text-slate-500 block font-bold">EMERGENCY LINE</span>
+                  <span className="text-base sm:text-lg font-extrabold font-mono text-slate-900 block">
+                    1800-22-3424
+                  </span>
+                </div>
+              </div>
+
+              <a
+                href="tel:1800223424"
+                className="w-full border border-slate-300 text-slate-800 font-bold text-xs py-2 rounded-gov-sm flex items-center justify-center space-x-1.5 transition-colors group-hover:bg-amber-600 group-hover:text-white group-hover:border-amber-600 shadow-xs"
+              >
+                <PhoneCall className="w-3.5 h-3.5" />
+                <span>Call Now</span>
+              </a>
             </div>
+
           </div>
         </div>
       </section>
